@@ -10,8 +10,8 @@ namespace BinaryParser
     {
         static void Main(string[] args)
         {
-            string s = "const m  = 4 ;";
-            Console.WriteLine(s.Trim(' '));
+            Memory mem = new Memory();
+            mem.HandleDataString("Array   kek_228   [1+ 1 + 1 +1:0] = ( 2 , 2,sec_12  )");
             Console.ReadKey();
         }
     }
