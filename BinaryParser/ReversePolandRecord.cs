@@ -102,6 +102,11 @@ namespace BinaryParser
         }
         public decimal result(string input)
         {
+            int devnull;
+            if (Int32.TryParse(input, out devnull))
+                return Convert.ToDecimal(input);
+
+
             Stack<string> stack = new Stack<string>();
             Queue<string> queue = new Queue<string>(ConvertToPostfixNotation(input));
             string str = queue.Dequeue();
