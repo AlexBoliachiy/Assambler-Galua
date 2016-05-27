@@ -11,7 +11,7 @@ namespace BinaryParser
         static void Main(string[] args)
         {
             Memory mem = new Memory();
-            mem.HandleDataString("Array   kek_228   [1+ 1 + 1 +1:0] = ( 2 , 2,sec_12  )");
+            mem.HandleDataString("Array   kek_228   [1+ 1 + 1 +1:0] = ( 2 , 2,sec_12, ms_c, 11  )");
             Console.ReadKey();
         }
     }
