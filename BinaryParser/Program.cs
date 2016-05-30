@@ -14,8 +14,10 @@ namespace BinaryParser
 
         static void Main(string[] args)
         {
-            Compilator cmp = new Compilator();
-            cmp.Compilate(@"..\..\..\text.txt");
+            Test test = new Test();
+            //test.Test1(@"..\..\..\Test\t1.txt", @"..\..\..\text1.txt"); // OK
+            test.Test1(@"..\..\..\Test\t2.txt", @"..\..\..\text2.txt"); // Эталон некорректен
+
             Console.ReadKey();
         }
     }

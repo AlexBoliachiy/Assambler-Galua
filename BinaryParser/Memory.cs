@@ -21,15 +21,21 @@ namespace BinaryParser
         public string output_var = String.Empty;
         public string output_con = String.Empty;
         public string output_arr = String.Empty;
-        private Dictionary<string, string> variables = new Dictionary<string, string>(); // Имя переменной : двоичный адресс
+
         private Dictionary<string, int >variables_values = new Dictionary<string, int>(); // Имя переменной : значение
+        private Dictionary<string, TYPE> variable_type = new Dictionary<string, TYPE>(); // Имя переменной : тип.
+        private Dictionary<string, int> variable_timeAdded = new Dictionary<string, int>(); // Имя перемеенной : какой по счету записанна
         private PostfixNotationExpression p = new PostfixNotationExpression();
-        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*\d+\s*$");
+        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d)|([A-Za-z_]+[A-Z_a-z0-9]*))\s*$");
         private Regex dec_arr = new Regex(@"^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*\)\s*$");
         private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*\d+\s*$");
-        private Regex var = new Regex(@"\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*");
+        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
+        private Regex ca = new Regex(@"CA_[0-3]");
+        Regex expression = new Regex(@"((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+");
         private int line;
-        private List<string> ConstAdresses = new List<string>();
+        private int Cons = 0;
+        private int Arrs = 0;
+        private int Vars = 0;
 
         public Memory()
         {
@@ -56,7 +62,7 @@ namespace BinaryParser
                     //Добавляем переменную и её значение в variables
                     //Добавляем в output данные
                     string const_name = cmd_split[1];
-                    if (variables.ContainsKey(const_name))
+                    if (variable_type.ContainsKey(const_name))
                         return false;
                     int const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
 
@@ -64,15 +70,15 @@ namespace BinaryParser
                     {
                         if (Math.Pow(2, (double)m) - 1 < const_value)
                         {
-                            return false; //Переполнение стека
+                            throw new CompilationException("Переполнение стека");                   
                         }
                         else
                         {
-                            variables.Add(const_name, GetBinaryAdress(line));
                             variables_values.Add(const_name, const_value);
+                            variable_type.Add(const_name, TYPE.cons);
+                            variable_timeAdded.Add(const_name, Cons++);
                             AddToOutput(const_value,ref output_con);
                             
-                            ConstAdresses.Add(GetBinaryAdress(line));
                             line++;
                         }
                     }
@@ -81,7 +87,7 @@ namespace BinaryParser
                         if (m == -1)
                             m = const_value;
                         else
-                            throw new ArgumentNullException("Повторное объявление m");
+                            throw new CompilationException("Повторное объявление m");
                     }
 
 
@@ -103,7 +109,7 @@ namespace BinaryParser
                     //Добавляем переменную и её значение в variables
                     //Добавляем в output данные
                     string var_name = cmd_split[0];
-                    if (variables.ContainsKey(var_name))
+                    if (variable_type.ContainsKey(var_name))
                         return false;
                     int var_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2]));
 
@@ -115,9 +121,11 @@ namespace BinaryParser
                         }
                         else
                         {
-                            variables.Add(var_name, GetBinaryAdress(line));
                             variables_values.Add(var_name, var_value);
-                            AddToOutput(var_value,ref output_var);
+                            variable_type.Add(var_name, TYPE.vars);
+                            variable_timeAdded.Add(var_name, Vars++);
+                            AddToOutput(var_value, ref output_var);
+                            
                             line++;
 
                         }
@@ -145,18 +153,24 @@ namespace BinaryParser
                 chars[i] = x.Replace(" ", "");  // Убираем лишние пробелы 
                 i++;
             }
-            foreach (var x in chars)
-                Console.WriteLine(x);
             string ArrayName = GetArrayName(chars[0]);
+
+            if (variable_type.ContainsKey(ArrayName))
+            {
+                throw new CompilationException("Попытка создать массив с уже использованым именем");
+            }
+
+            variable_type.Add(ArrayName, TYPE.arrs);
+            variable_timeAdded.Add(ArrayName, Arrs++);
             decimal lenght = GetLenghtExp(chars[1]);
             int CntOfVal = chars.Length; // тут и ниже начианаются некоторые проблемы, ибо сплит почему-то иногда возвращает пустую строку
             if (chars.Last() == "")
                 CntOfVal--;
             if (CntOfVal - 3 != lenght)
             {
-                throw new Exception("не все ячейки массива заполнены");
+                throw new CompilationException("не все ячейки массива заполнены");
             }
-            variables.Add(ArrayName, GetBinaryAdress(line));
+
             for (i = 3; i < CntOfVal; i++)
             {
                 chars[i] = GetBinaryInt(Convert.ToInt32(ReplaceVariableToValue(chars[i])));
@@ -173,8 +187,16 @@ namespace BinaryParser
             MatchCollection matches = var.Matches(str);
             if (matches.Count > 0)
             {
-                foreach (Match match in matches)
-                    str = str.Replace(match.Value, variables_values[match.Value].ToString());
+                try
+                {
+                    foreach (Match match in matches)
+                        str = str.Replace(match.Value, variables_values[match.Value].ToString());
+                }
+                catch (Exception ex)
+                {
+                    throw new CompilationException("обращение к несуществующей переменной");
+                }
+                
             }
             return str;
         }
@@ -212,8 +234,27 @@ namespace BinaryParser
             return str;
         }
         // Возвращает бинарное адресс длиной 9 (Это не магическое число в мануале указанно, что максимальная длинна адреса 511 ( 2**9 - 1))
-        private string GetBinaryAdress(int i)
+        private string GetBinaryAdress(string name)
         {
+            int i = 0; // Адресс в десятичной системе
+            if ( !variable_type.ContainsKey(name))
+            {
+                throw new CompilationException(" попытка получить адрес (необъявленной) несуществующей переменной");
+            }
+
+            switch (variable_type[name])
+            {
+                case TYPE.arrs:
+                    i = Vars + Cons;
+                    break;
+                case TYPE.vars:
+                    i = Cons;
+                    break;
+                case TYPE.cons:
+                    break;
+            }
+            i += variable_timeAdded[name];
+
             string str = i.ToString();
 
             for (int j = str.Length; j < 9; j++)
@@ -228,7 +269,7 @@ namespace BinaryParser
             string[] out_split = output.Split('\n');
             if (adress >= out_split.Length)
             {
-                throw new ArgumentException("обращение к невыделенной памяти");
+                throw new CompilationException("обращение к невыделенной памяти");
             }
             else
                 return out_split[adress];
@@ -239,23 +280,48 @@ namespace BinaryParser
             string[] out_split = output.Split('\n');
             if (Convert.ToInt32(adress, 2) >= out_split.Length)
             {
-                throw new ArgumentException("обращение к невыделенной памяти");
+                throw new CompilationException("обращение к невыделенной памяти");
             }
             else
                 return out_split[Convert.ToInt32(adress, 2)];
         }
 
-
-        private bool SetValue(string adress, string value)
+        public bool AddAllConstFromCodeSection(string[] Code)
         {
-            if (ConstAdresses.Contains(adress))
-                throw new ArgumentException("Попытка записать в константу значение");
+            foreach (string x in Code)
+            {
+                MatchCollection matches = expression.Matches(x);
+                if (matches.Count > 0)
+                {
+                    try
+                    {
+                        foreach (Match match in matches)
+                        {
+                            string value= match.Value;
+                            string name = value;
+                            if (ca.Matches(value).Count > 0)
+                                continue;
+                            value = p.result(ReplaceVariableToValue(value)).ToString();
+                            variables_values.Add(name, Convert.ToInt32(value));
+                            variable_type.Add(name, TYPE.cons);
+                            variable_timeAdded.Add(name, Cons++);
+                            AddToOutput(Convert.ToInt32(value), ref output_con);
 
-            throw new NotImplementedException();
-            //Вроде бы ненужный метод. Стереть
+                        }
 
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new CompilationException("обращение к несуществующей переменной");
+                    }
+
+                }
+            }
+            return true;
         }
 
     }
+
+    
 
 }

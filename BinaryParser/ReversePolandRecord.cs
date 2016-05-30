@@ -102,6 +102,7 @@ namespace BinaryParser
         }
         public decimal result(string input)
         {
+            input = input.Replace(" ", String.Empty);
             int devnull;
             if (Int32.TryParse(input, out devnull))
                 return Convert.ToDecimal(input);
