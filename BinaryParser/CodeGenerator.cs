@@ -49,6 +49,10 @@ namespace BinaryParser
         private string ConvertToBinary(int value, int rank)
         {
             string binary = Convert.ToString(value, 2);
+            if (binary.Length > rank)
+            {
+                throw new CompilationException("При конвертировании числа " +  value.ToString() + " в двоичную последовательность произошло переполнение");
+            }
             while (binary.Length < rank)
             {
                 binary = "0" + binary;
