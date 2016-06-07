@@ -195,56 +195,56 @@ namespace BinaryParser
         }
         private void ADD(string R0, string R1)
         {
-            output += "0000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            outputs[CurrentOutput] += "0000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             CurrentLine++;
         }
 
         private void MULT(string R0, string R1)
         {
-            output += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            outputs[CurrentOutput] += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             CurrentLine++;
         }
         private void DIV(string R0, string R1)
         {
-            output += "0010" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            outputs[CurrentOutput] += "0010" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             CurrentLine++;
         }
 
         private void POW(string R0, string R1)
         {
-            output += "0011" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            outputs[CurrentOutput] += "0011" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             CurrentLine++;
         }
         private void INV_(string R0)
         {
-            output += "0100" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0100" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
             CurrentLine++;
         }
 
         private void CDP(string R0)
         {
-            output += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
             CurrentLine++;
         }
 
         private void CPD(string R0)
         {
-            output += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
             CurrentLine++;
         }
 
         private void MOV(string R0, string R1)
         {
-            output += "0111" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            outputs[CurrentOutput] += "0111" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             CurrentLine++;
         }
 
         private void MOV_A(string R0, string R1)
         {
             if (R0 == "R0" || R0 == "R1" || R0 == "R2" || R0 == "R3")
-                output += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1);
+                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1);
             else
-                output += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R1);
+                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R1);
             CurrentLine += 2;
         }
         private void MOV_ARRAY(string R0, string R1)
@@ -271,7 +271,7 @@ namespace BinaryParser
                 {
                     binaryOffset = "0" + binaryOffset;
                 }
-                output += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
             }
 
             else
@@ -296,7 +296,7 @@ namespace BinaryParser
                 {
                     binaryOffset = "0" + binaryOffset;
                 }
-                output += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
             }
             CurrentLine += 3;
         }
@@ -304,21 +304,21 @@ namespace BinaryParser
         {
             if (R1 == string.Empty || R1 == null) // Значит безусловный переход
             {
-                output += "1010" + "11" + "1";
+                outputs[CurrentOutput] += "1010" + "11" + "1";
                 
             }
             else
             {
 
-                output += "1010" + Convert.ToString(Convert.ToInt32(R0[1]), 2) + "0"; 
+                outputs[CurrentOutput] += "1010" + Convert.ToString(Convert.ToInt32(R0[1]), 2) + "0"; 
             }
 
             if (IsNumber(R0))
             {
-                output += R1;
+                outputs[CurrentOutput] += R1;
             }
             else
-                output += mem.GetBinaryAdress(R0);
+                outputs[CurrentOutput] += mem.GetBinaryAdress(R0);
             CurrentLine += 2;
         }
 
@@ -329,7 +329,7 @@ namespace BinaryParser
 
         private void LOAD_CA(string R0, string R1)
         {
-            output += "1100" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[3].ToString()), 2);
+            outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[3].ToString()), 2);
             CurrentLine++;
         }
 
@@ -338,7 +338,7 @@ namespace BinaryParser
             int i = Convert.ToInt32(R0[3].ToString());
             string CA = ConvertToBinary(i, 2);
             string A = R1.Substring(3); 
-            output += "1101" + CA + "0" + A; 
+            outputs[CurrentOutput] += "1101" + CA + "0" + A; 
             CurrentLine += 2;
         }
 
@@ -346,11 +346,11 @@ namespace BinaryParser
         {
             if (R0[0] == 'R')// If register
             {
-                output += "1110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + R1;
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + R1;
             }
             else // if CA
             {
-                output += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1;
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1;
             }
             CurrentLine++;
         }
@@ -358,7 +358,7 @@ namespace BinaryParser
         private void OUT(string R0)
         {
            
-            output += "1111";
+            outputs[CurrentOutput] += "1111";
             if (R0.Contains("[")) // if array
             {
                 string arrName = R0.Remove(R0.IndexOf('['));
@@ -381,19 +381,19 @@ namespace BinaryParser
                 {
                     binaryOffset = "0" + binaryOffset;
                 }
-                output += "1" + "00" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                outputs[CurrentOutput] += "1" + "00" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
                 CurrentLine += 3;
             }
             else
             {
-                output += "0" + mem.GetBinaryAdress(R0);
+                outputs[CurrentOutput] += "0" + mem.GetBinaryAdress(R0);
                 CurrentLine += 2;
             }
         }
 
         private void LOOP(string R0, string R1)
         {
-            output += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1);
+            outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1);
 
             CurrentOutput++;
             outputs[CurrentOutput-1] += output;
@@ -417,10 +417,10 @@ namespace BinaryParser
             }
 
             outputs[CurrentOutput - 1] += "1010" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + str; 
-            output += "1010" + "11" + "1" + ConvertToBinary(EnterToCycle[CurrentOutput] + 2, 9);
+            outputs[CurrentOutput] += "1010" + "11" + "1" + ConvertToBinary(EnterToCycle[CurrentOutput] + 2, 9);
             CurrentOutput--;
-            outputs[CurrentOutput] += output;
-            output = outputs[CurrentOutput];
+            outputs[CurrentOutput] += outputs[CurrentOutput + 1];
+            outputs[CurrentOutput + 1] = string.Empty;
 
             CurrentLine += 2;
         }
