@@ -24,7 +24,7 @@ namespace BinaryParser
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
         Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
         Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*9b'[0-1]{9}\s*$");
-        Regex inc_dec_regex = new Regex(@"INC_DEC\s+CA_[0-3]\s*,\s*[0-1]\s*$");
+        Regex inc_dec_regex = new Regex(@"INC_DEC\s+((CA_)|(R))[0-3]\s*,\s*[0-1]\s*$");
         Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*[+-]\s*\d\])?\s*$");
         string output;
         Memory mem;
@@ -116,16 +116,12 @@ namespace BinaryParser
                         break;
                     case "MOV_A":
                         bool success = false;
-                        if (!mov_a_regex.IsMatch(currentStrCmd))
+                        if (mov_a_regex.IsMatch(currentStrCmd))
                         { 
                             MOV_A(ops[0], ops[1]);
                             success = true;
                         }
-                        if (mov_array_regex.IsMatch(currentStrCmd))
-                        {
-                            MOV_A(ops[0], ops[1]);
-                            success = true;
-                        }
+                        
 
                         if (!success)
                         {
@@ -188,6 +184,8 @@ namespace BinaryParser
         private string[] GetOperands(string raw)
         {
             raw = raw.Replace("\t", " ");
+            while (raw[0] == ' ')
+                raw = raw.Substring(1);
             string ops = raw.Substring(raw.IndexOf(' '));
             ops = ops.Replace(" ", string.Empty);
             return ops.Split(',');
@@ -253,7 +251,7 @@ namespace BinaryParser
                 {
                     throw new CompilationException("Попытка записи в константу");
                 }
-                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R1);
+                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0);
             }
             CurrentLine += 2;
         }
