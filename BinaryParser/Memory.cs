@@ -121,6 +121,7 @@ namespace BinaryParser
                         }
                         else
                         {
+
                             variables_values.Add(var_name, var_value);
                             variable_type.Add(var_name, TYPE.vars);
                             variable_timeAdded.Add(var_name, Vars++);
@@ -159,10 +160,11 @@ namespace BinaryParser
             {
                 throw new CompilationException("Попытка создать массив с уже использованым именем");
             }
-
-            variable_type.Add(ArrayName, TYPE.arrs);
-            variable_timeAdded.Add(ArrayName, Arrs++);
+            
             decimal lenght = GetLenghtExp(chars[1]);
+            variable_timeAdded.Add(ArrayName, Arrs);
+            Arrs += (int)lenght;
+            variable_type.Add(ArrayName, TYPE.arrs);
             int CntOfVal = chars.Length; // тут и ниже начианаются некоторые проблемы, ибо сплит почему-то иногда возвращает пустую строку
             if (chars.Last() == "")
                 CntOfVal--;
@@ -234,9 +236,10 @@ namespace BinaryParser
             return str;
         }
         // Возвращает бинарное адресс длиной 9 (Это не магическое число в мануале указанно, что максимальная длинна адреса 511 ( 2**9 - 1))
-        private string GetBinaryAdress(string name)
+        public string GetBinaryAdress(string name)
         {
             int i = 0; // Адресс в десятичной системе
+            name = name.Replace("\t", string.Empty);
             if ( !variable_type.ContainsKey(name))
             {
                 throw new CompilationException(" попытка получить адрес (необъявленной) несуществующей переменной");
@@ -255,7 +258,7 @@ namespace BinaryParser
             }
             i += variable_timeAdded[name];
 
-            string str = i.ToString();
+            string str = Convert.ToString(i, 2);
 
             for (int j = str.Length; j < 9; j++)
             {
@@ -263,7 +266,15 @@ namespace BinaryParser
             }
             return str;
         }
-
+        public TYPE GetType(string name)
+        {
+            if (!variable_type.ContainsKey(name))
+            {
+                throw new CompilationException(" попытка получить адрес (необъявленной) несуществующей переменной");
+            }
+            else
+                return variable_type[name];
+        }
         private string GetValue(int adress)
         {
             string[] out_split = output.Split('\n');
@@ -302,6 +313,8 @@ namespace BinaryParser
                             if (ca.Matches(value).Count > 0)
                                 continue;
                             value = p.result(ReplaceVariableToValue(value)).ToString();
+                            name = name.Replace("\t", string.Empty);
+                            name = name.Replace(" ", string.Empty);
                             variables_values.Add(name, Convert.ToInt32(value));
                             variable_type.Add(name, TYPE.cons);
                             variable_timeAdded.Add(name, Cons++);

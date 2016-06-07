@@ -15,12 +15,10 @@ Array C [pow_A+pow_B:0] = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 CODE
 
-LOAD_CA_A	CA_2, 9b’000000000
+LOAD_CA_A	CA_2, 9b'000000000
 
 LOOP	0, pow_B + 1 
-
-
-
+LOAD_CA_A CA_1, 9b'000000000
 LOAD_CA	CA_3, CA_2
 
 MOV_ARRAY	R1, B [CA_2 + 0]	
@@ -39,7 +37,7 @@ INC_DEC	CA_2, 0
 END_LOOP	0
 
 
-LOAD_CA_A	CA_1, 9b’000000000
+LOAD_CA_A	CA_1, 9b'000000000
 
 LOOP	0, pow_A + pow_B + 1 
 

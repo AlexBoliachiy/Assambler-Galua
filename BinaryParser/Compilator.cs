@@ -12,24 +12,48 @@ namespace BinaryParser
     
     class Compilator
     {
-        public Memory mem = new Memory();
+        public Compilator()
+        {
+            mem = new Memory();
+            codeGenerator = new CodeGenerator(mem);
+        }
+        public Memory mem;
+        public CodeGenerator codeGenerator;
         public bool Compilate(string path)
         {
             string[] commands = GetDataSection(path);
             int i = 0;
             foreach (string x in commands)
             {
-                if (x != "")
+                if (x != string.Empty)
                     if (!mem.HandleDataString(x))
                         throw new Exception("some error occured in line " + i.ToString());
                 i++;
             }
             mem.AddAllConstFromCodeSection(GetCodeSection(path));
             mem.Gather();
+            codeGenerator.HandleCodeSection(GetCodeSection(path));
             Console.WriteLine(mem.output);
-
+            PrintCodeHuman(codeGenerator.Code);
             return true;
 
+        }
+        public string GetCode()
+        {
+            return codeGenerator.Code;
+        }
+        public void  PrintCodeHuman(string code)
+        {
+            int i = 0;
+            foreach (char x in code)
+            {
+                if (x == '\n')
+                    continue;
+                Console.Write(x);
+                i++;
+                if (i % 8 == 0)
+                    Console.Write("      " + (i / 8 - 1).ToString() + '\n');
+            }
         }
 
         private string[] GetDataSection(string path)
@@ -59,7 +83,9 @@ namespace BinaryParser
             }
 
             for (; i < data.Length; i++)
+            {
                 out_data.Add(data[i]);
+            }
 
             return out_data.ToArray();
         }

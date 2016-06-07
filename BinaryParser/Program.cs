@@ -15,8 +15,9 @@ namespace BinaryParser
         static void Main(string[] args)
         {
             Test test = new Test();
+            test.CodeTest(@"..\..\..\Test\c1.txt", @"..\..\..\text1.txt");
             //test.Test1(@"..\..\..\Test\t1.txt", @"..\..\..\text1.txt"); // OK
-            test.Test1(@"..\..\..\Test\t2.txt", @"..\..\..\text2.txt"); // Эталон некорректен
+            //test.Test1(@"..\..\..\Test\t2.txt", @"..\..\..\text2.txt"); // Эталон некорректен
 
             Console.ReadKey();
         }

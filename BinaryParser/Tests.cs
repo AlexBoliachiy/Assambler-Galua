@@ -37,9 +37,43 @@ namespace BinaryParser
                 Console.WriteLine("OK");
             else
                 Console.WriteLine("False");
-
-                
         }
+        public void CodeTest(string PathToCodeIdeal, string Path)
+        {
+            Compilator cmp = new Compilator();
+            cmp.Compilate(Path);
+            string str = cmp.GetCode();
+            string readableStr = string.Empty;
+            for (int i=0; i < str.Length; i++)
+            {
+                readableStr += str[i];
+                if (i % 8 == 0 && i!=0)
+                    readableStr += "      " + (i/8).ToString() + '\n' ;
+            }
+            string Ideal= File.ReadAllText(PathToCodeIdeal);
+            Ideal = Ideal.Replace("\t", string.Empty);
+            Ideal = Ideal.Replace(" ", string.Empty);
+            Ideal = Ideal.Replace("\r", string.Empty);
+            Ideal = Ideal.Replace("\n", string.Empty);
+            str = str.Replace("\n", string.Empty);
+            try
+            {
+                for (int i=0; i < Ideal.Length; i++)
+                {
+                    if (Ideal[i] !=str[i])
+                    {
+                        Console.WriteLine("На линии номер {0}, {1} несовпадение:", i / 8, i % 8);
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+        }
+
+
     }
-        
+
+
 }
