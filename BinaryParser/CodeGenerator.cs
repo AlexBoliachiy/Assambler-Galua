@@ -244,7 +244,13 @@ namespace BinaryParser
             if (R0 == "R0" || R0 == "R1" || R0 == "R2" || R0 == "R3")
                 outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1);
             else
+            {
+                if ( mem.GetType(R0) == TYPE.cons)
+                {
+                    throw new CompilationException("Попытка записи в константу");
+                }
                 outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R1);
+            }
             CurrentLine += 2;
         }
         private void MOV_ARRAY(string R0, string R1)
