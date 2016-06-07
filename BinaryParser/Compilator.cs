@@ -52,7 +52,7 @@ namespace BinaryParser
                 Console.Write(x);
                 i++;
                 if (i % 8 == 0)
-                    Console.Write("      " + (i / 8 - 1).ToString() + '\n');
+                    Console.Write(/*"      " + (i / 8 - 1).ToString() + */'\n');
             }
         }
 

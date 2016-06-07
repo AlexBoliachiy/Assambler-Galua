@@ -389,7 +389,7 @@ namespace BinaryParser
                 {
                     binaryOffset = "0" + binaryOffset;
                 }
-                outputs[CurrentOutput] += "1" + "00" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
                 CurrentLine += 3;
             }
             else
