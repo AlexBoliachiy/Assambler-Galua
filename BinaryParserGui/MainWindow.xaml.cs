@@ -40,6 +40,8 @@ namespace BinaryParserGui
                     cmp.Compilate(o.FileName);
                     code.Text = cmp.GetCode();
                     data.Text = cmp.mem.output;
+                    System.IO.File.WriteAllText(@"ram_init_code.txt", code.Text);
+                    System.IO.File.WriteAllText(@"ram_init_data.txt.txt", data.Text);
                 }
             }
             catch (CompilationException ex)
