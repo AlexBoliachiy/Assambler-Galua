@@ -13,7 +13,15 @@ Array B [pow_B:0] = (sqr_alpha, 1)
 CODE
 MOV_A	R0, alpha					
 LOAD_CA_A	CA_0, 9b'000000000	
-LOOP	0, r-1						
+LOOP	0, r-1
+	MOV_A	R2, null				
+	LOAD_CA_A	CA_1, 9b'000000000
+	LOOP	1, count_T			
+		MOV_ARRAY	R1, G [CA_1 + 0]
+		MOV_ARRAY	T [CA_1 + 0], R1
+		MOV_ARRAY	G [CA_1 + 0], R2
+		INC_DEC	CA_1, 0		
+	END_LOOP	1							
 	LOAD_CA_A	CA_2, 9b'000000000
 	LOOP	1, pow_B + 1		
 		LOAD_CA_A	CA_1, 9b'000000000
@@ -36,14 +44,7 @@ LOOP	0, r-1
 	MOV_A	R1, count_T		
 	INC_DEC	R1, 0				
 	MOV_A	count_T, R1		
-	MOV_A	R2, null				
-	LOAD_CA_A	CA_1, 9b'000000000
-	LOOP	1, count_T			
-		MOV_ARRAY	R1, G [CA_1 + 0]
-		MOV_ARRAY	T [CA_1 + 0], R1
-		MOV_ARRAY	G [CA_1 + 0], R2
-		INC_DEC	CA_1, 0		
-	END_LOOP	1				
+				
 END_LOOP	0						
 LOAD_CA_A	CA_1, 9b'000000000	
 LOOP	0, r + 1						

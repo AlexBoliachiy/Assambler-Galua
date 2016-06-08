@@ -7,7 +7,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 // Иногда студия криво считывает знак "-", почему неизвестно
-namespace BinaryParser
+namespace BinaryParserGui
 {
     
     class Compilator
@@ -33,14 +33,24 @@ namespace BinaryParser
             mem.AddAllConstFromCodeSection(GetCodeSection(path));
             mem.Gather();
             codeGenerator.HandleCodeSection(GetCodeSection(path));
-            Console.WriteLine(mem.output);
             PrintCodeHuman(codeGenerator.Code);
             return true;
 
         }
         public string GetCode()
         {
-            return codeGenerator.Code;
+            string ouput = string.Empty;
+            int i = 0;
+            foreach (char x in codeGenerator.Code)
+            {
+                if (x == '\n')
+                    continue;
+                ouput += x;
+                i++;
+                if (i % 8 == 0)
+                    ouput += '\n';
+            }
+            return ouput;
         }
         public void  PrintCodeHuman(string code)
         {

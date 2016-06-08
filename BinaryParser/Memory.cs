@@ -332,6 +332,7 @@ namespace BinaryParser
             }
             return true;
         }
+        
 
     }
 

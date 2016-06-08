@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.IO;
 
-
 namespace BinaryParser
 {
     class Program
@@ -18,7 +17,8 @@ namespace BinaryParser
             // test.CodeTest(@"..\..\..\Test\c1.txt", @"..\..\..\text1.txt"); //ok
             //test.Test1(@"..\..\..\Test\t1.txt", @"..\..\..\text1.txt"); // OK
             //test.Test1(@"..\..\..\Test\t2.txt", @"..\..\..\text2.txt"); // Эталон некорректен
-            test.CodeTest(@"..\..\..\Test\c1.txt", @"..\..\..\text3.txt");
+            
+            test.CodeTest(@"..\..\..\Test\c1.txt", @"..\..\..\text2.txt");
             Console.ReadKey();
         }
     }
