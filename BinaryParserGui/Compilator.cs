@@ -19,20 +19,20 @@ namespace BinaryParserGui
         }
         public Memory mem;
         public CodeGenerator codeGenerator;
-        public bool Compilate(string path)
+        public bool Compilate(string input_code)
         {
-            string[] commands = GetDataSection(path);
+            string[] commands = GetDataSection(input_code);
             int i = 0;
             foreach (string x in commands)
             {
                 if (x != string.Empty)
                     if (!mem.HandleDataString(x))
-                        throw new Exception("some error occured in line " + i.ToString());
+                        throw new CompilationException("some error occured in line " + i.ToString());
                 i++;
             }
-            mem.AddAllConstFromCodeSection(GetCodeSection(path));
+            mem.AddAllConstFromCodeSection(GetCodeSection(input_code));
             mem.Gather();
-            codeGenerator.HandleCodeSection(GetCodeSection(path));
+            codeGenerator.HandleCodeSection(GetCodeSection(input_code));
             PrintCodeHuman(codeGenerator.Code);
             return true;
 
@@ -66,9 +66,11 @@ namespace BinaryParserGui
             }
         }
 
-        private string[] GetDataSection(string path)
+        private string[] GetDataSection(string code)
         {
-            string[] data = File.ReadAllLines(path);
+            code =code.Replace("\t", string.Empty);
+            code = code.Replace("\r", string.Empty);
+            string[] data = code.Split('\n');
             List<string> out_data = new List<string>();
             string bar = data[0].Replace(" ", string.Empty);
             bar = bar.Replace("\t", string.Empty);
@@ -82,9 +84,11 @@ namespace BinaryParserGui
             return out_data.ToArray();
         }
 
-        private string[] GetCodeSection(string path)
+        private string[] GetCodeSection(string code)
         {
-            string[] data = File.ReadAllLines(path);
+            code = code.Replace("\t", " ");
+            code = code.Replace("\r", string.Empty);
+            string[] data = code.Split('\n');
             List<string> out_data = new List<string>();
             int i;
             for (i = 1; data[i] != "CODE"; i++)

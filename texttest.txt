@@ -2,7 +2,7 @@ DATA
 
 const m = 4 
 
-const some_variable_for_test = 5
+const some_variable_for_test = 10
 const pow_A = 5
 
 const pow_B = 4 

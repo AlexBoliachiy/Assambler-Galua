@@ -183,10 +183,19 @@ namespace BinaryParserGui
         }
         private string[] GetOperands(string raw)
         {
+            bool success = true;
             raw = raw.Replace("\t", " ");
             while (raw[0] == ' ')
                 raw = raw.Substring(1);
-            string ops = raw.Substring(raw.IndexOf(' '));
+            string ops = string.Empty;
+            try
+            {
+                ops = raw.Substring(raw.IndexOf(' '));
+            }
+            catch
+            {
+                throw new CompilationException("one word command");
+            }
             ops = ops.Replace(" ", string.Empty);
             return ops.Split(',');
         }
