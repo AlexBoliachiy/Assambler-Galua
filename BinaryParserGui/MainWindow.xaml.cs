@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.IO;
+using System.Text.RegularExpressions;
+
+//262626
 
 namespace BinaryParserGui
 {
@@ -21,9 +24,11 @@ namespace BinaryParserGui
     /// </summary>
     public partial class IDE : Window
     {
+        private bool isPainting = false;
         private Compilator cmp = new Compilator();
         private string currentfile = string.Empty;
         private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.
+                                                                 
         public IDE()
         {
             InitializeComponent();
@@ -119,8 +124,13 @@ namespace BinaryParserGui
         private void editor_TextChanged(object sender, TextChangedEventArgs e)
         {
             IsSaved = false;
-            bool suc = true; 
-            cmp = new Compilator(); // Слишком много внутренних параметров, что бы просто провести очистку
+            bool suc = true;
+            if (isPainting)
+                return;
+            else
+                isPainting = true;
+
+            cmp = new Compilator(); // Слишком много внутренних параметров, приходится создавать новый объект
             TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             try
             {
@@ -134,14 +144,83 @@ namespace BinaryParserGui
             {
                 data.Text = cmp.mem.output;
                 code.Text = cmp.GetCode();
+                PaintEditor();
             }
+            isPainting = false;
         }
 
         //Окрашивает отдельные команды (подсветка синтаксиса)
         private void PaintEditor()
         {
-            TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd); // получаем текст
-            string copy = textRange.Text;
+            /*for (int i = 0; i < commands.Count; i++)
+            {
+                var matches = commands[i].Matches(textRange.Text);
+                for (int j=0; j < matches.Count; j++)
+                {
+                    TextRange colouringText = SubTextRange(textRange, matches[j].Index, matches[j].Length);
+                    colouringText.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.Red));
+                }
+            }*/
+            FillWordFromPosition("const", "#2e95e8");
+            FillWordFromPosition("MOV_ARRAY", "#2e95e8");
+            FillWordFromPosition("END_LOOP", "#58b8f0");
+            FillWordFromPosition("Array", "#1dbb6b");
+            FillWordFromPosition("DATA", "#f9dc1a");
+            FillWordFromPosition("CODE", "#f9dc1a");
+            FillWordFromPosition("ADD", "#2e95e8");
+            FillWordFromPosition("MULT", "#2e95e8");
+            FillWordFromPosition("DIV", "#2e95e8");
+            FillWordFromPosition("POW", "#2e95e8");
+            FillWordFromPosition("INV", "#2e95e8");
+            FillWordFromPosition("CDP", "#2e95e8");
+            FillWordFromPosition("CPD", "#2e95e8");
+            FillWordFromPosition("MOV_A", "#2e95e8");
+            FillWordFromPosition("1JMP", "#2e95e8");
+            FillWordFromPosition("LOOP", "#58b8f0");
+            FillWordFromPosition("LOAD_CA_A", "#2e95e8");
+            FillWordFromPosition("LOAD_CA", "#2e95e8");
+            FillWordFromPosition("INC_DEC", "#2e95e8");
+            FillWordFromPosition("OUT", "#2e95e8");
+
+            // FillWordFromPosition("Array",)
+
+
+
+        }
+        private void FillWordFromPosition( string word, string color)
+        {
+            
+            TextPointer position = editor.Document.ContentStart;
+            TextPointer endPosition = null;
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
+
+                    // Find the starting index of any substring that matches "word".
+                    int indexInRun = textRun.IndexOf(word);
+                    if (indexInRun >= 0)
+                    {
+                        position = position.GetPositionAtOffset(indexInRun);
+                        endPosition = position.GetPositionAtOffset(word.Length);
+                        TextRange colouringText = new TextRange(position, endPosition);
+                        colouringText.ApplyPropertyValue(TextElement.ForegroundProperty, 
+                            (SolidColorBrush)(new BrushConverter().ConvertFrom(color)));
+                    }
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+                }
+                else
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
+
+            // position will be null if "word" is not found.
+            
+        }
+
+        private void PaintBackground()
+        {
+            
         }
     }
 }

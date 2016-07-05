@@ -27,7 +27,7 @@ namespace BinaryParserGui
             {
                 if (x != string.Empty)
                     if (!mem.HandleDataString(x))
-                        throw new CompilationException("some error occured in line " + i.ToString());
+                        throw new CompilationException("Деяка помилка трапилася у рядку" + i.ToString());
                 i++;
             }
             mem.AddAllConstFromCodeSection(GetCodeSection(input_code));
@@ -75,7 +75,7 @@ namespace BinaryParserGui
             string bar = data[0].Replace(" ", string.Empty);
             bar = bar.Replace("\t", string.Empty);
             if (bar != "DATA")
-                throw new Exception("Отсуствует ключевое слово DATA");
+                throw new CompilationException("Отсуствует ключевое слово DATA");
             for (int i=1; data[i] != "CODE"; i++ )
             {
 

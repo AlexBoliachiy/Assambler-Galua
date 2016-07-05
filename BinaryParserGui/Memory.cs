@@ -29,7 +29,7 @@ namespace BinaryParserGui
         private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d)|([A-Za-z_]+[A-Z_a-z0-9]*))\s*$");
         private Regex dec_arr = new Regex(@"^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*\)\s*$");
         private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*\d+\s*$");
-        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
+        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*"); // вообще не ебу как я мог так назвать переменную
         private Regex ca = new Regex(@"CA_[0-3]");
         Regex expression = new Regex(@"((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+");
         private int line;
