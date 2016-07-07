@@ -27,8 +27,10 @@ namespace BinaryParserGui
         private bool isPainting = false;
         private Compilator cmp = new Compilator();
         private string currentfile = string.Empty;
-        private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.
-                                                                 
+        private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.          
+        private int curTab = 0;
+        private string prevText;
+        private bool shallWriteTab = true;                                     
         public IDE()
         {
             InitializeComponent();
@@ -123,15 +125,18 @@ namespace BinaryParserGui
 
         private void editor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            IsSaved = false;
-            bool suc = true;
-            if (isPainting)
+            if (isPainting) // Для избежания рекурсии ( изменяя текст тут, рекурсивно будет вызываться эта же функция)
                 return;
             else
                 isPainting = true;
 
+            IsSaved = false;
+            bool suc = true;
+            
+
             cmp = new Compilator(); // Слишком много внутренних параметров, приходится создавать новый объект
             TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+            HandleRemovedTabulation(textRange.Text);
             try
             {
                 cmp.Compilate(textRange.Text);
@@ -144,23 +149,17 @@ namespace BinaryParserGui
             {
                 data.Text = cmp.mem.output;
                 code.Text = cmp.GetCode();
-                PaintEditor();
             }
+            PaintEditor();
             isPainting = false;
+            
         }
 
         //Окрашивает отдельные команды (подсветка синтаксиса)
         private void PaintEditor()
         {
-            /*for (int i = 0; i < commands.Count; i++)
-            {
-                var matches = commands[i].Matches(textRange.Text);
-                for (int j=0; j < matches.Count; j++)
-                {
-                    TextRange colouringText = SubTextRange(textRange, matches[j].Index, matches[j].Length);
-                    colouringText.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.Red));
-                }
-            }*/
+            TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.White));
             FillWordFromPosition("const", "#2e95e8");
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("END_LOOP", "#58b8f0");
@@ -218,9 +217,70 @@ namespace BinaryParserGui
             
         }
 
-        private void PaintBackground()
+        private int CountTabulation() // Считает, сколько табуляций должно автоматически дописываться
         {
+            TextPointer carret = editor.CaretPosition;
+            TextPointer position = editor.Document.ContentStart;
+            TextRange curTab = new TextRange(carret, position);
+            Regex endloop = new Regex(@"^\s*END_LOOP\s+[0-3]\s*");
+            Regex loop = new Regex(@"^\s*LOOP\s+[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*");
+            var endLoopCount = endloop.Matches(curTab.Text).Count;
+            var LoopCount = endloop.Matches(curTab.Text).Count;
+            return LoopCount - endLoopCount; 
+        }
+
+        private void editor_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                curTab += CountTabulation();
+            }
+
+            else if (e.Key == Key.Tab)
+                curTab--;
+
             
+        }
+
+        // Если табуляция убрана, то  уменьшает счетчик табуляций. Иначе ничего не делает
+        private void HandleRemovedTabulation( string curText)
+        {
+            int cur = 0;
+            int prev = 0;
+            for (int i = 0; i != curText.Length; i++)
+            {
+                if (curText[i] == '\t')
+                    cur++;
+
+            }
+
+            for (int i = 0; i != prevText.Length; i++)
+            {
+                if (curText[i] == '\t')
+                    prev++;
+
+            }
+
+            if ( cur - prev > 0)
+            {
+                curTab -= cur - prev;
+            }
+
+
+        }
+
+        private void editor_KeyDown(object sender, KeyEventArgs e)
+        {
+            isPainting = true;
+            if ((e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9))
+            {
+                TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                for (int i=0; i < curTab; i++)
+                {
+                    editor.CaretPosition.InsertTextInRun("\t");
+                }
+            }
+            isPainting = false;
         }
     }
 }
