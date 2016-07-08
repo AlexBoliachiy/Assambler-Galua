@@ -14,9 +14,9 @@
                 <MenuItem Header="Save" Click="MenuItem_Save"></MenuItem>
                 <MenuItem Header="Save As..." Click="MenuItem_SaveAs"/>
                 <Separator></Separator>
-                <MenuItem Header="Exit"></MenuItem>
+                <MenuItem Header="Exit" Click="MenuItem_exit"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Compile"/>
+            <MenuItem Header="Compile" Click="MenuItem_Compile"/>
         </Menu>
         <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged" Background="#262626"
                      Foreground="WhiteSmoke" FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown">

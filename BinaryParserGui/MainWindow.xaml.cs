@@ -45,6 +45,7 @@ namespace BinaryParserGui
                 TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
                 range.Load(fileStream, DataFormats.Text);
                 IsSaved = true;
+                PaintEditor();
             }
         }
 
@@ -86,13 +87,18 @@ namespace BinaryParserGui
                 MessageBoxResult result = MessageBox.Show("Бажаєте зберегти зміни?", "Питанячко", MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
+                {
                     if (currentfile == String.Empty)
                         MenuItem_SaveAs(sender, e);
                     else
                         MenuItem_Save(sender, e);
+                    currentfile = string.Empty;
+                    TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                    tr.Text = string.Empty;
+                }
                 else if (result == MessageBoxResult.No)
                 {
-                    editor.DataContext = string.Empty;
+                    
                     currentfile = string.Empty;
                 }
                 else if (result == MessageBoxResult.Cancel)
@@ -119,6 +125,7 @@ namespace BinaryParserGui
                     e.Cancel = true;
 
             }
+            
 
         }
 
@@ -222,7 +229,7 @@ namespace BinaryParserGui
             TextPointer position = editor.Document.ContentStart;
             TextRange curTab = new TextRange(position, carret);
             Regex endloop = new Regex(@"END_LOOP\s+[0-3]\s*");
-            Regex loop = new Regex(@"^\s*LOOP\s+[0-3]\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*");
+            Regex loop = new Regex(@"\s*LOOP\s+[0-3]\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*");
             var endLoopCol = endloop.Matches(curTab.Text); // ошибка - реджексы не матчатся
             var LoopCol = loop.Matches(curTab.Text);
             int LoopCount = LoopCol.Count;
@@ -250,6 +257,7 @@ namespace BinaryParserGui
             {
                 //HandleRemovedTabulation(tr.Text);
             }
+            PaintEditor();
             isPainting = false;
 
 
@@ -285,6 +293,16 @@ namespace BinaryParserGui
                 tr.Text = tr.Text.Remove(index, 1);
                 curTab--;
             }
+        }
+
+        private void MenuItem_exit(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void MenuItem_Compile(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
