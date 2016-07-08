@@ -29,8 +29,7 @@ namespace BinaryParserGui
         private string currentfile = string.Empty;
         private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.          
         private int curTab = 0;
-        private string prevText;
-        private bool shallWriteTab = true;                                     
+        private string prevText = string.Empty;
         public IDE()
         {
             InitializeComponent();
@@ -136,7 +135,6 @@ namespace BinaryParserGui
 
             cmp = new Compilator(); // Слишком много внутренних параметров, приходится создавать новый объект
             TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
-            HandleRemovedTabulation(textRange.Text);
             try
             {
                 cmp.Compilate(textRange.Text);
@@ -150,8 +148,9 @@ namespace BinaryParserGui
                 data.Text = cmp.mem.output;
                 code.Text = cmp.GetCode();
             }
-            PaintEditor();
+            
             isPainting = false;
+            label.Content = curTab.ToString();
             
         }
 
@@ -186,6 +185,7 @@ namespace BinaryParserGui
 
 
         }
+        // Ишет все совпадения с указанным словом и окрашивает его 
         private void FillWordFromPosition( string word, string color)
         {
             
@@ -213,7 +213,6 @@ namespace BinaryParserGui
                     position = position.GetNextContextPosition(LogicalDirection.Forward);
             }
 
-            // position will be null if "word" is not found.
             
         }
 
@@ -221,57 +220,48 @@ namespace BinaryParserGui
         {
             TextPointer carret = editor.CaretPosition;
             TextPointer position = editor.Document.ContentStart;
-            TextRange curTab = new TextRange(carret, position);
-            Regex endloop = new Regex(@"^\s*END_LOOP\s+[0-3]\s*");
-            Regex loop = new Regex(@"^\s*LOOP\s+[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*");
-            var endLoopCount = endloop.Matches(curTab.Text).Count;
-            var LoopCount = endloop.Matches(curTab.Text).Count;
-            return LoopCount - endLoopCount; 
+            TextRange curTab = new TextRange(position, carret);
+            Regex endloop = new Regex(@"END_LOOP\s+[0-3]\s*");
+            Regex loop = new Regex(@"^\s*LOOP\s+[0-3]\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*");
+            var endLoopCol = endloop.Matches(curTab.Text); // ошибка - реджексы не матчатся
+            var LoopCol = loop.Matches(curTab.Text);
+            int LoopCount = LoopCol.Count;
+            int endLoopCount = endLoopCol.Count;
+            return LoopCount - endLoopCount;
         }
+
 
         private void editor_KeyUp(object sender, KeyEventArgs e)
         {
+            isPainting = true;
             if (e.Key == Key.Enter)
             {
-                curTab += CountTabulation();
+                removeTabNearEndLoop();
+                curTab = CountTabulation();
+                for (int i = 0; i < curTab; i++)
+                { 
+                    editor.CaretPosition.InsertTextInRun("\t");
+                }
             }
 
             else if (e.Key == Key.Tab)
-                curTab--;
+                curTab++;
+            else if (e.Key == Key.Back)
+            {
+                //HandleRemovedTabulation(tr.Text);
+            }
+            isPainting = false;
+
+
 
             
         }
 
-        // Если табуляция убрана, то  уменьшает счетчик табуляций. Иначе ничего не делает
-        private void HandleRemovedTabulation( string curText)
-        {
-            int cur = 0;
-            int prev = 0;
-            for (int i = 0; i != curText.Length; i++)
-            {
-                if (curText[i] == '\t')
-                    cur++;
-
-            }
-
-            for (int i = 0; i != prevText.Length; i++)
-            {
-                if (curText[i] == '\t')
-                    prev++;
-
-            }
-
-            if ( cur - prev > 0)
-            {
-                curTab -= cur - prev;
-            }
-
-
-        }
+        
 
         private void editor_KeyDown(object sender, KeyEventArgs e)
         {
-            isPainting = true;
+           /* isPainting = true;
             if ((e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9))
             {
                 TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
@@ -280,7 +270,21 @@ namespace BinaryParserGui
                     editor.CaretPosition.InsertTextInRun("\t");
                 }
             }
-            isPainting = false;
+            isPainting = false;*/
+        }
+
+        private void removeTabNearEndLoop()
+        {
+            var tr = new TextRange(editor.Document.ContentStart, editor.CaretPosition);
+            int index = tr.Text.LastIndexOf("\t");
+            if (index == -1)
+                return;
+            var str = tr.Text.Substring(index);
+            if (str.Contains("END_LOOP"))
+            {
+                tr.Text = tr.Text.Remove(index, 1);
+                curTab--;
+            }
         }
     }
 }

@@ -217,6 +217,7 @@
                 <TextBox Name="data" FlowDirection="LeftToRight" Background="#292929" Foreground="Wheat" ></TextBox>
             </Grid>
         </ScrollViewer>
+        <Label x:Name="label" Content="Label" Grid.Column="1" HorizontalAlignment="Left" Margin="150,0,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="1.039,-0.577"/>
         <Grid.RowDefinitions>
             <RowDefinition Height="15"/>
             <RowDefinition/>
