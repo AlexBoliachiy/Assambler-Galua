@@ -106,12 +106,17 @@ namespace BinaryParserGui
                         MenuItem_Save(sender, e);
                     currentfile = string.Empty;
                     TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                    data.Text = string.Empty;
                     tr.Text = string.Empty;
+                    code.Text = string.Empty;
                 }
                 else if (result == MessageBoxResult.No)
                 {
-                    
+                    TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                    tr.Text = string.Empty;
                     currentfile = string.Empty;
+                    data.Text = string.Empty;
+                    code.Text = string.Empty;
                 }
                 else if (result == MessageBoxResult.Cancel)
                     return;
