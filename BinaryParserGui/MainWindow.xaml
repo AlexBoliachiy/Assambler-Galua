@@ -8,15 +8,16 @@
         Title="Асемблер Галуа IDE" WindowState="Maximized" Closing="Window_Exit" >
     <Grid>
         <Menu>
-            <MenuItem Header="File">
-                <MenuItem Header="New" Click="MenuItem_New"></MenuItem>
-                <MenuItem Header="Open" Click="MenuItem_Open"></MenuItem>
-                <MenuItem Header="Save" Click="MenuItem_Save"></MenuItem>
-                <MenuItem Header="Save As..." Click="MenuItem_SaveAs"/>
+            <MenuItem Header="Файл">
+                <MenuItem Header="Новий" Command="New"></MenuItem>
+                <MenuItem Header="Відкрити" Click="MenuItem_Open"></MenuItem>
+                <MenuItem Header="Зберегти"  Command="Save"></MenuItem>
+                <MenuItem Header="Зберегти як..." Click="MenuItem_SaveAs"/>
                 <Separator></Separator>
-                <MenuItem Header="Exit" Click="MenuItem_exit"></MenuItem>
+                <MenuItem Header="Вийти" Click="MenuItem_exit"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Compile" Click="MenuItem_Compile"/>
+            <MenuItem Header="Компілювати" Click="MenuItem_Compile"/>
+            <MenuItem Header="Налаштування" Click="MenuItem_Settings"></MenuItem>
         </Menu>
         <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged" Background="#262626"
                      Foreground="WhiteSmoke" FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown">
@@ -217,7 +218,6 @@
                 <TextBox Name="data" FlowDirection="LeftToRight" Background="#292929" Foreground="Wheat" ></TextBox>
             </Grid>
         </ScrollViewer>
-        <Label x:Name="label" Content="Label" Grid.Column="1" HorizontalAlignment="Left" Margin="150,0,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="1.039,-0.577"/>
         <Grid.RowDefinitions>
             <RowDefinition Height="15"/>
             <RowDefinition/>

@@ -51,7 +51,7 @@ namespace BinaryParserGui
             string binary = Convert.ToString(value, 2);
             if (binary.Length > rank)
             {
-                throw new CompilationException("При конвертировании числа " +  value.ToString() + " в двоичную последовательность произошло переполнение");
+                throw new CompilationException("При конвертуванні числа " +  value.ToString() + " у двійкову послідовність трапилося переповнення");
             }
             while (binary.Length < rank)
             {
@@ -76,42 +76,42 @@ namespace BinaryParserGui
                 {
                     case "ADD": // В оригинале названо add_sub, но в коде почему-то эта команда ни разу не использовалась, так что я назвал её так
                         if (!add_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         ADD(ops[0], ops[1]);
                         break;
                     case "MULT":
                         if (!mult_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         MULT(ops[0], ops[1]);
                         break;
                     case "DIV":
                         if (!div_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         DIV(ops[0], ops[1]);
                         break;
                     case "POW":
                         if (!pow_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка - " + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  : - " + i.ToString());
                         POW(ops[0], ops[1]);
                         break;
                     case "INV_":
                         if (!inv_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         INV_(ops[0]);
                         break;
                     case "CDP":
                         if (!cdp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         CDP(ops[0]);
                         break;
                     case "CPD":
                         if (!cpd_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         CPD(ops[0]);
                         break;
                     case "MOV":
                         if (!mov_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         MOV(ops[0], ops[1]);
                         break;
                     case "MOV_A":
@@ -125,7 +125,7 @@ namespace BinaryParserGui
 
                         if (!success)
                         {
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         }
 
                         break;
@@ -139,42 +139,42 @@ namespace BinaryParserGui
 
                         if (!suc)
                         {
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         }
                         break;
                     case "JMP":
                         if (!jmp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         JMP(ops[0], ops[1]);
                         break;
                     case "LOOP":
                         if (!loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString() + " " + x);
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString() + " " + x);
                         LOOP(ops[0], ops[1]);
                         break;
                     case "LOAD_CA":
                         if (!load_ca_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         LOAD_CA(ops[0], ops[1]);
                         break;
                     case "LOAD_CA_A":
                         if (!load_ca_a_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         LOAD_CA_A(ops[0], ops[1]);
                         break;
                     case "INC_DEC":
                         if (!inc_dec_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         INC_DEC(ops[0], ops[1]);
                         break;
                     case "OUT":
                         if (!out_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         OUT(ops[0]);
                         break;
                     case "END_LOOP":
                         if (!end_loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Ошибка в коде: строка" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         END_LOOP(ops[0]);
                         break;
                 }
@@ -183,7 +183,6 @@ namespace BinaryParserGui
         }
         private string[] GetOperands(string raw)
         {
-            bool success = true;
             raw = raw.Replace("\t", " ");
             while (raw[0] == ' ')
                 raw = raw.Substring(1);
@@ -307,7 +306,7 @@ namespace BinaryParserGui
                 string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
                 if (binaryOffset.Length > 4)
                 {
-                    throw new CompilationException("Значение смещения больше 4-х байт");
+                    throw new CompilationException("Значення зміщення більще 4-х біт");
                 }
                 while (binaryOffset.Length != 4)
                 {
@@ -392,7 +391,7 @@ namespace BinaryParserGui
                 string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
                 if (binaryOffset.Length > 4)
                 {
-                    throw new CompilationException("Значение смещения больше 4-х байт");
+                    throw new CompilationException("Значення зміщення більще 4-х біт");
                 }
                 while (binaryOffset.Length != 4)
                 {
@@ -423,7 +422,7 @@ namespace BinaryParserGui
         {
             if (CurrentOutput - 1!= Convert.ToInt32(R0))
             {
-                throw new CompilationException("Неожиданное окончание цикла номер " + R0);
+                throw new CompilationException("Несподіваний кінець циклу номер" + R0);
             }
 
             string str = Convert.ToString(CurrentLine + 2, 2);

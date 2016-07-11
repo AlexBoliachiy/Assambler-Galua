@@ -26,10 +26,10 @@ namespace BinaryParserGui
         private Dictionary<string, TYPE> variable_type = new Dictionary<string, TYPE>(); // Имя переменной : тип.
         private Dictionary<string, int> variable_timeAdded = new Dictionary<string, int>(); // Имя перемеенной : какой по счету записанна
         private PostfixNotationExpression p = new PostfixNotationExpression();
-        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d)|([A-Za-z_]+[A-Z_a-z0-9]*))\s*$");
+        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=(\s*((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))\s*$");
         private Regex dec_arr = new Regex(@"^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*\)\s*$");
         private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*\d+\s*$");
-        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*"); // вообще не ебу как я мог так назвать переменную
+        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*"); 
         private Regex ca = new Regex(@"CA_[0-3]");
         Regex expression = new Regex(@"((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+");
         private int line;
@@ -64,13 +64,14 @@ namespace BinaryParserGui
                     string const_name = cmd_split[1];
                     if (variable_type.ContainsKey(const_name))
                         return false;
+
                     int const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
 
                     if (const_name != "m")
                     {
                         if (Math.Pow(2, (double)m) - 1 < const_value)
                         {
-                            throw new CompilationException("Переполнение стека");                   
+                            throw new CompilationException("Переповнення стеку");                   
                         }
                         else
                         {
@@ -87,7 +88,7 @@ namespace BinaryParserGui
                         if (m == -1)
                             m = const_value;
                         else
-                            throw new CompilationException("Повторное объявление m");
+                            throw new CompilationException("Повторне об'явлення m");
                     }
 
 
@@ -158,7 +159,7 @@ namespace BinaryParserGui
 
             if (variable_type.ContainsKey(ArrayName))
             {
-                throw new CompilationException("Попытка создать массив с уже использованым именем");
+                throw new CompilationException("Спроба створити массив з вже викоростаним именем");
             }
             
             decimal lenght = GetLenghtExp(chars[1]);
@@ -170,7 +171,7 @@ namespace BinaryParserGui
                 CntOfVal--;
             if (CntOfVal - 3 != lenght)
             {
-                throw new CompilationException("не все ячейки массива заполнены");
+                throw new CompilationException("не усі ячейки масива заповнені");
             }
 
             for (i = 3; i < CntOfVal; i++)
@@ -196,7 +197,7 @@ namespace BinaryParserGui
                 }
                 catch (Exception ex)
                 {
-                    throw new CompilationException("обращение к несуществующей переменной");
+                    throw new CompilationException("звертання до неіснуючої змінної");
                 }
                 
             }
@@ -242,7 +243,7 @@ namespace BinaryParserGui
             name = name.Replace("\t", string.Empty);
             if ( !variable_type.ContainsKey(name))
             {
-                throw new CompilationException(" попытка получить адрес (необъявленной) несуществующей переменной");
+                throw new CompilationException(" спроба отримати адресу неіснуючої зміної");
             }
 
             switch (variable_type[name])
@@ -270,7 +271,7 @@ namespace BinaryParserGui
         {
             if (!variable_type.ContainsKey(name))
             {
-                throw new CompilationException(" попытка получить адрес (необъявленной) несуществующей переменной");
+                throw new CompilationException(" спроба отримати адресу неіснуючої зміної");
             }
             else
                 return variable_type[name];
@@ -280,7 +281,7 @@ namespace BinaryParserGui
             string[] out_split = output.Split('\n');
             if (adress >= out_split.Length)
             {
-                throw new CompilationException("обращение к невыделенной памяти");
+                throw new CompilationException("звертання до невиділенної пам'яті");
             }
             else
                 return out_split[adress];
@@ -291,7 +292,7 @@ namespace BinaryParserGui
             string[] out_split = output.Split('\n');
             if (Convert.ToInt32(adress, 2) >= out_split.Length)
             {
-                throw new CompilationException("обращение к невыделенной памяти");
+                throw new CompilationException("звертання до невиділенної пам'яті");
             }
             else
                 return out_split[Convert.ToInt32(adress, 2)];
@@ -325,7 +326,7 @@ namespace BinaryParserGui
                     }
                     catch (Exception ex)
                     {
-                        throw new CompilationException("обращение к несуществующей переменной");
+                        throw new CompilationException("звертання до невиділенної пам'яті");
                     }
 
                 }

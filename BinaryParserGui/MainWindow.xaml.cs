@@ -30,14 +30,26 @@ namespace BinaryParserGui
         private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.          
         private int curTab = 0;
         private string prevText = string.Empty;
+        public bool write = false;
         public IDE()
         {
+
+
             InitializeComponent();
+            CommandBinding bind = new CommandBinding(ApplicationCommands.Save);
+            bind.Executed += MenuItem_Save;
+            this.CommandBindings.Add(bind);
+            CommandBinding bind1 = new CommandBinding(ApplicationCommands.New);
+            bind1.Executed += MenuItem_New;
+            this.CommandBindings.Add(bind1);
+
+
         }
 
         private void MenuItem_Open(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (dlg.ShowDialog() == true)
             {
                 currentfile = dlg.FileName;
@@ -157,7 +169,6 @@ namespace BinaryParserGui
             }
             
             isPainting = false;
-            label.Content = curTab.ToString();
             
         }
 
@@ -302,7 +313,44 @@ namespace BinaryParserGui
 
         private void MenuItem_Compile(object sender, RoutedEventArgs e)
         {
+            var tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+            bool suc = true;
+            cmp = new Compilator(); // Слишком много внутренних параметров, приходится создавать новый объект
+            TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+            try
+            {
+                cmp.Compilate(textRange.Text);
+            }
+            catch (CompilationException ex)
+            {
+                suc = false;
+                MessageBox.Show(ex.Message, "Помилка компіляції", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                if (suc == true)
+                {
+                    bool isWrite = false;
+                    data.Text = cmp.mem.output;
+                    code.Text = cmp.GetCode();
+                    if (write == true)
+                    {
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "code" + ".txt", data.Text);
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "mem" + ".txt", data.Text);
+                    }
+                    string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
+                    MessageBox.Show("Зроблено!\n" + str , "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                }
 
+            }
+
+        }
+
+        private void MenuItem_Settings(object sender, RoutedEventArgs e)
+        {
+
+            Settings s = new Settings(write, this);
+            s.Show();
         }
     }
 }
