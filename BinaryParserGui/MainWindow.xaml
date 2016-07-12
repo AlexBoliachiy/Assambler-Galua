@@ -19,8 +19,8 @@
             <MenuItem Header="Компілювати" Click="MenuItem_Compile"/>
             <MenuItem Header="Налаштування" Click="MenuItem_Settings"></MenuItem>
         </Menu>
-        <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged" Background="#262626"
-                     Foreground="WhiteSmoke" FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown">
+        <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged" 
+                     FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown">
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type Paragraph}">
                     <Setter Property="Margin" Value="0"/>
@@ -120,7 +120,7 @@
                 </Style>
             </ScrollViewer.Resources>
             <Grid>
-                <TextBox Name="code" Background="#292929" Foreground="Wheat"></TextBox>
+                <TextBox Name="code" ></TextBox>
             </Grid>
         </ScrollViewer>
         <ScrollViewer Name="dataview" Grid.Column="0" Grid.Row="1" FlowDirection="RightToLeft" >
@@ -215,7 +215,7 @@
                 </Style>
             </ScrollViewer.Resources>
             <Grid>
-                <TextBox Name="data" FlowDirection="LeftToRight" Background="#292929" Foreground="Wheat" ></TextBox>
+                <TextBox Name="data" FlowDirection="LeftToRight" ></TextBox>
             </Grid>
         </ScrollViewer>
         <Grid.RowDefinitions>

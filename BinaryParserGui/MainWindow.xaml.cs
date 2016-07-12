@@ -30,6 +30,7 @@ namespace BinaryParserGui
         private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.          
         private int curTab = 0;
         private string prevText = string.Empty;
+        private Color fontColor;
         public bool write = false;
         public IDE()
         {
@@ -42,10 +43,63 @@ namespace BinaryParserGui
             CommandBinding bind1 = new CommandBinding(ApplicationCommands.New);
             bind1.Executed += MenuItem_New;
             this.CommandBindings.Add(bind1);
+            if (!Properties.Settings.Default.gamma)
+            {
+                editor.Background = new SolidColorBrush(Colors.White);
+                code.Background = new SolidColorBrush(Colors.White);
+                data.Background = new SolidColorBrush(Colors.White);
 
+                editor.Foreground = new SolidColorBrush(Colors.Black);
+                code.Foreground = new SolidColorBrush(Colors.Black);
+                data.Foreground = new SolidColorBrush(Colors.Black);
 
+                fontColor = Colors.Black;
+            }
+
+            else
+            {
+                editor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"));
+                code.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                data.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+
+                editor.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
+                code.Foreground = new SolidColorBrush(Colors.Wheat);
+                data.Foreground = new SolidColorBrush(Colors.Wheat);
+
+                fontColor = Colors.White;
+            }
+            
         }
 
+
+        public void InterfaceChange(bool gamma)
+        {
+            if (!gamma)
+            {
+                editor.Background = new SolidColorBrush(Colors.White);
+                code.Background = new SolidColorBrush(Colors.White);
+                data.Background = new SolidColorBrush(Colors.White);
+
+                editor.Foreground = new SolidColorBrush(Colors.Black);
+                code.Foreground = new SolidColorBrush(Colors.Black);
+                data.Foreground = new SolidColorBrush(Colors.Black);
+
+                fontColor = Colors.Black;
+            }
+
+            else
+            {
+                editor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"));
+                code.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                data.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+
+                editor.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
+                code.Foreground = new SolidColorBrush(Colors.Wheat);
+                data.Foreground = new SolidColorBrush(Colors.Wheat);
+
+                fontColor = Colors.White;
+            }
+        }
         private void MenuItem_Open(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
@@ -56,8 +110,9 @@ namespace BinaryParserGui
                 FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
                 TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
                 range.Load(fileStream, DataFormats.Text);
-                IsSaved = true;
                 PaintEditor();
+                IsSaved = true;
+               
             }
         }
 
@@ -181,7 +236,7 @@ namespace BinaryParserGui
         private void PaintEditor()
         {
             TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
-            tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(Colors.White));
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(fontColor));
             FillWordFromPosition("const", "#2e95e8");
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("END_LOOP", "#58b8f0");
@@ -203,7 +258,7 @@ namespace BinaryParserGui
             FillWordFromPosition("INC_DEC", "#2e95e8");
             FillWordFromPosition("OUT", "#2e95e8");
 
-            // FillWordFromPosition("Array",)
+          
 
 
 

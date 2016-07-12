@@ -15,7 +15,7 @@
         </StackPanel.Resources>
         <Label FontWeight="Bold">Налаштування</Label>
         <CheckBox Name="IsWriteFile" Checked="IsWriteFile_Checked" Unchecked="IsWriteFile_Unchecked">писати вивід до файлів</CheckBox>
-        
-        
+        <CheckBox Name="IsGammaBlack" Checked="IsGammaBlack_Checked" Unchecked="IsGammaBlack_Unchecked">спецiльний дизайнерський iнтерфейс</CheckBox>
+
     </StackPanel>
 </Window>
