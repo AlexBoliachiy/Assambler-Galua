@@ -48,10 +48,15 @@ namespace BinaryParserGui
                 editor.Background = new SolidColorBrush(Colors.White);
                 code.Background = new SolidColorBrush(Colors.White);
                 data.Background = new SolidColorBrush(Colors.White);
+                codeNum.Background = new SolidColorBrush(Colors.White);
+                dataNum.Background = new SolidColorBrush(Colors.White);
+
 
                 editor.Foreground = new SolidColorBrush(Colors.Black);
                 code.Foreground = new SolidColorBrush(Colors.Black);
                 data.Foreground = new SolidColorBrush(Colors.Black);
+                codeNum.Foreground = new SolidColorBrush(Colors.White);
+                dataNum.Foreground = new SolidColorBrush(Colors.White);
 
                 fontColor = Colors.Black;
             }
@@ -61,10 +66,14 @@ namespace BinaryParserGui
                 editor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"));
                 code.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
                 data.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                dataNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                codeNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
 
                 editor.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
                 code.Foreground = new SolidColorBrush(Colors.Wheat);
                 data.Foreground = new SolidColorBrush(Colors.Wheat);
+                codeNum.Foreground = new SolidColorBrush(Colors.Wheat);
+                dataNum.Foreground = new SolidColorBrush(Colors.Wheat);
 
                 fontColor = Colors.White;
             }
@@ -79,10 +88,17 @@ namespace BinaryParserGui
                 editor.Background = new SolidColorBrush(Colors.White);
                 code.Background = new SolidColorBrush(Colors.White);
                 data.Background = new SolidColorBrush(Colors.White);
+                codeNum.Background = new SolidColorBrush(Colors.White);
+                dataNum.Background = new SolidColorBrush(Colors.White);
+
 
                 editor.Foreground = new SolidColorBrush(Colors.Black);
                 code.Foreground = new SolidColorBrush(Colors.Black);
                 data.Foreground = new SolidColorBrush(Colors.Black);
+                codeNum.Foreground = new SolidColorBrush(Colors.White);
+                dataNum.Foreground = new SolidColorBrush(Colors.White);
+
+
 
                 fontColor = Colors.Black;
             }
@@ -92,10 +108,15 @@ namespace BinaryParserGui
                 editor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"));
                 code.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
                 data.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                dataNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                codeNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
 
                 editor.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
                 code.Foreground = new SolidColorBrush(Colors.Wheat);
                 data.Foreground = new SolidColorBrush(Colors.Wheat);
+                codeNum.Foreground = new SolidColorBrush(Colors.Wheat);
+                dataNum.Foreground = new SolidColorBrush(Colors.Wheat);
+
 
                 fontColor = Colors.White;
             }
@@ -411,6 +432,34 @@ namespace BinaryParserGui
 
             Settings s = new Settings(write, this);
             s.Show();
+        }
+        private void  code_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            int lines = 0;
+            codeNum.Text = string.Empty;
+            for (int i=0; i != code.Text.Length; i++)
+            {
+                if (code.Text[i] == '\n')
+                {
+                    codeNum.Text += lines.ToString() + "\n";
+                    lines++;
+                }
+            }
+            
+        }
+
+        private void data_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            dataNum.Text = string.Empty;
+            int lines = 0;
+            for (int i = 0; i != data.Text.Length; i++)
+            {
+                if (data.Text[i] == '\n')
+                {
+                    dataNum.Text += lines.ToString() + "\n";
+                    lines++;
+                }
+            }
         }
     }
 }

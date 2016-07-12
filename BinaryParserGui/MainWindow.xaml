@@ -29,6 +29,7 @@
             </RichTextBox.Resources>
         </RichTextBox>
         <ScrollViewer Name="codeview" Grid.Column="2" Grid.Row="1">
+            
             <ScrollViewer.Resources>
                 <Style x:Key="ScrollBarLineButtonStyle" TargetType="{x:Type RepeatButton}">
                     <Setter Property="Focusable" Value="False"/>
@@ -120,7 +121,14 @@
                 </Style>
             </ScrollViewer.Resources>
             <Grid>
-                <TextBox Name="code" ></TextBox>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="5*" />
+                    
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="codeNum" Grid.Column="0"></TextBlock>
+                <TextBox Name="code" Grid.Column="1" TextChanged="code_TextChanged"></TextBox>
+
             </Grid>
         </ScrollViewer>
         <ScrollViewer Name="dataview" Grid.Column="0" Grid.Row="1" FlowDirection="RightToLeft" >
@@ -215,7 +223,15 @@
                 </Style>
             </ScrollViewer.Resources>
             <Grid>
-                <TextBox Name="data" FlowDirection="LeftToRight" ></TextBox>
+                <Grid.ColumnDefinitions>
+                    
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="5*" />
+
+                </Grid.ColumnDefinitions>
+                <TextBlock Name="dataNum" FlowDirection="LeftToRight"  Grid.Column="0"></TextBlock>
+                <TextBox Name="data" Grid.Column="1" TextChanged="data_TextChanged" FlowDirection="LeftToRight"></TextBox>
+                
             </Grid>
         </ScrollViewer>
         <Grid.RowDefinitions>
