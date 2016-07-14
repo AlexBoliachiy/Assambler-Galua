@@ -145,6 +145,7 @@ namespace BinaryParserGui
                 IsSaved = true;
                 this.Title = dlg.FileName.Substring(dlg.FileName.LastIndexOf("\\") + 1);
                 w.Close();
+                fileStream.Close();
                
             }
         }
@@ -461,7 +462,7 @@ namespace BinaryParserGui
             {
                 if (code.Text[i] == '\n')
                 {
-                    codeNum.Text += lines.ToString() + "\n";
+                    codeNum.Text += "   " + lines.ToString() + "\n";
                     lines++;
                 }
             }
@@ -476,7 +477,7 @@ namespace BinaryParserGui
             {
                 if (data.Text[i] == '\n')
                 {
-                    dataNum.Text += lines.ToString() + "\n";
+                    dataNum.Text += "   " + lines.ToString() + "\n";
                     lines++;
                 }
             }

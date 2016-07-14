@@ -130,7 +130,7 @@
                     <ColumnDefinition Width="5*" />
                     
                 </Grid.ColumnDefinitions>
-                <TextBlock Name="codeNum" Grid.Column="0"></TextBlock>
+                <TextBlock Name="codeNum" Grid.Column="0" FlowDirection="RightToLeft" ></TextBlock>
                 <TextBox Name="code" Grid.Column="1" TextChanged="code_TextChanged"></TextBox>
 
             </Grid>
