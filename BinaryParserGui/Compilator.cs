@@ -68,19 +68,36 @@ namespace BinaryParserGui
 
         private string[] GetDataSection(string code)
         {
-            code =code.Replace("\t", string.Empty);
+
+            code = code.Replace("\t", string.Empty);
             code = code.Replace("\r", string.Empty);
             string[] data = code.Split('\n');
             List<string> out_data = new List<string>();
-            string bar = data[0].Replace(" ", string.Empty);
+            int m = 0;
+            string bar = data[m].Replace(" ", string.Empty);
             bar = bar.Replace("\t", string.Empty);
-            if (bar != "DATA")
-                throw new CompilationException("Отсуствует ключевое слово DATA");
-            for (int i=1; data[i] != "CODE"; i++ )
+            
+            try
             {
+                while (bar != "DATA")
+                {
+                    if (bar != string.Empty && bar != "DATA")
+                        throw new CompilationException("Найпершою командою повина бути об'явлення секцii DATA");
+                    m++;                  
+                    bar = data[m].Replace(" ", string.Empty);
 
-                out_data.Add(data[i]);
+                }
+                m++;
+                for (; data[m] != "CODE"; m++)
+                {
+                    out_data.Add(data[m]);
+                }
             }
+            catch (IndexOutOfRangeException)
+            {
+                throw new CompilationException("Не вистачаэ ключевих слiв (DATA/CODE)");
+            }
+            
             return out_data.ToArray();
         }
 

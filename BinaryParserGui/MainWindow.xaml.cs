@@ -40,9 +40,17 @@ namespace BinaryParserGui
             CommandBinding bind = new CommandBinding(ApplicationCommands.Save);
             bind.Executed += MenuItem_Save;
             this.CommandBindings.Add(bind);
+
+
             CommandBinding bind1 = new CommandBinding(ApplicationCommands.New);
             bind1.Executed += MenuItem_New;
             this.CommandBindings.Add(bind1);
+
+
+            CommandBinding bind2 = new CommandBinding(ApplicationCommands.Open);
+            bind2.Executed += MenuItem_Open;
+            this.CommandBindings.Add(bind2);
+
             if (!Properties.Settings.Default.gamma)
             {
                 editor.Background = new SolidColorBrush(Colors.White);
@@ -55,8 +63,8 @@ namespace BinaryParserGui
                 editor.Foreground = new SolidColorBrush(Colors.Black);
                 code.Foreground = new SolidColorBrush(Colors.Black);
                 data.Foreground = new SolidColorBrush(Colors.Black);
-                codeNum.Foreground = new SolidColorBrush(Colors.White);
-                dataNum.Foreground = new SolidColorBrush(Colors.White);
+                codeNum.Foreground = new SolidColorBrush(Colors.Black);
+                dataNum.Foreground = new SolidColorBrush(Colors.Black);
 
                 fontColor = Colors.Black;
             }
@@ -95,8 +103,8 @@ namespace BinaryParserGui
                 editor.Foreground = new SolidColorBrush(Colors.Black);
                 code.Foreground = new SolidColorBrush(Colors.Black);
                 data.Foreground = new SolidColorBrush(Colors.Black);
-                codeNum.Foreground = new SolidColorBrush(Colors.White);
-                dataNum.Foreground = new SolidColorBrush(Colors.White);
+                codeNum.Foreground = new SolidColorBrush(Colors.Black);
+                dataNum.Foreground = new SolidColorBrush(Colors.Black);
 
 
 
@@ -128,11 +136,15 @@ namespace BinaryParserGui
             if (dlg.ShowDialog() == true)
             {
                 currentfile = dlg.FileName;
+                WaitWindow w = new WaitWindow();
+                w.Show();
                 FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
                 TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
                 range.Load(fileStream, DataFormats.Text);
                 PaintEditor();
                 IsSaved = true;
+                this.Title = dlg.FileName.Substring(dlg.FileName.LastIndexOf("\\") + 1);
+                w.Close();
                
             }
         }
@@ -197,6 +209,14 @@ namespace BinaryParserGui
                 else if (result == MessageBoxResult.Cancel)
                     return;
 
+            }
+            else
+            {
+                TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                tr.Text = string.Empty;
+                currentfile = string.Empty;
+                data.Text = string.Empty;
+                code.Text = string.Empty;
             }
         }
 

@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="Асемблер Галуа IDE" WindowState="Maximized" Closing="Window_Exit" >
     <Grid>
-        <Menu>
+        <Menu Grid.ColumnSpan="3" Margin="0,0,10,0">
             <MenuItem Header="Файл">
                 <MenuItem Header="Новий" Command="New"></MenuItem>
-                <MenuItem Header="Відкрити" Click="MenuItem_Open"></MenuItem>
+                <MenuItem Header="Відкрити" Command="Open"></MenuItem>
                 <MenuItem Header="Зберегти"  Command="Save"></MenuItem>
                 <MenuItem Header="Зберегти як..." Click="MenuItem_SaveAs"/>
                 <Separator></Separator>
@@ -27,7 +27,11 @@
                     
                 </Style>
             </RichTextBox.Resources>
+            <FlowDocument>
+                <Paragraph/>
+            </FlowDocument>
         </RichTextBox>
+        
         <ScrollViewer Name="codeview" Grid.Column="2" Grid.Row="1">
             
             <ScrollViewer.Resources>
