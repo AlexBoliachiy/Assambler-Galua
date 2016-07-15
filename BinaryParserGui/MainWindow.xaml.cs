@@ -165,6 +165,8 @@ namespace BinaryParserGui
         private void MenuItem_SaveAs(object sender, RoutedEventArgs e)
         {
             SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "Text File (*.txt)|*.txt|Show All Files (*.*)|*.*";
+            dlg.FileName = currentfile.Substring(currentfile.LastIndexOf("\\") + 1);
             if (dlg.ShowDialog() == true)
             {
                 SaveCode(dlg.FileName);
@@ -174,7 +176,19 @@ namespace BinaryParserGui
 
         private void SaveCode(string FileName)
         {
-            FileStream fileStream = new FileStream(FileName, FileMode.Create);
+
+            FileStream fileStream = new FileStream(FileName, FileMode.Create); ;
+            /*if (FileName.Substring(FileName.Length-4) ==".txt")
+            {
+                fileStream = new FileStream(FileName, FileMode.Create);
+            }
+            else
+            {
+                fileStream = new FileStream(FileName +".txt", FileMode.Create);
+            }*/
+            
+
+
             TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             range.Save(fileStream, DataFormats.Text);
             IsSaved = true;
@@ -359,13 +373,13 @@ namespace BinaryParserGui
                 removeTabNearEndLoop();
                 curTab = CountTabulation();
                 for (int i = 0; i < curTab; i++)
-                { 
+                {
                     editor.CaretPosition.InsertTextInRun("\t");
                 }
             }
 
             else if (e.Key == Key.Tab)
-                curTab++;
+                editor.CaretPosition.InsertTextInRun("\t");
             else if (e.Key == Key.Back)
             {
                 //HandleRemovedTabulation(tr.Text);
@@ -462,7 +476,7 @@ namespace BinaryParserGui
             {
                 if (code.Text[i] == '\n')
                 {
-                    codeNum.Text += "   " + lines.ToString() + "\n";
+                    codeNum.Text += "       " + lines.ToString() + "\n";
                     lines++;
                 }
             }
@@ -477,7 +491,7 @@ namespace BinaryParserGui
             {
                 if (data.Text[i] == '\n')
                 {
-                    dataNum.Text += "   " + lines.ToString() + "\n";
+                    dataNum.Text +=  lines.ToString() + "      " + "\n";
                     lines++;
                 }
             }
