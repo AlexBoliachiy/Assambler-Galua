@@ -146,6 +146,7 @@ namespace BinaryParserGui
                 this.Title = dlg.FileName.Substring(dlg.FileName.LastIndexOf("\\") + 1);
                 w.Close();
                 fileStream.Close();
+                this.Title += " - " + "Асемблер Галуа IDE";
 
             }
         }
@@ -232,6 +233,7 @@ namespace BinaryParserGui
                 currentfile = string.Empty;
                 data.Text = string.Empty;
                 code.Text = string.Empty;
+                this.Title = "New file - " + "Асемблер Галуа IDE";
             }
         }
 
@@ -293,6 +295,7 @@ namespace BinaryParserGui
         {
             TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(fontColor));
+            FillWordFromPosition("MOV", "#2e95e8");
             FillWordFromPosition("const", "#2e95e8");
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("END_LOOP", "#58b8f0");
@@ -458,7 +461,7 @@ namespace BinaryParserGui
             {
                 if (suc == true)
                 {
-                    bool isWrite = false;
+                    bool isWrite = false; // Не стирать
                     data.Text = cmp.mem.output;
                     code.Text = cmp.GetCode();
                     if (write == true)

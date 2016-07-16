@@ -20,7 +20,7 @@
             <MenuItem Header="Налаштування" Click="MenuItem_Settings"></MenuItem>
         </Menu>
         <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged" 
-                     FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown">
+                     FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown" IsUndoEnabled="True" UndoLimit="10">
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type Paragraph}">
                     <Setter Property="Margin" Value="0"/>
