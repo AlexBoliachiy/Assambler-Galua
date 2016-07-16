@@ -234,7 +234,7 @@
 
                 </Grid.ColumnDefinitions>
                 <TextBlock Name="dataNum" FlowDirection="RightToLeft"  Grid.Column="1"></TextBlock>
-                <TextBox Name="data" Grid.Column="0" TextChanged="data_TextChanged" FlowDirection="RightToLeft"></TextBox>
+                <TextBox Name="data" Grid.Column="0" TextChanged="data_TextChanged" FlowDirection="LeftToRight"></TextBox>
                 
             </Grid>
         </ScrollViewer>
