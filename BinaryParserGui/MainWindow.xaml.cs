@@ -85,7 +85,7 @@ namespace BinaryParserGui
 
                 fontColor = Colors.White;
             }
-            
+
         }
 
 
@@ -146,7 +146,7 @@ namespace BinaryParserGui
                 this.Title = dlg.FileName.Substring(dlg.FileName.LastIndexOf("\\") + 1);
                 w.Close();
                 fileStream.Close();
-               
+
             }
         }
 
@@ -186,7 +186,7 @@ namespace BinaryParserGui
             {
                 fileStream = new FileStream(FileName +".txt", FileMode.Create);
             }*/
-            
+
 
 
             TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
@@ -235,8 +235,8 @@ namespace BinaryParserGui
             }
         }
 
-        
-        
+
+
 
         private void Window_Exit(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -253,7 +253,7 @@ namespace BinaryParserGui
                     e.Cancel = true;
 
             }
-            
+
 
         }
 
@@ -266,7 +266,7 @@ namespace BinaryParserGui
 
             IsSaved = false;
             bool suc = true;
-            
+
 
             cmp = new Compilator(); // Слишком много внутренних параметров, приходится создавать новый объект
             TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
@@ -283,9 +283,9 @@ namespace BinaryParserGui
                 data.Text = cmp.mem.output;
                 code.Text = cmp.GetCode();
             }
-            
+
             isPainting = false;
-            
+
         }
 
         //Окрашивает отдельные команды (подсветка синтаксиса)
@@ -314,15 +314,15 @@ namespace BinaryParserGui
             FillWordFromPosition("INC_DEC", "#2e95e8");
             FillWordFromPosition("OUT", "#2e95e8");
 
-          
+
 
 
 
         }
         // Ишет все совпадения с указанным словом и окрашивает его 
-        private void FillWordFromPosition( string word, string color)
+        private void FillWordFromPosition(string word, string color)
         {
-            
+
             TextPointer position = editor.Document.ContentStart;
             TextPointer endPosition = null;
             while (position != null)
@@ -338,7 +338,7 @@ namespace BinaryParserGui
                         position = position.GetPositionAtOffset(indexInRun);
                         endPosition = position.GetPositionAtOffset(word.Length);
                         TextRange colouringText = new TextRange(position, endPosition);
-                        colouringText.ApplyPropertyValue(TextElement.ForegroundProperty, 
+                        colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
                             (SolidColorBrush)(new BrushConverter().ConvertFrom(color)));
                     }
                     position = position.GetNextContextPosition(LogicalDirection.Forward);
@@ -347,7 +347,7 @@ namespace BinaryParserGui
                     position = position.GetNextContextPosition(LogicalDirection.Forward);
             }
 
-            
+
         }
 
         private int CountTabulation() // Считает, сколько табуляций должно автоматически дописываться
@@ -368,16 +368,17 @@ namespace BinaryParserGui
         private void editor_KeyUp(object sender, KeyEventArgs e)
         {
             isPainting = true;
+            var tr = new TextRange(editor.Document.ContentStart, editor.CaretPosition);
             if (e.Key == Key.Enter)
             {
-                removeTabNearEndLoop();
+                
                 curTab = CountTabulation();
+                removeTabNearEndLoop();
                 for (int i = 0; i < curTab; i++)
                 {
                     editor.CaretPosition.InsertTextInRun("\t");
                 }
             }
-
             else if (e.Key == Key.Tab)
                 editor.CaretPosition.InsertTextInRun("\t");
             else if (e.Key == Key.Back)
@@ -389,37 +390,48 @@ namespace BinaryParserGui
 
 
 
-            
+
         }
 
-        
+
 
         private void editor_KeyDown(object sender, KeyEventArgs e)
         {
-           /* isPainting = true;
-            if ((e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9))
-            {
-                TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
-                for (int i=0; i < curTab; i++)
-                {
-                    editor.CaretPosition.InsertTextInRun("\t");
-                }
-            }
-            isPainting = false;*/
+
         }
 
         private void removeTabNearEndLoop()
         {
             var tr = new TextRange(editor.Document.ContentStart, editor.CaretPosition);
+
             int index = tr.Text.LastIndexOf("\t");
-            if (index == -1)
+            int indexENDLOOP = tr.Text.LastIndexOf("END_LOOP");
+            if (index + 1 != indexENDLOOP || index == -1 || indexENDLOOP == -1)
+            {
                 return;
+            }
+
             var str = tr.Text.Substring(index);
-            if (str.Contains("END_LOOP"))
+            int requireTabs = CountTabulation();
+            try
+            {
+                for (int i = 0; tr.Text[index - i] == '\t'; i++)
+                {
+                    requireTabs--;
+                }
+
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return;
+            }
+            if (requireTabs != 0)
             {
                 tr.Text = tr.Text.Remove(index, 1);
+              
                 curTab--;
             }
+
         }
 
         private void MenuItem_exit(object sender, RoutedEventArgs e)
@@ -476,7 +488,7 @@ namespace BinaryParserGui
             {
                 if (code.Text[i] == '\n')
                 {
-                    codeNum.Text += "       " + lines.ToString() + "\n";
+                    codeNum.Text += "  " + lines.ToString() + "\n";
                     lines++;
                 }
             }
@@ -491,7 +503,7 @@ namespace BinaryParserGui
             {
                 if (data.Text[i] == '\n')
                 {
-                    dataNum.Text +=  lines.ToString() + "      " + "\n";
+                    dataNum.Text += " " +   lines.ToString() + "\n";
                     lines++;
                 }
             }

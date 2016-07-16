@@ -32,6 +32,8 @@ namespace BinaryParserGui
         int CurrentLine = 0;
         int CurrentOutput = 0;
         int[] EnterToCycle = new int[4];
+        Dictionary<int, bool> servedLoopsValue = new Dictionary<int, bool>() { { 0, false }, { 1, false }, { 2, false }, { 3, false } };
+        Stack<int> closingValue = new Stack<int>();
 
 
         public CodeGenerator(Memory mem)
@@ -409,8 +411,11 @@ namespace BinaryParserGui
 
         private void LOOP(string R0, string R1)
         {
+            if (servedLoopsValue[Convert.ToInt32(R0)])
+                throw new CompilationException("Icнуэ один незакритий цикл з лiчильником " + R0);
             outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1);
-
+            closingValue.Push(Convert.ToInt32(R0));
+            servedLoopsValue[Convert.ToInt32(R0)] = true;
             CurrentOutput++;
             outputs[CurrentOutput-1] += output;
             output = string.Empty;
@@ -420,11 +425,11 @@ namespace BinaryParserGui
         }
         private void END_LOOP(string R0)
         {
-            if (CurrentOutput - 1!= Convert.ToInt32(R0))
+            if (closingValue.Pop() != Convert.ToInt32(R0))
             {
                 throw new CompilationException("Несподіваний кінець циклу номер" + R0);
             }
-
+            servedLoopsValue[Convert.ToInt32(R0)] = false;
             string str = Convert.ToString(CurrentLine + 2, 2);
 
             for (int j = str.Length; j < 9; j++)

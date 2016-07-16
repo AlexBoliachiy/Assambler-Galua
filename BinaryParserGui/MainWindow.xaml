@@ -130,7 +130,7 @@
                     <ColumnDefinition Width="5*" />
                     
                 </Grid.ColumnDefinitions>
-                <TextBlock Name="codeNum" Grid.Column="0" FlowDirection="LeftToRight" ></TextBlock>
+                <TextBlock Name="codeNum" Grid.Column="0" FlowDirection="RightToLeft" ></TextBlock>
                 <TextBox Name="code" Grid.Column="1" TextChanged="code_TextChanged"></TextBox>
 
             </Grid>
@@ -233,8 +233,8 @@
                     <ColumnDefinition Width="1*" />
 
                 </Grid.ColumnDefinitions>
-                <TextBlock Name="dataNum" FlowDirection="LeftToRight"  Grid.Column="1"></TextBlock>
-                <TextBox Name="data" Grid.Column="0" TextChanged="data_TextChanged" FlowDirection="LeftToRight"></TextBox>
+                <TextBlock Name="dataNum" FlowDirection="RightToLeft"  Grid.Column="1"></TextBlock>
+                <TextBox Name="data" Grid.Column="0" TextChanged="data_TextChanged" FlowDirection="RightToLeft"></TextBox>
                 
             </Grid>
         </ScrollViewer>
