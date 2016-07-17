@@ -7,14 +7,14 @@ using System.Text.RegularExpressions;
 
 namespace BinaryParserGui
 {
-    enum TYPE
+    public enum TYPE
     {
         cons,
         vars,
         arrs
     }
 
-    class Memory
+    public class Memory
     {
         private int m = -1;
         public string output = String.Empty;
@@ -26,12 +26,12 @@ namespace BinaryParserGui
         private Dictionary<string, TYPE> variable_type = new Dictionary<string, TYPE>(); // Имя переменной : тип.
         private Dictionary<string, int> variable_timeAdded = new Dictionary<string, int>(); // Имя перемеенной : какой по счету записанна
         private PostfixNotationExpression p = new PostfixNotationExpression();
-        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=(\s*((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))\s*$");
+        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))|(b'[0-1]+)|(h'[0-9A-F]+))\s*$");
         private Regex dec_arr = new Regex(@"^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*\)\s*$");
-        private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*\d+\s*$");
+        private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d+)|(h'[0-F]+)|(b'[10]+))\s*$");
         private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*"); 
         private Regex ca = new Regex(@"CA_[0-3]");
-        Regex expression = new Regex(@"((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+");
+        private Regex expression = new Regex(@"(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)");
         private int line;
         private int Cons = 0;
         private int Arrs = 0;
@@ -57,6 +57,9 @@ namespace BinaryParserGui
             string[] cmd_split = cmd.Split(' ');
             if (cmd_split[0] == "const")
             {
+
+
+
                 if (dec_con.IsMatch(cmd))
                 {
                     //Добавляем переменную и её значение в variables
@@ -65,21 +68,35 @@ namespace BinaryParserGui
                     if (variable_type.ContainsKey(const_name))
                         return false;
 
-                    int const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
+                    int const_value = -1;
+                    try {
+                        if (char.IsDigit(cmd_split[3][0]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
+                        else if (cmd_split[3].Remove(2) == "b'") // Binary number
+                            const_value = Convert.ToInt32(cmd_split[3].Substring(2), 2);
+                        else if (cmd_split[3].Remove(2) == "h'") //Hexadecimal number
+                            const_value = Convert.ToInt32(cmd_split[3].Substring(2), 16);
+                        else
+                            throw new CompilationException("Число");
+                    }
+                    catch 
+                    {
+                        throw new CompilationException("Допишіть будь ласка значення змінної у команді " + cmd);
+                    }
 
                     if (const_name != "m")
                     {
                         if (Math.Pow(2, (double)m) - 1 < const_value)
                         {
-                            throw new CompilationException("Переповнення стеку");                   
+                            throw new CompilationException("Переповнення стеку у команді " + cmd);
                         }
                         else
                         {
                             variables_values.Add(const_name, const_value);
                             variable_type.Add(const_name, TYPE.cons);
                             variable_timeAdded.Add(const_name, Cons++);
-                            AddToOutput(const_value,ref output_con);
-                            
+                            AddToOutput(const_value, ref output_con);
+
                             line++;
                         }
                     }
@@ -93,6 +110,10 @@ namespace BinaryParserGui
 
 
                 }
+                else return false;
+
+
+
             }
             else if (cmd_split[0] == "Array")
             {
@@ -102,6 +123,7 @@ namespace BinaryParserGui
                     //Сплитами парсим массив и выделяем все значения
                     //Добавляем в variables и output
                 }
+                else return false;
             }
             else
             {
@@ -112,8 +134,22 @@ namespace BinaryParserGui
                     string var_name = cmd_split[0];
                     if (variable_type.ContainsKey(var_name))
                         return false;
-                    int var_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2]));
-
+                    int const_value = -1;
+                    try {
+                        if (char.IsDigit(cmd_split[2][0]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2]));
+                        else if (cmd_split[2].Remove(2) == "b'") // Binary number
+                            const_value = Convert.ToInt32(cmd_split[2].Substring(2), 2);
+                        else if (cmd_split[2].Remove(2) == "h'") //Hexadecimal number
+                            const_value = Convert.ToInt32(cmd_split[2].Substring(2), 16);
+                        else
+                            throw new CompilationException("Число");
+                    }
+                    catch
+                    {
+                        throw new CompilationException("Допишіть будь ласка значення змінної у команді " + cmd);
+                    }
+                    var var_value = const_value;
                     if (var_name != "m")
                     {
                         if (Math.Pow(2, (double)m) - 1 < var_value)
@@ -302,6 +338,8 @@ namespace BinaryParserGui
         {
             foreach (string x in Code)
             {
+                if (x.Contains("LOAD_CA_A")) // Если эта команда, то добавлять значения в память небезопасно. Так что тут указывать исключительно 9-байтовые значения
+                    continue;
                 MatchCollection matches = expression.Matches(x);
                 if (matches.Count > 0)
                 {
@@ -309,17 +347,40 @@ namespace BinaryParserGui
                     {
                         foreach (Match match in matches)
                         {
-                            string value= match.Value;
-                            string name = value;
-                            if (ca.Matches(value).Count > 0)
+                            int value = -1;
+                            string name = match.Value;
+                            try
+                            {
+
+                                if (match.Value.Remove(2) == "b'") // Binary number
+                                    value = Convert.ToInt32(match.Value.Substring(2), 2);
+                                else if (match.Value.Remove(2) == "h'") //Hexadecimal number
+                                    value = Convert.ToInt32(match.Value.Substring(2), 16);
+                                else
+                                {
+                                    value = (int)p.result(ReplaceVariableToValue(match.Value));
+                                    name = name.Replace("\t", string.Empty);
+                                    name = name.Replace(" ", string.Empty);
+                                }
+                            }
+                            catch
+                            {
+
+                            }
+
+                            if (ca.IsMatch(match.Value))
                                 continue;
-                            value = p.result(ReplaceVariableToValue(value)).ToString();
-                            name = name.Replace("\t", string.Empty);
-                            name = name.Replace(" ", string.Empty);
-                            variables_values.Add(name, Convert.ToInt32(value));
-                            variable_type.Add(name, TYPE.cons);
-                            variable_timeAdded.Add(name, Cons++);
-                            AddToOutput(Convert.ToInt32(value), ref output_con);
+                            try
+                            { 
+                                variables_values.Add(name, value);
+                                variable_type.Add(name, TYPE.cons);
+                                variable_timeAdded.Add(name, Cons++);
+                                AddToOutput(Convert.ToInt32(value), ref output_con);
+                            }
+                            catch (ArgumentException)
+                            {
+                                
+                            }
 
                         }
 

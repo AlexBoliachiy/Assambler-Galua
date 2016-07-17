@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Threading;
 
 //262626
 
@@ -25,13 +27,14 @@ namespace BinaryParserGui
     public partial class IDE : Window
     {
         private bool isPainting = false;
-        private Compilator cmp = new Compilator();
+        public Compilator cmp = new Compilator();
         private string currentfile = string.Empty;
         private bool IsSaved = true; // Переменная, для отслеживания сохранности кода.          
         private int curTab = 0;
         private string prevText = string.Empty;
         private Color fontColor;
         public bool write = false;
+        public bool Acomp { get; set; }
         public IDE()
         {
 
@@ -178,18 +181,7 @@ namespace BinaryParserGui
         private void SaveCode(string FileName)
         {
 
-            FileStream fileStream = new FileStream(FileName, FileMode.Create); ;
-            /*if (FileName.Substring(FileName.Length-4) ==".txt")
-            {
-                fileStream = new FileStream(FileName, FileMode.Create);
-            }
-            else
-            {
-                fileStream = new FileStream(FileName +".txt", FileMode.Create);
-            }*/
-
-
-
+            FileStream fileStream = new FileStream(FileName, FileMode.Create);     
             TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             range.Save(fileStream, DataFormats.Text);
             IsSaved = true;
@@ -253,8 +245,8 @@ namespace BinaryParserGui
                         MenuItem_Save(sender, null);
                 else if (result == MessageBoxResult.Cancel)
                     e.Cancel = true;
-
             }
+
 
 
         }
@@ -263,14 +255,35 @@ namespace BinaryParserGui
         {
             if (isPainting) // Для избежания рекурсии ( изменяя текст тут, рекурсивно будет вызываться эта же функция)
                 return;
-            else
-                isPainting = true;
-
             IsSaved = false;
+            if (Acomp)
+                Dispatcher.BeginInvoke((Action) (() => 
+                {
+                    bool suc = true;
+                    cmp = new Compilator();
+                    TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                    try
+                    {
+                        cmp.Compilate(textRange.Text);
+                    }
+                    catch (CompilationException ex)
+                    {
+                        suc = false;
+                    }
+                    if (suc == true)
+                    {
+                        data.Text = cmp.mem.output;
+                        code.Text = cmp.GetCode();
+                    }
+                }),DispatcherPriority.SystemIdle);
+        }
+
+        public delegate void TestThreadDelegate(ref Compilator cmp, ref TextBox data, ref TextBox code);
+
+        public void compiliate(ref Compilator cmp, ref TextBox data, ref TextBox code)
+        {
             bool suc = true;
-
-
-            cmp = new Compilator(); // Слишком много внутренних параметров, приходится создавать новый объект
+            cmp = new Compilator();
             TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             try
             {
@@ -285,14 +298,13 @@ namespace BinaryParserGui
                 data.Text = cmp.mem.output;
                 code.Text = cmp.GetCode();
             }
-
-            isPainting = false;
-
         }
+
 
         //Окрашивает отдельные команды (подсветка синтаксиса)
         private void PaintEditor()
         {
+            isPainting = true;
             TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(fontColor));
             FillWordFromPosition("MOV", "#2e95e8");
@@ -317,7 +329,7 @@ namespace BinaryParserGui
             FillWordFromPosition("INC_DEC", "#2e95e8");
             FillWordFromPosition("OUT", "#2e95e8");
 
-
+            isPainting = false;
 
 
 
@@ -370,7 +382,7 @@ namespace BinaryParserGui
 
         private void editor_KeyUp(object sender, KeyEventArgs e)
         {
-            isPainting = true;
+            
             var tr = new TextRange(editor.Document.ContentStart, editor.CaretPosition);
             if (e.Key == Key.Enter)
             {
@@ -389,7 +401,7 @@ namespace BinaryParserGui
                 //HandleRemovedTabulation(tr.Text);
             }
             PaintEditor();
-            isPainting = false;
+            
 
 
 
@@ -506,10 +518,13 @@ namespace BinaryParserGui
             {
                 if (data.Text[i] == '\n')
                 {
-                    dataNum.Text += " " +   lines.ToString() + "\n";
+                    dataNum.Text += "  " +   lines.ToString() + "\n";
                     lines++;
                 }
             }
         }
     }
+
+    
+
 }

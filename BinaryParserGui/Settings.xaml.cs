@@ -26,6 +26,7 @@ namespace BinaryParserGui
             IsWriteFile.IsChecked = curWrite;
             ide = window;
             IsGammaBlack.IsChecked = Properties.Settings.Default.gamma;
+            Acompilation.IsChecked = Properties.Settings.Default.Acomp;
         }
 
         private void IsWriteFile_Checked(object sender, RoutedEventArgs e)
@@ -41,12 +42,15 @@ namespace BinaryParserGui
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ide.write = (bool) IsWriteFile.IsChecked;
+            ide.Acomp = (bool)Acompilation.IsChecked;
             if (IsGammaBlack.IsChecked != Properties.Settings.Default.gamma)
             {
                 Properties.Settings.Default.gamma = !Properties.Settings.Default.gamma;
                 ide.InterfaceChange(Properties.Settings.Default.gamma);
-                Properties.Settings.Default.Save();
+                
             }
+            Properties.Settings.Default.Acomp = (bool)Acompilation.IsChecked;
+            Properties.Settings.Default.Save();
         }
 
         private void IsGammaBlack_Checked(object sender, RoutedEventArgs e)

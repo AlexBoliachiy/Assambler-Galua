@@ -34,5 +34,17 @@ namespace BinaryParserGui.Properties {
                 this["gamma"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Acomp {
+            get {
+                return ((bool)(this["Acomp"]));
+            }
+            set {
+                this["Acomp"] = value;
+            }
+        }
     }
 }

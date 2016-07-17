@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace BinaryParserGui
 {
-    class CodeGenerator
+    public class CodeGenerator
     {
         Regex add_regex = new Regex(@"ADD\s+R[0-3]\s*,\s*R[0-3]\s*$"); //Для большей читаемости кода я предпочел напилить кучу реджексов
         Regex mult_regex = new Regex(@"MULT\s+R[0-3]\s*,\s*R[0-3]\s*$");
@@ -18,14 +18,14 @@ namespace BinaryParserGui
         Regex cpd_regex = new Regex(@"CPD\s+R[0-3]\s*$");
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
-        Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*[+-]\s*\d+])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*[+-]\s*\d+]\s*,\s*R[0-3]))\s*$"); //
+        Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?]\s*,\s*R[0-3]))\s*$"); //
         Regex jmp_regex = new Regex(@"JMP\s+(R[0-3]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|([0-9]{9}))\s*$");
-        Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*$");
+        Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)*\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
         Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
-        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*9b'[0-1]{9}\s*$");
+        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*((b'[0-1]+)|(h'[0-F]+)|(\d+))\s*$");
         Regex inc_dec_regex = new Regex(@"INC_DEC\s+((CA_)|(R))[0-3]\s*,\s*[0-1]\s*$");
-        Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*[+-]\s*\d\])?\s*$");//
+        Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*([+-]\s*\d+)?\])?\s*$");//
         string output;
         Memory mem;
         string[] outputs = new String[5];
@@ -71,7 +71,11 @@ namespace BinaryParserGui
                 string currentStrCmd = x.Replace("\t", " ");
                 string[] CurrentCmd = currentStrCmd.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if ( CurrentCmd.Length == 0 || CurrentCmd[0] == "CODE" )
+                {
+                    i++;
                     continue;
+                }
+                    
                 output += '\n';
                 string[] ops = GetOperands(x);
                 switch (CurrentCmd[0])
@@ -259,7 +263,7 @@ namespace BinaryParserGui
             {
                 if ( mem.GetType(R0) == TYPE.cons)
                 {
-                    throw new CompilationException("Попытка записи в константу");
+                    throw new CompilationException("Спроба запису у константу у команді MOV_A " + R0 + ",  " + R1 );
                 }
                 outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0);
             }
@@ -269,52 +273,74 @@ namespace BinaryParserGui
         {
             if (R0 == "R0" || R0 == "R1" || R0 == "R2" || R0 == "R3")
             {
-                string arrName = R1.Remove(R1.IndexOf('['));
-                string exp = R1.Substring(R1.IndexOf('['));
-                string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                exp = exp.Substring(5);
-                string offset = exp.Remove(exp.IndexOf(']'), 1);
-                string sign;
-                if (offset[0] == '+')
-                    sign = "1";
+                if (R1.Contains("+") || R1.Contains("-"))
+                {
+                    string arrName = R1.Remove(R1.IndexOf('['));
+                    string exp = R1.Substring(R1.IndexOf('['));
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    exp = exp.Substring(5);
+                    string offset = exp.Remove(exp.IndexOf(']'), 1);
+                    string sign;
+                    if (offset[0] == '+')
+                        sign = "1";
+                    else
+                        sign = "0";
+                    offset = offset.Substring(1);
+                    string binaryOffset = ConvertToBinary(Convert.ToInt32(offset), 2);
+                    if (binaryOffset.Length > 4)
+                    {
+                        throw new CompilationException("Значение смещения больше 4-х байт");
+                    }
+                    while (binaryOffset.Length != 4)
+                    {
+                        binaryOffset = "0" + binaryOffset;
+                    }
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                }
                 else
-                    sign = "0";
-                offset = offset.Substring(1);
-                string binaryOffset = ConvertToBinary(Convert.ToInt32(offset), 2);
-                if (binaryOffset.Length > 4)
                 {
-                    throw new CompilationException("Значение смещения больше 4-х байт");
+                    string arrName = R1.Remove(R1.IndexOf('['));
+                    string exp = R1.Substring(R1.IndexOf('['));
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    exp = exp.Substring(5);
+                    string offset = exp.Remove(exp.IndexOf(']'), 1);
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "0" + "0000";
                 }
-                while (binaryOffset.Length != 4)
-                {
-                    binaryOffset = "0" + binaryOffset;
-                }
-                outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
             }
 
             else
             {
-                string arrName = R0.Remove(R0.IndexOf('['));
-                string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
-                string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                exp = exp.Substring(5);
-                string offset = exp.Remove(exp.IndexOf(']'), 1);
-                string sign;
-                if (offset[0] == '+')
-                    sign = "1";
+                if (R0.Contains("+") || R0.Contains("-"))
+                {
+                    string arrName = R0.Remove(R0.IndexOf('['));
+                    string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    exp = exp.Substring(5);
+                    string offset = exp.Remove(exp.IndexOf(']'), 1);
+                    string sign;
+                    if (offset[0] == '+')
+                        sign = "1";
+                    else
+                        sign = "0";
+                    offset = offset.Substring(1);
+                    string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
+                    if (binaryOffset.Length > 4)
+                    {
+                        throw new CompilationException("Значення зміщення більще 4-х біт");
+                    }
+                    while (binaryOffset.Length != 4)
+                    {
+                        binaryOffset = "0" + binaryOffset;
+                    }
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                }
                 else
-                    sign = "0";
-                offset = offset.Substring(1);
-                string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
-                if (binaryOffset.Length > 4)
                 {
-                    throw new CompilationException("Значення зміщення більще 4-х біт");
+                    string arrName = R0.Remove(R0.IndexOf('['));
+                    string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "0" + "0000";
                 }
-                while (binaryOffset.Length != 4)
-                {
-                    binaryOffset = "0" + binaryOffset;
-                }
-                outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
             }
             CurrentLine += 3;
         }
@@ -355,7 +381,23 @@ namespace BinaryParserGui
         {
             int i = Convert.ToInt32(R0[3].ToString());
             string CA = ConvertToBinary(i, 2);
-            string A = R1.Substring(3); 
+            string A = string.Empty;
+            int Aint = -1;
+            try {
+                if (char.IsDigit(R1[0]))
+                    Aint= Convert.ToInt32(R1);
+                else if (R1.Remove(2) == "b'") // Binary number
+                    Aint = Convert.ToInt32(R1.Substring(2), 2);
+                else if (R1.Remove(2) == "h'") //Hexadecimal number
+                    Aint = Convert.ToInt32(R1.Substring(2), 16);
+                else
+                    throw new CompilationException("Число");
+            }
+                    catch
+            {
+                throw new CompilationException("Допишіть будь ласка значення змінної у команді LOAD_CA_A" + R0 + ", " + R1);
+            }
+            A = ConvertToBinary(Aint, 9);
             outputs[CurrentOutput] += "1101" + CA + "0" + A; 
             CurrentLine += 2;
         }
@@ -379,28 +421,39 @@ namespace BinaryParserGui
             outputs[CurrentOutput] += "1111";
             if (R0.Contains("[")) // if array
             {
-                string arrName = R0.Remove(R0.IndexOf('['));
-                string exp = R0.Substring(R0.IndexOf('['));
-                string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                exp = exp.Substring(5);
-                string offset = exp.Remove(exp.IndexOf(']'), 1);
-                string sign;
-                if (offset[0] == '+')
-                    sign = "0";
+                if (R0.Contains("+") || R0.Contains("-"))
+                {
+                    string arrName = R0.Remove(R0.IndexOf('['));
+                    string exp = R0.Substring(R0.IndexOf('['));
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    exp = exp.Substring(5);
+                    string offset = exp.Remove(exp.IndexOf(']'), 1);
+                    string sign;
+                    if (offset[0] == '+')
+                        sign = "0";
+                    else
+                        sign = "1";
+                    offset = offset.Substring(1);
+                    string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
+                    if (binaryOffset.Length > 4)
+                    {
+                        throw new CompilationException("Значення зміщення більще 4-х біт");
+                    }
+                    while (binaryOffset.Length != 4)
+                    {
+                        binaryOffset = "0" + binaryOffset;
+                    }
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
+                    CurrentLine += 3;
+                }
                 else
-                    sign = "1";
-                offset = offset.Substring(1);
-                string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
-                if (binaryOffset.Length > 4)
                 {
-                    throw new CompilationException("Значення зміщення більще 4-х біт");
+                    string arrName = R0.Remove(R0.IndexOf('['));
+                    string exp = R0.Substring(R0.IndexOf('['));
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "0" + "0000";
+                    CurrentLine += 3;
                 }
-                while (binaryOffset.Length != 4)
-                {
-                    binaryOffset = "0" + binaryOffset;
-                }
-                outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
-                CurrentLine += 3;
             }
             else
             {
@@ -412,7 +465,7 @@ namespace BinaryParserGui
         private void LOOP(string R0, string R1)
         {
             if (servedLoopsValue[Convert.ToInt32(R0)])
-                throw new CompilationException("Icнуэ один незакритий цикл з лiчильником " + R0);
+                throw new CompilationException("Icнує один незакритий цикл з лiчильником " + R0);
             outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1);
             closingValue.Push(Convert.ToInt32(R0));
             servedLoopsValue[Convert.ToInt32(R0)] = true;
@@ -425,9 +478,11 @@ namespace BinaryParserGui
         }
         private void END_LOOP(string R0)
         {
+            if (closingValue.Count == 0)
+                throw new CompilationException("Закриття циклу є, а початку немає (закриття лічильника під номером " + R0);
             if (closingValue.Pop() != Convert.ToInt32(R0))
             {
-                throw new CompilationException("Несподіваний кінець циклу номер" + R0);
+                throw new CompilationException("Несподіваний кінець циклу номер або використання зайнятої змінної лічильника" + R0);
             }
             servedLoopsValue[Convert.ToInt32(R0)] = false;
             string str = Convert.ToString(CurrentLine + 2, 2);

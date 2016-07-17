@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace BinaryParserGui
 {
     
-    class Compilator
+    public class Compilator
     {
         public Compilator()
         {
@@ -95,7 +95,7 @@ namespace BinaryParserGui
             }
             catch (IndexOutOfRangeException)
             {
-                throw new CompilationException("Не вистачаэ ключевих слiв (DATA/CODE)");
+                throw new CompilationException("Не вистачає ключевих слiв (DATA/CODE)");
             }
             
             return out_data.ToArray();
