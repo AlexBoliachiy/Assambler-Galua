@@ -282,9 +282,9 @@ namespace BinaryParserGui
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
                     string sign;
                     if (offset[0] == '+')
-                        sign = "1";
-                    else
                         sign = "0";
+                    else
+                        sign = "1";
                     offset = offset.Substring(1);
                     string binaryOffset = ConvertToBinary(Convert.ToInt32(offset), 2);
                     if (binaryOffset.Length > 4)
@@ -304,7 +304,7 @@ namespace BinaryParserGui
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
                     exp = exp.Substring(5);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "0" + "0000";
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
 
@@ -319,9 +319,9 @@ namespace BinaryParserGui
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
                     string sign;
                     if (offset[0] == '+')
-                        sign = "1";
-                    else
                         sign = "0";
+                    else
+                        sign = "1";
                     offset = offset.Substring(1);
                     string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
                     if (binaryOffset.Length > 4)
@@ -339,7 +339,7 @@ namespace BinaryParserGui
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "0" + "0000";
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
             CurrentLine += 3;
@@ -451,7 +451,7 @@ namespace BinaryParserGui
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['));
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "0" + "0000";
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                     CurrentLine += 3;
                 }
             }

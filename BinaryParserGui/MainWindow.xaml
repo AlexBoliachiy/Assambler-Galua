@@ -19,7 +19,7 @@
             <MenuItem Header="Компілювати" Click="MenuItem_Compile"/>
             <MenuItem Header="Налаштування" Click="MenuItem_Settings"></MenuItem>
         </Menu>
-        <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged" 
+        <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged"  SelectionChanged="editor_SelectionChanged"
                      FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown" IsUndoEnabled="True" UndoLimit="10">
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type Paragraph}">
@@ -238,9 +238,18 @@
                 
             </Grid>
         </ScrollViewer>
+        
+        <Label Name="StatusBar" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">  </Label>
+
+
+
+    
+
+
         <Grid.RowDefinitions>
             <RowDefinition Height="15"/>
             <RowDefinition/>
+            <RowDefinition Height="30"  ></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />

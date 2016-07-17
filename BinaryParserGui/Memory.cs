@@ -70,6 +70,7 @@ namespace BinaryParserGui
 
                     int const_value = -1;
                     try {
+
                         if (char.IsDigit(cmd_split[3][0]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
                         else if (cmd_split[3].Remove(2) == "b'") // Binary number

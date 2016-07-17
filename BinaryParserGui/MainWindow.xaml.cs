@@ -37,7 +37,7 @@ namespace BinaryParserGui
         public bool Acomp { get; set; }
         public IDE()
         {
-
+            
 
             InitializeComponent();
             CommandBinding bind = new CommandBinding(ApplicationCommands.Save);
@@ -131,6 +131,8 @@ namespace BinaryParserGui
 
                 fontColor = Colors.White;
             }
+
+            
         }
         private void MenuItem_Open(object sender, RoutedEventArgs e)
         {
@@ -522,6 +524,21 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
+        }
+
+        private void editor_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            TextPointer tp1 = editor.Selection.Start.GetLineStartPosition(0);
+            TextPointer tp2 = editor.Selection.Start;
+
+            int column = tp1.GetOffsetToPosition(tp2);
+
+            int someBigNumber = int.MaxValue;
+            int lineMoved, currentLineNumber;
+            editor.Selection.Start.GetLineStartPosition(-someBigNumber, out lineMoved);
+            currentLineNumber = -lineMoved;
+
+            StatusBar.Content = "Лінія: " + currentLineNumber.ToString() + " Колонка: " + column.ToString();
         }
     }
 
