@@ -67,18 +67,24 @@ namespace BinaryParserGui
                     string const_name = cmd_split[1];
                     if (variable_type.ContainsKey(const_name))
                         return false;
-
+                    int offset = 0;
+                    if (cmd_split[2] != "=")
+                    {
+                        offset = 1;
+                        cmd_split[2] = cmd_split[2].Replace("=", string.Empty);
+                    }
                     int const_value = -1;
                     try {
 
-                        if (char.IsDigit(cmd_split[3][0]))
-                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
-                        else if (cmd_split[3].Remove(2) == "b'") // Binary number
-                            const_value = Convert.ToInt32(cmd_split[3].Substring(2), 2);
-                        else if (cmd_split[3].Remove(2) == "h'") //Hexadecimal number
-                            const_value = Convert.ToInt32(cmd_split[3].Substring(2), 16);
-                        else if (var.IsMatch(cmd_split[3]))
-                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
+                        if (char.IsDigit(cmd_split[3-offset][0]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
+                        else if (var.IsMatch(cmd_split[3 - offset]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
+                        else if (cmd_split[3 - offset].Remove(2) == "b'") // Binary number
+                            const_value = Convert.ToInt32(cmd_split[3 - offset].Substring(2), 2);
+                        else if (cmd_split[3 - offset].Remove(2) == "h'") //Hexadecimal number
+                            const_value = Convert.ToInt32(cmd_split[3 - offset].Substring(2), 16);
+                        
                         else
                             throw new CompilationException("Число");
                     }
@@ -134,17 +140,25 @@ namespace BinaryParserGui
                 {
                     //Добавляем переменную и её значение в variables
                     //Добавляем в output данные
+                    int offset = 0;
+                    if (cmd_split[1] != "=")
+                    {
+                        offset = 1;
+                        cmd_split[2] = cmd_split[1].Replace("=", string.Empty);
+                    }
                     string var_name = cmd_split[0];
                     if (variable_type.ContainsKey(var_name))
                         return false;
                     int const_value = -1;
                     try {
-                        if (char.IsDigit(cmd_split[2][0]))
-                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2]));
-                        else if (cmd_split[2].Remove(2) == "b'") // Binary number
-                            const_value = Convert.ToInt32(cmd_split[2].Substring(2), 2);
-                        else if (cmd_split[2].Remove(2) == "h'") //Hexadecimal number
-                            const_value = Convert.ToInt32(cmd_split[2].Substring(2), 16);
+                        if (char.IsDigit(cmd_split[2 - offset][0]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
+                        else if (var.IsMatch(cmd_split[2 - offset]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
+                        else if (cmd_split[2 - offset].Remove(2) == "b'") // Binary number
+                            const_value = Convert.ToInt32(cmd_split[2 - offset].Substring(2), 2);
+                        else if (cmd_split[2 - offset].Remove(2) == "h'") //Hexadecimal number
+                            const_value = Convert.ToInt32(cmd_split[2 - offset].Substring(2), 16);
                         else
                             throw new CompilationException("Число");
                     }
@@ -210,7 +224,7 @@ namespace BinaryParserGui
                 CntOfVal--;
             if (CntOfVal - 3 != lenght)
             {
-                throw new CompilationException("не усі ячейки масива заповнені");
+                throw new CompilationException("не усі комірки масива заповнені");
             }
 
             for (i = 3; i < CntOfVal; i++)

@@ -183,6 +183,9 @@ namespace BinaryParserGui
                             throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
                         END_LOOP(ops[0]);
                         break;
+                    default:
+                        throw new CompilationException("Невідома команда " + currentStrCmd + " у рядку " + i.ToString());
+                        break;
                 }
                 i++;
             }
