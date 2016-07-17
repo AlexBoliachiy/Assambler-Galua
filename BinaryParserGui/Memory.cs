@@ -77,6 +77,8 @@ namespace BinaryParserGui
                             const_value = Convert.ToInt32(cmd_split[3].Substring(2), 2);
                         else if (cmd_split[3].Remove(2) == "h'") //Hexadecimal number
                             const_value = Convert.ToInt32(cmd_split[3].Substring(2), 16);
+                        else if (var.IsMatch(cmd_split[3]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3]));
                         else
                             throw new CompilationException("Число");
                     }
