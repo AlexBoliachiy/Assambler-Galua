@@ -35,6 +35,9 @@ namespace BinaryParserGui
         private Color fontColor;
         public bool write = false;
         public bool Acomp { get; set; }
+
+        public List<String> UndoList = new List<string>();
+        public int UndoMax = 30;
         public IDE()
         {
             
@@ -278,6 +281,8 @@ namespace BinaryParserGui
                         code.Text = cmp.GetCode();
                     }
                 }),DispatcherPriority.SystemIdle);
+           // if ()
+            //UndoList.Add(new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
         }
 
         public delegate void TestThreadDelegate(ref Compilator cmp, ref TextBox data, ref TextBox code);
@@ -480,7 +485,7 @@ namespace BinaryParserGui
                     code.Text = cmp.GetCode();
                     if (write == true)
                     {
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "code" + ".txt", data.Text);
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "code" + ".txt", code.Text);
                         File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "mem" + ".txt", data.Text);
                     }
                     string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
@@ -509,6 +514,7 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
+           
             
         }
 
@@ -539,6 +545,12 @@ namespace BinaryParserGui
             currentLineNumber = -lineMoved;
 
             StatusBar.Content = "Лінія: " + currentLineNumber.ToString() + " Колонка: " + column.ToString();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F5)
+                MenuItem_Compile(null, null);
         }
     }
 

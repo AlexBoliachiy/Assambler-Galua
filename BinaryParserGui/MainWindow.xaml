@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BinaryParserGui"
         mc:Ignorable="d"
-        Title="Асемблер Галуа IDE" WindowState="Maximized" Closing="Window_Exit" >
+        Title="Асемблер Галуа IDE" WindowState="Maximized" Closing="Window_Exit" KeyDown="Window_KeyDown" >
     <Grid KeyboardNavigation.TabNavigation="None" >
         <Menu Grid.ColumnSpan="3" Margin="0,0,10,0">
             <MenuItem Header="Файл">
@@ -16,7 +16,7 @@
                 <Separator></Separator>
                 <MenuItem Header="Вийти" Click="MenuItem_exit"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Компілювати" Click="MenuItem_Compile"/>
+            <MenuItem Header="Компілювати" Click="MenuItem_Compile" />
             <MenuItem Header="Налаштування" Click="MenuItem_Settings"></MenuItem>
         </Menu>
         <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged"  SelectionChanged="editor_SelectionChanged"
