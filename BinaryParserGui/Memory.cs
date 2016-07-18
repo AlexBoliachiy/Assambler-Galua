@@ -36,10 +36,11 @@ namespace BinaryParserGui
         private int Cons = 0;
         private int Arrs = 0;
         private int Vars = 0;
+      
 
         public Memory()
         {
-
+            
         }
 
         public void Gather()

@@ -34,10 +34,11 @@ namespace BinaryParserGui
         int[] EnterToCycle = new int[4];
         Dictionary<int, bool> servedLoopsValue = new Dictionary<int, bool>() { { 0, false }, { 1, false }, { 2, false }, { 3, false } };
         Stack<int> closingValue = new Stack<int>();
-
+        public int rowCountData = 0;
 
         public CodeGenerator(Memory mem)
         {
+
             this.mem = mem;
             for (int i = 0; i < outputs.Length; i++)
             {
@@ -82,42 +83,42 @@ namespace BinaryParserGui
                 {
                     case "ADD": // В оригинале названо add_sub, но в коде почему-то эта команда ни разу не использовалась, так что я назвал её так
                         if (!add_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         ADD(ops[0], ops[1]);
                         break;
                     case "MULT":
                         if (!mult_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         MULT(ops[0], ops[1]);
                         break;
                     case "DIV":
                         if (!div_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         DIV(ops[0], ops[1]);
                         break;
                     case "POW":
                         if (!pow_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  : - " + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  : - " + (i + rowCountData).ToString());
                         POW(ops[0], ops[1]);
                         break;
                     case "INV_":
                         if (!inv_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         INV_(ops[0]);
                         break;
                     case "CDP":
                         if (!cdp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         CDP(ops[0]);
                         break;
                     case "CPD":
                         if (!cpd_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         CPD(ops[0]);
                         break;
                     case "MOV":
                         if (!mov_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         MOV(ops[0], ops[1]);
                         break;
                     case "MOV_A":
@@ -131,7 +132,7 @@ namespace BinaryParserGui
 
                         if (!success)
                         {
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         }
 
                         break;
@@ -145,47 +146,47 @@ namespace BinaryParserGui
 
                         if (!suc)
                         {
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         }
                         break;
                     case "JMP":
                         if (!jmp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         JMP(ops[0], ops[1]);
                         break;
                     case "LOOP":
                         if (!loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString() + " " + x);
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString() + " " + x);
                         LOOP(ops[0], ops[1]);
                         break;
                     case "LOAD_CA":
                         if (!load_ca_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         LOAD_CA(ops[0], ops[1]);
                         break;
                     case "LOAD_CA_A":
                         if (!load_ca_a_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         LOAD_CA_A(ops[0], ops[1]);
                         break;
                     case "INC_DEC":
                         if (!inc_dec_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         INC_DEC(ops[0], ops[1]);
                         break;
                     case "OUT":
                         if (!out_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         OUT(ops[0]);
                         break;
                     case "END_LOOP":
                         if (!end_loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + i.ToString());
+                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         END_LOOP(ops[0]);
                         break;
                     default:
-                        throw new CompilationException("Невідома команда " + currentStrCmd + " у рядку " + i.ToString());
-                        break;
+                        throw new CompilationException("Невідома команда " + currentStrCmd + " у рядку " + (i + rowCountData).ToString());
+                        
                 }
                 i++;
             }
@@ -467,8 +468,11 @@ namespace BinaryParserGui
 
         private void LOOP(string R0, string R1)
         {
+            int r;
+            if (!Int32.TryParse(R0, out r))
+                throw new CompilationException("Значення лічильника циклу або відсутнє або некоректне!");
             if (servedLoopsValue[Convert.ToInt32(R0)])
-                throw new CompilationException("Icнує один незакритий цикл з лiчильником " + R0);
+                throw new CompilationException("Використання лічильника, що вже використовується та ще незакритий! Номер лічильника:" + R0);
             outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1);
             closingValue.Push(Convert.ToInt32(R0));
             servedLoopsValue[Convert.ToInt32(R0)] = true;
@@ -482,10 +486,10 @@ namespace BinaryParserGui
         private void END_LOOP(string R0)
         {
             if (closingValue.Count == 0)
-                throw new CompilationException("Закриття циклу є, а початку немає (закриття лічильника під номером " + R0);
+                throw new CompilationException("Закриття циклу є, а початку немає (закриття лічильника під номером! " + R0);
             if (closingValue.Pop() != Convert.ToInt32(R0))
             {
-                throw new CompilationException("Несподіваний кінець циклу номер або використання зайнятої змінної лічильника" + R0);
+                throw new CompilationException("Несподіваний кінець циклу номер або використання зайнятої змінної лічильника!" + R0);
             }
             servedLoopsValue[Convert.ToInt32(R0)] = false;
             string str = Convert.ToString(CurrentLine + 2, 2);

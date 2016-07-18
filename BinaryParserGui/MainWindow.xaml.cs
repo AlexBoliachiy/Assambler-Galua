@@ -35,9 +35,11 @@ namespace BinaryParserGui
         private Color fontColor;
         public bool write = false;
         public bool Acomp { get; set; }
+        public static RoutedCommand Undo = new RoutedCommand();
 
         public List<String> UndoList = new List<string>();
         public int UndoMax = 30;
+        private int curUndo = 0;
         public IDE()
         {
             
@@ -56,6 +58,11 @@ namespace BinaryParserGui
             CommandBinding bind2 = new CommandBinding(ApplicationCommands.Open);
             bind2.Executed += MenuItem_Open;
             this.CommandBindings.Add(bind2);
+
+
+            /*RoutedCommand newCmd = new RoutedCommand();
+            newCmd.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control));
+            CommandBindings.Add(new CommandBinding(newCmd, UndoExecuted));*/
 
             if (!Properties.Settings.Default.gamma)
             {
@@ -175,7 +182,11 @@ namespace BinaryParserGui
         {
             SaveFileDialog dlg = new SaveFileDialog();
             dlg.Filter = "Text File (*.txt)|*.txt|Show All Files (*.*)|*.*";
-            dlg.FileName = currentfile.Substring(currentfile.LastIndexOf("\\") + 1);
+            if (currentfile != string.Empty)
+                dlg.FileName = currentfile.Substring(currentfile.LastIndexOf("\\") + 1);
+            else
+                dlg.FileName = "New file";
+
             if (dlg.ShowDialog() == true)
             {
                 SaveCode(dlg.FileName);
@@ -281,8 +292,7 @@ namespace BinaryParserGui
                         code.Text = cmp.GetCode();
                     }
                 }),DispatcherPriority.SystemIdle);
-           // if ()
-            //UndoList.Add(new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd).Text);
+            
         }
 
         public delegate void TestThreadDelegate(ref Compilator cmp, ref TextBox data, ref TextBox code);
@@ -547,11 +557,20 @@ namespace BinaryParserGui
             StatusBar.Content = "Лінія: " + currentLineNumber.ToString() + " Колонка: " + column.ToString();
         }
 
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F5)
                 MenuItem_Compile(null, null);
         }
+
+
+        private void UndoExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+           
+
+        }
+
     }
 
     

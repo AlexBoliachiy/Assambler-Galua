@@ -12,11 +12,23 @@ namespace BinaryParserGui
     
     public class Compilator
     {
+        int rowCountData = 0;
         public Compilator()
         {
             mem = new Memory();
             codeGenerator = new CodeGenerator(mem);
+            rowCountData = 0;
         }
+
+
+        public void Refresh()
+        {
+            mem = new Memory();
+            codeGenerator = new CodeGenerator(mem);
+            rowCountData = 0;
+        }
+
+
         public Memory mem;
         public CodeGenerator codeGenerator;
         public bool Compilate(string input_code)
@@ -30,13 +42,16 @@ namespace BinaryParserGui
                         throw new CompilationException("Деяка помилка трапилася у рядку" + i.ToString());
                 i++;
             }
-            mem.AddAllConstFromCodeSection(GetCodeSection(input_code));
+            var codeSec = GetCodeSection(input_code);
+            mem.AddAllConstFromCodeSection(codeSec);
             mem.Gather();
-            codeGenerator.HandleCodeSection(GetCodeSection(input_code));
+            codeGenerator.HandleCodeSection(codeSec);
             PrintCodeHuman(codeGenerator.Code);
             return true;
 
         }
+
+
         public string GetCode()
         {
             string ouput = string.Empty;
@@ -51,7 +66,10 @@ namespace BinaryParserGui
                     ouput += '\n';
             }
             return ouput;
+
         }
+
+
         public void  PrintCodeHuman(string code)
         {
             int i = 0;
@@ -66,12 +84,14 @@ namespace BinaryParserGui
             }
         }
 
+
         private string[] GetDataSection(string code)
         {
 
             code = code.Replace("\t", string.Empty);
             code = code.Replace("\r", string.Empty);
             string[] data = code.Split('\n');
+            
             List<string> out_data = new List<string>();
             int m = 0;
             string bar = data[m].Replace(" ", string.Empty);
@@ -88,10 +108,12 @@ namespace BinaryParserGui
 
                 }
                 m++;
+                
                 for (; data[m] != "CODE"; m++)
                 {
                     out_data.Add(data[m]);
                 }
+                codeGenerator.rowCountData = m; // Для отображения номера рядка ошибки синтаксиса
             }
             catch (IndexOutOfRangeException)
             {
@@ -100,6 +122,7 @@ namespace BinaryParserGui
             
             return out_data.ToArray();
         }
+
 
         private string[] GetCodeSection(string code)
         {
