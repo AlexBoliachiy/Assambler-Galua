@@ -27,9 +27,10 @@ namespace BinaryParserGui
         private Dictionary<string, int> variable_timeAdded = new Dictionary<string, int>(); // Имя перемеенной : какой по счету записанна
         private PostfixNotationExpression p = new PostfixNotationExpression();
         private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))|(b'[0-1]+)|(h'[0-9A-F]+))\s*$");
-        private Regex dec_arr = new Regex(@"^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*\)\s*$");
+        private Regex dec_arr = new Regex(@"^^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)|(b'[0-1]+)|(h'[0-9A-F]+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)|(b'[0-1]+)|(h'[0-9A-F]+))))*\s*\)\s*$");
         private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d+)|(h'[0-F]+)|(b'[10]+))\s*$");
-        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*"); 
+        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
+        private Regex varForDec = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
         private Regex ca = new Regex(@"CA_[0-3]");
         private Regex expression = new Regex(@"(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)");
         private int line;
@@ -79,12 +80,15 @@ namespace BinaryParserGui
 
                         if (char.IsDigit(cmd_split[3-offset][0]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
-                        else if (var.IsMatch(cmd_split[3 - offset]))
+                        else if (cmd_split[3 - offset].Length == 1) //Односимвольная переменная
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
                         else if (cmd_split[3 - offset].Remove(2) == "b'") // Binary number
                             const_value = Convert.ToInt32(cmd_split[3 - offset].Substring(2), 2);
                         else if (cmd_split[3 - offset].Remove(2) == "h'") //Hexadecimal number
                             const_value = Convert.ToInt32(cmd_split[3 - offset].Substring(2), 16);
+                        else if (var.IsMatch(cmd_split[3 - offset]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
+                        
                         
                         else
                             throw new CompilationException("Число");
@@ -154,12 +158,15 @@ namespace BinaryParserGui
                     try {
                         if (char.IsDigit(cmd_split[2 - offset][0]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
-                        else if (var.IsMatch(cmd_split[2 - offset]))
+                        else if (cmd_split[2 - offset].Length == 1) // Односимвольная переменная 
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
                         else if (cmd_split[2 - offset].Remove(2) == "b'") // Binary number
                             const_value = Convert.ToInt32(cmd_split[2 - offset].Substring(2), 2);
                         else if (cmd_split[2 - offset].Remove(2) == "h'") //Hexadecimal number
                             const_value = Convert.ToInt32(cmd_split[2 - offset].Substring(2), 16);
+                        else if (var.IsMatch(cmd_split[2 - offset]))
+                            const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
+                        
                         else
                             throw new CompilationException("Число");
                     }
@@ -230,8 +237,29 @@ namespace BinaryParserGui
 
             for (i = 3; i < CntOfVal; i++)
             {
-                chars[i] = GetBinaryInt(Convert.ToInt32(ReplaceVariableToValue(chars[i])));
-                AddToOutput(Convert.ToInt32(chars[i], 2),ref output_arr);
+                int const_value = 0;
+                try
+                {
+                    
+                    if (char.IsDigit(chars[i][0]))
+                        const_value = Convert.ToInt32(ReplaceVariableToValue(chars[i]));
+                    else if (chars[i].Remove(2) == "b'") // Binary number
+                        const_value = Convert.ToInt32(chars[i].Substring(2), 2);
+                    else if (chars[i].Remove(2) == "h'") //Hexadecimal number
+                        const_value = Convert.ToInt32(chars[i].Substring(2), 16);
+                    else if (chars[i].Length == 1)
+                        const_value = Convert.ToInt32(ReplaceVariableToValue(chars[i]));
+                    else if (var.IsMatch(chars[i]))
+                        const_value = Convert.ToInt32(ReplaceVariableToValue(chars[i]));
+                    
+                    else
+                        throw new CompilationException("Число");
+                }
+                catch
+                {
+                    throw new CompilationException("Допишіть будь ласка значення змінної у рядку " + line.ToString());
+                }
+                AddToOutput(const_value, ref output_arr);
                 line++;
             }
 
