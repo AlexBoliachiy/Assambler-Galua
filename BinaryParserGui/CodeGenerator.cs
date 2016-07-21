@@ -20,7 +20,7 @@ namespace BinaryParserGui
         Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
         Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?]\s*,\s*R[0-3]))\s*$"); //
         Regex jmp_regex = new Regex(@"JMP\s+(R[0-3]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|([0-9]{9}))\s*$");
-        Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)*\s*$");
+        Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
         Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
         Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*((b'[0-1]+)|(h'[0-F]+)|(\d+))\s*$");
@@ -184,8 +184,11 @@ namespace BinaryParserGui
                             throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
                         END_LOOP(ops[0]);
                         break;
+                    case "/*":
+                        throw new CompilationException("Незакритий коментар у рядку  :" + (i + rowCountData).ToString());
                     default:
                         throw new CompilationException("Невідома команда " + currentStrCmd + " у рядку " + (i + rowCountData).ToString());
+                        
                         
                 }
                 i++;
@@ -215,7 +218,7 @@ namespace BinaryParserGui
         }
         private void ADD(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            outputs[CurrentOutput] += "0000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + " " + "ADD " + R0 + "," + R1;
             CurrentLine++;
         }
 

@@ -76,9 +76,10 @@ namespace BinaryParserGui
                         cmd_split[2] = cmd_split[2].Replace("=", string.Empty);
                     }
                     int const_value = -1;
-                    try {
+                    try
+                    {
 
-                        if (char.IsDigit(cmd_split[3-offset][0]))
+                        if (char.IsDigit(cmd_split[3 - offset][0]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
                         else if (cmd_split[3 - offset].Length == 1) //Односимвольная переменная
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
@@ -88,12 +89,12 @@ namespace BinaryParserGui
                             const_value = Convert.ToInt32(cmd_split[3 - offset].Substring(2), 16);
                         else if (var.IsMatch(cmd_split[3 - offset]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[3 - offset]));
-                        
-                        
+
+
                         else
                             throw new CompilationException("Число");
                     }
-                    catch 
+                    catch
                     {
                         throw new CompilationException("Допишіть будь ласка значення змінної у команді " + cmd);
                     }
@@ -139,6 +140,8 @@ namespace BinaryParserGui
                 }
                 else return false;
             }
+            else if (cmd_split[0] == "/*")
+                throw new CompilationException("Незакритий многострічковий коментар у секціЇ DATA");
             else
             {
                 if (dec_var.IsMatch(cmd))
@@ -155,7 +158,8 @@ namespace BinaryParserGui
                     if (variable_type.ContainsKey(var_name))
                         return false;
                     int const_value = -1;
-                    try {
+                    try
+                    {
                         if (char.IsDigit(cmd_split[2 - offset][0]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
                         else if (cmd_split[2 - offset].Length == 1) // Односимвольная переменная 
@@ -166,7 +170,7 @@ namespace BinaryParserGui
                             const_value = Convert.ToInt32(cmd_split[2 - offset].Substring(2), 16);
                         else if (var.IsMatch(cmd_split[2 - offset]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
-                        
+
                         else
                             throw new CompilationException("Число");
                     }
@@ -188,7 +192,7 @@ namespace BinaryParserGui
                             variable_type.Add(var_name, TYPE.vars);
                             variable_timeAdded.Add(var_name, Vars++);
                             AddToOutput(var_value, ref output_var);
-                            
+
                             line++;
 
                         }
@@ -201,7 +205,7 @@ namespace BinaryParserGui
                 }
                 else
                     return false; // Ошибка в синтаксисе
-                
+
             }
             return true;
             
@@ -303,7 +307,7 @@ namespace BinaryParserGui
         private bool AddToOutput(int i, ref string Output)
         {
             string str = GetBinaryInt(i);
-            Output += str + "\n";
+            Output += str + " " + variables_values.Last().Key + "\n";
             return true;
         }
         

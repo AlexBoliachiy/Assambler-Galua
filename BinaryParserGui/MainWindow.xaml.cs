@@ -37,12 +37,10 @@ namespace BinaryParserGui
         public bool Acomp { get; set; }
         public static RoutedCommand Undo = new RoutedCommand();
 
-        public List<String> UndoList = new List<string>();
-        public int UndoMax = 30;
-        private int curUndo = 0;
+
         public IDE()
         {
-            
+
 
             InitializeComponent();
             CommandBinding bind = new CommandBinding(ApplicationCommands.Save);
@@ -60,9 +58,6 @@ namespace BinaryParserGui
             this.CommandBindings.Add(bind2);
 
 
-            /*RoutedCommand newCmd = new RoutedCommand();
-            newCmd.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control));
-            CommandBindings.Add(new CommandBinding(newCmd, UndoExecuted));*/
 
             if (!Properties.Settings.Default.gamma)
             {
@@ -142,7 +137,7 @@ namespace BinaryParserGui
                 fontColor = Colors.White;
             }
 
-            
+
         }
         private void MenuItem_Open(object sender, RoutedEventArgs e)
         {
@@ -197,7 +192,7 @@ namespace BinaryParserGui
         private void SaveCode(string FileName)
         {
 
-            FileStream fileStream = new FileStream(FileName, FileMode.Create);     
+            FileStream fileStream = new FileStream(FileName, FileMode.Create);
             TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             range.Save(fileStream, DataFormats.Text);
             IsSaved = true;
@@ -273,26 +268,26 @@ namespace BinaryParserGui
                 return;
             IsSaved = false;
             if (Acomp)
-                Dispatcher.BeginInvoke((Action) (() => 
-                {
-                    bool suc = true;
-                    cmp = new Compilator();
-                    TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
-                    try
-                    {
-                        cmp.Compilate(textRange.Text);
-                    }
-                    catch (CompilationException ex)
-                    {
-                        suc = false;
-                    }
-                    if (suc == true)
-                    {
-                        data.Text = cmp.mem.output;
-                        code.Text = cmp.GetCode();
-                    }
-                }),DispatcherPriority.SystemIdle);
-            
+                Dispatcher.BeginInvoke((Action)(() =>
+               {
+                   bool suc = true;
+                   cmp = new Compilator();
+                   TextRange textRange = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
+                   try
+                   {
+                       cmp.Compilate(textRange.Text);
+                   }
+                   catch (CompilationException ex)
+                   {
+                       suc = false;
+                   }
+                   if (suc == true)
+                   {
+                       data.Text = cmp.mem.output;
+                       code.Text = cmp.GetCode();
+                   }
+               }), DispatcherPriority.SystemIdle);
+
         }
 
         public delegate void TestThreadDelegate(ref Compilator cmp, ref TextBox data, ref TextBox code);
@@ -322,6 +317,8 @@ namespace BinaryParserGui
         private void PaintEditor()
         {
             isPainting = true;
+
+
             TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(fontColor));
             FillWordFromPosition("MOV", "#2e95e8");
@@ -345,7 +342,8 @@ namespace BinaryParserGui
             FillWordFromPosition("LOAD_CA", "#2e95e8");
             FillWordFromPosition("INC_DEC", "#2e95e8");
             FillWordFromPosition("OUT", "#2e95e8");
-
+            PaintMultiLaneComments();
+            PaintSingleLineComments();
             isPainting = false;
 
 
@@ -399,11 +397,11 @@ namespace BinaryParserGui
 
         private void editor_KeyUp(object sender, KeyEventArgs e)
         {
-            
+
             var tr = new TextRange(editor.Document.ContentStart, editor.CaretPosition);
             if (e.Key == Key.Enter)
             {
-                
+
                 curTab = CountTabulation();
                 removeTabNearEndLoop();
                 for (int i = 0; i < curTab; i++)
@@ -418,7 +416,7 @@ namespace BinaryParserGui
                 //HandleRemovedTabulation(tr.Text);
             }
             PaintEditor();
-            
+
 
 
 
@@ -460,7 +458,7 @@ namespace BinaryParserGui
             if (requireTabs != 0)
             {
                 tr.Text = tr.Text.Remove(index, 1);
-              
+
                 curTab--;
             }
 
@@ -499,7 +497,7 @@ namespace BinaryParserGui
                         File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "mem" + ".txt", data.Text);
                     }
                     string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
-                    MessageBox.Show("Зроблено!\n" + str , "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    MessageBox.Show("Зроблено!\n" + str, "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                 }
 
             }
@@ -512,11 +510,11 @@ namespace BinaryParserGui
             Settings s = new Settings(write, this);
             s.Show();
         }
-        private void  code_TextChanged(object sender, TextChangedEventArgs e)
+        private void code_TextChanged(object sender, TextChangedEventArgs e)
         {
             int lines = 0;
             codeNum.Text = string.Empty;
-            for (int i=0; i != code.Text.Length; i++)
+            for (int i = 0; i != code.Text.Length; i++)
             {
                 if (code.Text[i] == '\n')
                 {
@@ -524,8 +522,8 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
-           
-            
+
+
         }
 
         private void data_TextChanged(object sender, TextChangedEventArgs e)
@@ -536,7 +534,7 @@ namespace BinaryParserGui
             {
                 if (data.Text[i] == '\n')
                 {
-                    dataNum.Text += "  " +   lines.ToString() + "\n";
+                    dataNum.Text += "  " + lines.ToString() + "\n";
                     lines++;
                 }
             }
@@ -565,14 +563,107 @@ namespace BinaryParserGui
         }
 
 
-        private void UndoExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-           
 
+        //Разукрашивает комментарии. Должно находится внутри PaintEditor
+        // Чувак, мне срочно нужен RGB код вот такого цвета
+        private void PaintMultiLaneComments()
+        {
+            TextPointer position = editor.Document.ContentStart;
+            TextPointer endPosition = null;
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
+
+                    // Find the starting index of any substring that matches "word".
+                    int indexInRun = textRun.IndexOf("/*");
+                    if (indexInRun >= 0)
+                    {
+                        position = position.GetPositionAtOffset(indexInRun);
+                        if (position.GetTextInRun(LogicalDirection.Forward).Contains("*/")) //частный случай
+                        {
+                            int index = position.GetTextInRun(LogicalDirection.Forward).IndexOf("*/");
+                            TextRange tr = new TextRange(position, position.GetPositionAtOffset(index + 2));
+                            tr.ApplyPropertyValue(TextElement.ForegroundProperty,
+                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
+                            position = position.GetNextContextPosition(LogicalDirection.Forward);
+                            continue;
+                        }
+                        endPosition = position.GetPositionAtOffset(3);
+                        while (endPosition != null) //
+                        {
+
+                            if (endPosition.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                            {
+                                if (endPosition.GetTextInRun(LogicalDirection.Forward).Contains("*/"))
+                                {
+                                    int index = position.GetTextInRun(LogicalDirection.Forward).IndexOf("*/");
+                                    TextRange tr = new TextRange(position, endPosition.GetPositionAtOffset(index + 2));
+                                    tr.ApplyPropertyValue(TextElement.ForegroundProperty,
+                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
+
+                                    position = endPosition.GetPositionAtOffset(index);
+                                    break;
+                                }
+                                else
+                                    endPosition = endPosition.GetNextContextPosition(LogicalDirection.Forward);
+                            }
+                            else
+                                endPosition = endPosition.GetNextContextPosition(LogicalDirection.Forward);
+
+                        }
+
+
+
+
+                    }
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+                }
+                else
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
         }
 
+        public void PaintSingleLineComments()
+        {
+            TextPointer position = editor.Document.ContentStart;
+            TextPointer endPosition;
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
+
+                    // Find the starting index of any substring that matches "word".
+                    int indexInRun = textRun.IndexOf("//");
+                    if (indexInRun >= 0)
+                    {
+
+                        position = position.GetPositionAtOffset(indexInRun);
+                        endPosition = position.GetPositionAtOffset(textRun.Length);
+                        if (endPosition == null)
+                            endPosition = position.GetPositionAtOffset(textRun.Length - 1);
+                        TextRange tr = new TextRange(position, endPosition);
+                        tr.ApplyPropertyValue(TextElement.ForegroundProperty,
+                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
+                        position = position.GetNextContextPosition(LogicalDirection.Forward);
+                    }
+                    else
+                        position = position.GetNextContextPosition(LogicalDirection.Forward);
+                }
+                else
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
+        }
+
+
+
+
+
+
+
     }
-
-    
-
 }
+
+ 
