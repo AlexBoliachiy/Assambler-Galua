@@ -111,6 +111,7 @@ namespace BinaryParserGui
                             variable_type.Add(const_name, TYPE.cons);
                             variable_timeAdded.Add(const_name, Cons++);
                             AddToOutput(const_value, ref output_con);
+                            output_con += " {" + const_name + "}\n";
 
                             line++;
                         }
@@ -170,7 +171,6 @@ namespace BinaryParserGui
                             const_value = Convert.ToInt32(cmd_split[2 - offset].Substring(2), 16);
                         else if (var.IsMatch(cmd_split[2 - offset]))
                             const_value = Convert.ToInt32(ReplaceVariableToValue(cmd_split[2 - offset]));
-
                         else
                             throw new CompilationException("Число");
                     }
@@ -192,7 +192,7 @@ namespace BinaryParserGui
                             variable_type.Add(var_name, TYPE.vars);
                             variable_timeAdded.Add(var_name, Vars++);
                             AddToOutput(var_value, ref output_var);
-
+                            output_var += " {" + var_name +"}\n";
                             line++;
 
                         }
@@ -264,6 +264,7 @@ namespace BinaryParserGui
                     throw new CompilationException("Допишіть будь ласка значення змінної у рядку " + line.ToString());
                 }
                 AddToOutput(const_value, ref output_arr);
+                output_arr += " {" + ArrayName + "}\n";
                 line++;
             }
 
@@ -307,7 +308,7 @@ namespace BinaryParserGui
         private bool AddToOutput(int i, ref string Output)
         {
             string str = GetBinaryInt(i);
-            Output += str + " " + variables_values.Last().Key + "\n";
+            Output += str;
             return true;
         }
         
@@ -426,6 +427,7 @@ namespace BinaryParserGui
                                 variable_type.Add(name, TYPE.cons);
                                 variable_timeAdded.Add(name, Cons++);
                                 AddToOutput(Convert.ToInt32(value), ref output_con);
+                                output_con += " {" + name + "}\n";
                             }
                             catch (ArgumentException)
                             {

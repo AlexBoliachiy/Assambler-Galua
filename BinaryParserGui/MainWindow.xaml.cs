@@ -36,6 +36,7 @@ namespace BinaryParserGui
         public bool write = false;
         public bool Acomp { get; set; }
         public static RoutedCommand Undo = new RoutedCommand();
+        private Regex comment = new Regex(@"{.*}");
 
 
         public IDE()
@@ -493,8 +494,8 @@ namespace BinaryParserGui
                     code.Text = cmp.GetCode();
                     if (write == true)
                     {
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "code" + ".txt", code.Text);
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "mem" + ".txt", data.Text);
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "code" + ".txt", comment.Replace(code.Text, string.Empty));
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "mem" + ".txt", comment.Replace(data.Text, string.Empty));
                     }
                     string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
                     MessageBox.Show("Зроблено!\n" + str, "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);

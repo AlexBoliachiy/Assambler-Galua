@@ -59,19 +59,40 @@ namespace BinaryParserGui
 
         public string GetCode()
         {
-            string ouput = string.Empty;
-            int i = 0;
-            foreach (char x in codeGenerator.Code)
+            string raw = codeGenerator.Code;
+            int pointer = 0;
+            int counter = 0;
+            try
             {
-                if (x == '\n')
-                    continue;
-                ouput += x;
-                i++;
-                if (i % 8 == 0)
-                    ouput += '\n';
-            }
-            return ouput;
+                while (pointer != raw.Length - 1)
+                {
 
+                    pointer++;
+                    counter++;
+                    if (raw[pointer] == ' ' || raw[pointer] == '\n')
+                    {
+                        pointer++;
+                    }
+                    if (raw[pointer] == '{')
+                    {
+                        while (raw[pointer] != '}')
+                            pointer++;
+                        pointer++;
+                    }
+                    
+                    if (counter%8 == 0  )
+                    {
+                        raw = raw.Insert(pointer, "\n");
+                        pointer++;
+                    }
+                }
+                
+            }
+            catch
+            {
+
+            }
+            return raw;
         }
 
 
