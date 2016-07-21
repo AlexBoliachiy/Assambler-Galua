@@ -9,10 +9,13 @@ using System.Text.RegularExpressions;
 // Иногда студия криво считывает знак "-", почему неизвестно
 namespace BinaryParserGui
 {
+
     
     public class Compilator
     {
-        int rowCountData = 0;
+        private static Regex CommentLine = new Regex(@"\/\/.*$", RegexOptions.Multiline);
+        private static Regex CommentBetweenLine = new Regex(@"\/\*((.*)|)\*\/", RegexOptions.Singleline);
+        int rowCountData = 0; 
         public Compilator()
         {
             mem = new Memory();
@@ -33,6 +36,8 @@ namespace BinaryParserGui
         public CodeGenerator codeGenerator;
         public bool Compilate(string input_code)
         {
+            input_code = CommentLine.Replace(input_code, string.Empty);
+            input_code = CommentBetweenLine.Replace(input_code, string.Empty);
             string[] commands = GetDataSection(input_code);
             int i = 0;
             foreach (string x in commands)
