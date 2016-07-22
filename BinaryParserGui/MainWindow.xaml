@@ -244,8 +244,8 @@
         </ScrollViewer>
         
         <Label Name="StatusBar" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">  </Label>
-        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold" FontSize="15" VerticalAlignment="Top">Код даних</Label>
-        <Label Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" FontWeight="Bold" FontSize="15" VerticalAlignment="Top">Код команд</Label>
+        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold" FontSize="15" VerticalAlignment="Top">Пам'ять даних</Label>
+        <Label Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" FontWeight="Bold" FontSize="15" VerticalAlignment="Top">Пам'ять команд</Label>
         <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" FontWeight="Bold" FontSize="15" VerticalAlignment="Top">Код асемблера</Label>
 
     

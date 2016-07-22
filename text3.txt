@@ -15,11 +15,11 @@ Array A [pow_A:0] = (5, 15,1,0, 7, 3)
 Array C [pow_A + r : 0] = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 CODE
 MOV_A	R0, alpha					
-LOAD_CA_A	CA_0, 9b'000000000	
+LOAD_CA_A	CA_0, b'000000000	
 LOOP	0, r-1						
-	LOAD_CA_A	CA_2, 9b'000000000
+	LOAD_CA_A	CA_2, b'000000000
 	LOOP		1, pow_B + 1		
-			LOAD_CA_A	CA_1, 9b'000000000
+			LOAD_CA_A	CA_1, b'000000000
 			LOAD_CA	CA_3, CA_2
 			MOV_ARRAY	R2, B [CA_2 + 0]
 			LOOP	2, count_T	
@@ -31,7 +31,7 @@ LOOP	0, r-1
 				INC_DEC	CA_1, 0
 				INC_DEC	CA_3, 0
 			END_LOOP		2		
-			INC_DEC_CA	CA_2, 0	
+			INC_DEC 	CA_2, 0	
 	END_LOOP	1				
 	MOV_ARRAY	R1, B [CA_0 + 0]
 	MULT		R1, R0				
@@ -40,7 +40,7 @@ LOOP	0, r-1
 	INC_DEC  R1, 0				
 	MOV_A	count_T, R1		
 	MOV_A	R2, null				
-	LOAD_CA_A	CA_1, 9b'000000000
+	LOAD_CA_A	CA_1, b'000000000
 	LOOP		1, count_T			
 			MOV_ARRAY	R1, G [CA_1 + 0]
 			MOV_ARRAY	T [CA_1 + 0], R1
@@ -48,9 +48,9 @@ LOOP	0, r-1
 			INC_DEC	CA_1, 0		
 	END_LOOP	1				
 END_LOOP	0						
-LOAD_CA_A	CA_2, 9b'000000000
+LOAD_CA_A	CA_2, b'000000000
 LOOP	0, pow_A + 1		
-	LOAD_CA_A	CA_1, 9b'000000000
+	LOAD_CA_A	CA_1, b'000000000
 	LOAD_CA	CA_3, CA_2
 	MOV_ARRAY	R1, A [CA_2 + 0]
 	LOOP	1, count_T	
@@ -62,9 +62,9 @@ LOOP	0, pow_A + 1
 		INC_DEC	CA_1, 0
 		INC_DEC	CA_3, 0
 	END_LOOP		1		
-	INC_DEC	CA_2, 0		
+	INC_DEC	 CA_2, 0		
 END_LOOP	0				
-LOAD_CA_A	CA_1, 9b'000000000
+LOAD_CA_A	CA_1, b'000000000
 LOOP	0, pow_A + r + 1		
 	OUT	C [CA_1 + 0]		
 	INC_DEC	CA_1, 0		

@@ -322,9 +322,10 @@ namespace BinaryParserGui
 
             TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(fontColor));
-            FillWordFromPosition("MOV", "#2e95e8");
-            FillWordFromPosition("const", "#2e95e8");
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
+            FillWordFromPosition("MOV_A", "#2e95e8");
+            FillWordFromPosition("MOV", "#2e95e8");
+            FillWordFromPosition("const", "#2e95e8");  
             FillWordFromPosition("END_LOOP", "#58b8f0");
             FillWordFromPosition("Array", "#1dbb6b");
             FillWordFromPosition("DATA", "#f9dc1a");
@@ -336,7 +337,7 @@ namespace BinaryParserGui
             FillWordFromPosition("INV", "#2e95e8");
             FillWordFromPosition("CDP", "#2e95e8");
             FillWordFromPosition("CPD", "#2e95e8");
-            FillWordFromPosition("MOV_A", "#2e95e8");
+           
             FillWordFromPosition("1JMP", "#2e95e8");
             FillWordFromPosition("LOOP", "#58b8f0");
             FillWordFromPosition("LOAD_CA_A", "#2e95e8");
