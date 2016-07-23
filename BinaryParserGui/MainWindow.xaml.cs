@@ -16,6 +16,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
 
 //262626
 
@@ -36,7 +37,7 @@ namespace BinaryParserGui
         public bool write = false;
         public bool Acomp { get; set; }
         public static RoutedCommand Undo = new RoutedCommand();
-        private Regex comment = new Regex(@"{.*}");
+        private Regex comment = new Regex(@"\/\/.*$", RegexOptions.Multiline);
 
 
         public IDE()
@@ -492,11 +493,11 @@ namespace BinaryParserGui
                 {
                     bool isWrite = false; // Не стирать
                     data.Text = cmp.mem.output;
-                    code.Text = cmp.GetCode();
+                    code.Text = cmp.GetCodeWithComments();
                     if (write == true)
                     {
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "code" + ".txt", comment.Replace(code.Text, string.Empty));
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "mem" + ".txt", comment.Replace(data.Text, string.Empty));
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
+                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
                     }
                     string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
                     MessageBox.Show("Зроблено!\n" + str, "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
@@ -524,6 +525,7 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
+            //codeNum.Text += "  " + lines.ToString() + "\n";
 
 
         }
@@ -553,6 +555,12 @@ namespace BinaryParserGui
             int lineMoved, currentLineNumber;
             editor.Selection.Start.GetLineStartPosition(-someBigNumber, out lineMoved);
             currentLineNumber = -lineMoved;
+
+
+            long size = 0;
+            object o = new object();
+
+
 
             StatusBar.Content = "Лінія: " + currentLineNumber.ToString() + " Колонка: " + column.ToString();
         }
@@ -601,7 +609,7 @@ namespace BinaryParserGui
                                 if (endPosition.GetTextInRun(LogicalDirection.Forward).Contains("*/"))
                                 {
                                     int index = position.GetTextInRun(LogicalDirection.Forward).IndexOf("*/");
-                                    TextRange tr = new TextRange(position, endPosition.GetPositionAtOffset(index + 2));
+                                    TextRange tr = new TextRange(position, endPosition.GetPositionAtOffset(index + 3));
                                     tr.ApplyPropertyValue(TextElement.ForegroundProperty,
                                     (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
 

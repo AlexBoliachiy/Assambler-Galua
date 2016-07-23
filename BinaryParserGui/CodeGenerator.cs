@@ -35,6 +35,7 @@ namespace BinaryParserGui
         Dictionary<int, bool> servedLoopsValue = new Dictionary<int, bool>() { { 0, false }, { 1, false }, { 2, false }, { 3, false } };
         Stack<int> closingValue = new Stack<int>();
         public int rowCountData = 0;
+        public Dictionary<int, string> comments = new Dictionary<int, string>();
 
         public CodeGenerator(Memory mem)
         {
@@ -217,62 +218,71 @@ namespace BinaryParserGui
         }
         private void ADD(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "{ " + "ADD " + R0 + "," + R1 + "}";
+            outputs[CurrentOutput] += "0000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            comments.Add(CurrentLine, "// " + "ADD " + R0 + ", " + R1);
             CurrentLine++;
         }
 
         private void MULT(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "{ " + "MULT " + R0 + "," + R1 + "}"; ;
+            outputs[CurrentOutput] += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ; ;
+            comments.Add(CurrentLine, "// " + "MULT " + R0 + ", " + R1);
             CurrentLine++;
         }
         private void DIV(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0010" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "{ " + "DIV " + R0 + "," + R1 + "}"; ;
+            outputs[CurrentOutput] += "0010" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ;
+            comments.Add(CurrentLine, "// " + "DIV " + R0 + ", " + R1);
             CurrentLine++;
         }
 
         private void POW(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0011" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "{ " + "POW " + R0 + "," + R1 + "}"; ;
+            outputs[CurrentOutput] += "0011" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ;
+            comments.Add(CurrentLine, "// " + "POW " + R0 + ", " + R1);
             CurrentLine++;
         }
         private void INV_(string R0)
         {
-            outputs[CurrentOutput] += "0100" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" + "{ " + "INV " + R0 + "," +  "}"; ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0100" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            comments.Add(CurrentLine, "// " + "INV " + R0 + ", ");
             CurrentLine++;
         }
 
         private void CDP(string R0)
         {
-            outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" + "{ " + "CDP " + R0 + "," + "}"; ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            comments.Add(CurrentLine, "// " + "CDP " + R0 + ", ");
             CurrentLine++;
         }
 
         private void CPD(string R0)
         {
-            outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" + "{ " + "CPD " + R0 + "," + "}"; ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"  ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            comments.Add(CurrentLine, "// " + "CPD " + R0 + ", ");
             CurrentLine++;
         }
 
         private void MOV(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0111" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "{ " + "MOV " + R0 + "," + R1 + "}"; ;
+            outputs[CurrentOutput] += "0111" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ;
+            comments.Add(CurrentLine, "// " + "MOV " + R0 + ", " + R1);
             CurrentLine++;
         }
 
         private void MOV_A(string R0, string R1)
         {
             if (R0 == "R0" || R0 == "R1" || R0 == "R2" || R0 == "R3")
-                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1) + "{ " + "MOV_A " + R0 + "," + R1 + "}"; 
+                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1) ; 
             else
             {
                 if ( mem.GetType(R0) == TYPE.cons)
                 {
                     throw new CompilationException("Спроба запису у константу у команді MOV_A " + R0 + ",  " + R1 );
                 }
-                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0)+ "{ " + "MOV_A " + R0 + "," + R1 + "}";
+                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0);
             }
+            comments.Add(CurrentLine, "// " + "MOV_A " + R0 + ", " + R1);
             CurrentLine += 2;
         }
         private void MOV_ARRAY(string R0, string R1)
@@ -301,7 +311,7 @@ namespace BinaryParserGui
                     {
                         binaryOffset = "0" + binaryOffset;
                     }
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset + "{ " + "MOV_ARRAY " + R0 + "," + R1 + "}";
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
                 }
                 else
                 {
@@ -310,7 +320,7 @@ namespace BinaryParserGui
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
                     exp = exp.Substring(5);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" + "{ " + "MOV_ARRAY" + R0 + "," + R1 + "}";
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" ;
                 }
             }
 
@@ -338,16 +348,17 @@ namespace BinaryParserGui
                     {
                         binaryOffset = "0" + binaryOffset;
                     }
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset + "{ " + "MOV_ARRAY " + R0 + "," + R1 + "}";
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset ;
                 }
                 else
                 {
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" + "{ " + "MOV_ARRAY " + R0 + "," + R1 + "}";
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
+            comments.Add(CurrentLine, "// " + "MOV_ARRAY " + R0 + ", " + R1);
             CurrentLine += 3;
         }
         private void JMP(string R0, string R1)
@@ -368,14 +379,16 @@ namespace BinaryParserGui
                 outputs[CurrentOutput] += R1;
             }
             else
-                outputs[CurrentOutput] += mem.GetBinaryAdress(R0) + "{ " + "JMP " + R0 + "," + R1 + "}";
+                outputs[CurrentOutput] += mem.GetBinaryAdress(R0);
+            comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1);
             CurrentLine += 2;
         }
 
      
         private void LOAD_CA(string R0, string R1)
         {
-            outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[3].ToString()), 2) + "{ " + "LOAD_CA " + R0 + "," + R1 + "}";
+            outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[3].ToString()), 2);
+            comments.Add(CurrentLine, "// " + "LOAD_CA " + R0 + ", " + R1);
             CurrentLine++;
         }
 
@@ -400,7 +413,8 @@ namespace BinaryParserGui
                 throw new CompilationException("Допишіть будь ласка значення змінної у команді LOAD_CA_A" + R0 + ", " + R1);
             }
             A = ConvertToBinary(Aint, 9);
-            outputs[CurrentOutput] += "1101" + CA + "0" + A + "{ " + "LOAD_CA_A " + R0 + "," + R1 + "}"; 
+            outputs[CurrentOutput] += "1101" + CA + "0" + A ;
+            comments.Add(CurrentLine, "// " + "LOAD_CA_A " + R0 + ", " + R1);
             CurrentLine += 2;
         }
 
@@ -408,12 +422,13 @@ namespace BinaryParserGui
         {
             if (R0[0] == 'R')// If register
             {
-                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + R1 + "{ " + "INC_DEC" + R0 + "," + R1 + "}";
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + R1 ;
             }
             else // if CA
             {
-                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1 + "{ " + "INC_DEC " + R0 + "," + R1 + "}";
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1 ;
             }
+            comments.Add(CurrentLine, "// " + "INC_DEC " + R0 + ", " + R1);
             CurrentLine++;
         }
 
@@ -445,7 +460,8 @@ namespace BinaryParserGui
                     {
                         binaryOffset = "0" + binaryOffset;
                     }
-                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset + "{" + "OUT " + R0 + "," + "}";
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset ;
+                    comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                     CurrentLine += 3;
                 }
                 else
@@ -453,13 +469,15 @@ namespace BinaryParserGui
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['));
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" + "{" + "OUT " + R0 + "," + "}";
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" ;
+                    comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                     CurrentLine += 3;
                 }
             }
             else
             {
-                outputs[CurrentOutput] += "0" + mem.GetBinaryAdress(R0) + " {" + "OUT " + R0 + "," + "}";
+                outputs[CurrentOutput] += "0" + mem.GetBinaryAdress(R0) ;
+                comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                 CurrentLine += 2;
             }
         }
@@ -471,13 +489,14 @@ namespace BinaryParserGui
                 throw new CompilationException("Значення лічильника циклу або відсутнє або некоректне!");
             if (servedLoopsValue[Convert.ToInt32(R0)])
                 throw new CompilationException("Використання лічильника, що вже використовується та ще незакритий! Номер лічильника:" + R0);
-            outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1) + " {" + "LOOP " + R0 + "," + R1 + "}";
+            outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1) ;
             closingValue.Push(Convert.ToInt32(R0));
             servedLoopsValue[Convert.ToInt32(R0)] = true;
             CurrentOutput++;
             outputs[CurrentOutput-1] += output;
             output = string.Empty;
             EnterToCycle[CurrentOutput] = CurrentLine;
+            comments.Add(CurrentLine, "// " + "LOOP " + R0 + ", " + R1);
             CurrentLine += 4;
             
         }
@@ -502,7 +521,7 @@ namespace BinaryParserGui
             CurrentOutput--;
             outputs[CurrentOutput] += outputs[CurrentOutput + 1];
             outputs[CurrentOutput + 1] = string.Empty;
-
+            comments.Add(CurrentLine,"END_LOOP " + R0);
             CurrentLine += 2;
         }
 
