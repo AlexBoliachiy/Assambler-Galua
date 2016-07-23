@@ -11,9 +11,8 @@ namespace TestApp2
     class Program
     {
         static void Main(string[] args)
-        {
-            Test("o.txt.", "s.txt", 8);
-            Console.Read();
+        { 
+
         }
 
         static void Test(string pathetalon, string str2, int t)
@@ -36,4 +35,6 @@ namespace TestApp2
             }
         }
     }
-}
+} 
+
+

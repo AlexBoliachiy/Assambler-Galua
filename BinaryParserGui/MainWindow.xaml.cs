@@ -651,7 +651,7 @@ namespace BinaryParserGui
                     {
 
                         position = position.GetPositionAtOffset(indexInRun);
-                        endPosition = position.GetPositionAtOffset(textRun.Length);
+                        endPosition = position.GetLineStartPosition(1);
                         if (endPosition == null)
                             endPosition = position.GetPositionAtOffset(textRun.Length - 1);
                         TextRange tr = new TextRange(position, endPosition);
