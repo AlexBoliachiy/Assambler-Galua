@@ -54,10 +54,11 @@ namespace BinaryParserGui
                             if (x.Contains("^"))
                             {
                                 mem.m = Convert.ToInt32(new Regex(@"\^\d+").Match(x).Value.Substring(1));
+                                codeGenerator.gf = false;
                             }
                             else
                             {
-                                
+                                codeGenerator.gf = true;
                                 mem.m = (int)Math.Ceiling(Math.Log(Convert.ToDouble(new Regex(@"\d+").Match(x).Value.Substring(0)), 2));
                             }
                             GF = 1;

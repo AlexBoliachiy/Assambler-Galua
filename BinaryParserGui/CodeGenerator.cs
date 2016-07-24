@@ -36,7 +36,7 @@ namespace BinaryParserGui
         Stack<int> closingValue = new Stack<int>();
         public int rowCountData = 0;
         public Dictionary<int, string> comments = new Dictionary<int, string>();
-
+        public bool gf = false;
         public CodeGenerator(Memory mem)
         {
 
@@ -251,13 +251,17 @@ namespace BinaryParserGui
 
         private void CDP(string R0)
         {
+            if (gf)
+                throw new CompilationException("Не можна використовувати команду CDP при директиві GF(p)");
             outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
-            comments.Add(CurrentLine, "// " + "CDP " + R0 + ", ");
+            comments.Add(CurrentLine, "// " + "CDP " + R0 );
             CurrentLine++;
         }
 
         private void CPD(string R0)
         {
+            if (gf)
+                throw new CompilationException("Не можна використовувати команду CPD при директиві GF(p)");
             outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"  ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
             comments.Add(CurrentLine, "// " + "CPD " + R0 + ", ");
             CurrentLine++;
