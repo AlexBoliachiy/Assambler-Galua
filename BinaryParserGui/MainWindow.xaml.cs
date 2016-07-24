@@ -611,7 +611,7 @@ namespace BinaryParserGui
                                     int index = position.GetTextInRun(LogicalDirection.Forward).IndexOf("*/");
                                     TextRange tr = new TextRange(position, endPosition.GetPositionAtOffset(index + 3));
                                     tr.ApplyPropertyValue(TextElement.ForegroundProperty,
-                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
+                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#C0C0C0")));
 
                                     position = endPosition.GetPositionAtOffset(index);
                                     break;
@@ -656,7 +656,7 @@ namespace BinaryParserGui
                             endPosition = position.GetPositionAtOffset(textRun.Length - 1);
                         TextRange tr = new TextRange(position, endPosition);
                         tr.ApplyPropertyValue(TextElement.ForegroundProperty,
-                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
+                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#C0C0C0")));
                         position = position.GetNextContextPosition(LogicalDirection.Forward);
                     }
                     else

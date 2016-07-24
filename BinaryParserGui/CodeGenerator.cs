@@ -18,7 +18,7 @@ namespace BinaryParserGui
         Regex cpd_regex = new Regex(@"CPD\s+R[0-3]\s*$");
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
-        Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?]\s*,\s*R[0-3]))\s*$"); //
+        Regex mov_array_regex = new Regex(@"OV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
         Regex jmp_regex = new Regex(@"JMP\s+(R[0-3]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|([0-9]{9}))\s*$");
         Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)|([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
@@ -83,42 +83,42 @@ namespace BinaryParserGui
                 {
                     case "ADD": // В оригинале названо add_sub, но в коде почему-то эта команда ни разу не использовалась, так что я назвал её так
                         if (!add_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         ADD(ops[0], ops[1]);
                         break;
                     case "MULT":
                         if (!mult_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         MULT(ops[0], ops[1]);
                         break;
                     case "DIV":
                         if (!div_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         DIV(ops[0], ops[1]);
                         break;
                     case "POW":
                         if (!pow_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  : - " + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         POW(ops[0], ops[1]);
                         break;
                     case "INV_":
                         if (!inv_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         INV_(ops[0]);
                         break;
                     case "CDP":
                         if (!cdp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         CDP(ops[0]);
                         break;
                     case "CPD":
                         if (!cpd_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         CPD(ops[0]);
                         break;
                     case "MOV":
                         if (!mov_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         MOV(ops[0], ops[1]);
                         break;
                     case "MOV_A":
@@ -132,7 +132,7 @@ namespace BinaryParserGui
 
                         if (!success)
                         {
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         }
 
                         break;
@@ -146,42 +146,42 @@ namespace BinaryParserGui
 
                         if (!suc)
                         {
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         }
                         break;
                     case "JMP":
                         if (!jmp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         JMP(ops[0], ops[1]);
                         break;
                     case "LOOP":
                         if (!loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString() + " " + x);
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0]  + " " + x);
                         LOOP(ops[0], ops[1]);
                         break;
                     case "LOAD_CA":
                         if (!load_ca_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         LOAD_CA(ops[0], ops[1]);
                         break;
                     case "LOAD_CA_A":
                         if (!load_ca_a_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         LOAD_CA_A(ops[0], ops[1]);
                         break;
                     case "INC_DEC":
                         if (!inc_dec_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         INC_DEC(ops[0], ops[1]);
                         break;
                     case "OUT":
                         if (!out_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         OUT(ops[0]);
                         break;
                     case "END_LOOP":
                         if (!end_loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка у синтаксисі коду команд, команда номер  :" + (i + rowCountData).ToString());
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер" + (i + rowCountData).ToString() + " Команда" + CurrentCmd[0] );
                         END_LOOP(ops[0]);
                         break;
                     case "/*":

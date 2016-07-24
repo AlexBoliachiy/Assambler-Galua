@@ -15,6 +15,7 @@ namespace BinaryParserGui
     {
         private static Regex CommentLine = new Regex(@"\/\/.*$", RegexOptions.Multiline);
         private static Regex CommentBetweenLine = new Regex(@"\/\*((.*)|)\*\/", RegexOptions.Singleline);
+        private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
         int rowCountData = 0; 
         public Compilator()
         {
@@ -40,11 +41,32 @@ namespace BinaryParserGui
             input_code = CommentBetweenLine.Replace(input_code, string.Empty);
             string[] commands = GetDataSection(input_code);
             int i = 0;
+            int GF = -1;
             foreach (string x in commands)
             {
+
                 if (x != string.Empty)
+                {
+                    if (GF == -1)  // Если м не объявлена ранее 
+                    {
+                        if (gfRegex.IsMatch(x))
+                        {
+                            if (x.Contains("^"))
+                            {
+                                mem.m = Convert.ToInt32(new Regex(@"\^\d+").Match(x).Value.Substring(1));
+                            }
+                            else
+                            {
+                                
+                                mem.m = (int)Math.Ceiling(Math.Log(Convert.ToDouble(new Regex(@"\d+").Match(x).Value.Substring(0)), 2));
+                            }
+                            GF = 1;
+                        }
+                        else throw new CompilationException("С початку повинна йти директива #GF");
+                    }
                     if (!mem.HandleDataString(x))
-                        throw new CompilationException("Деяка помилка трапилася у рядку" + i.ToString());
+                        throw new CompilationException("Деяка помилка трапилася у деклараціЇ " + x);
+                }
                 i++;
             }
             var codeSec = GetCodeSection(input_code);

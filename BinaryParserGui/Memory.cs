@@ -16,7 +16,7 @@ namespace BinaryParserGui
 
     public class Memory
     {
-        private int m = -1;
+        public int m = -1;
         public string output = String.Empty;
         public string output_var = String.Empty;
         public string output_con = String.Empty;
@@ -25,24 +25,44 @@ namespace BinaryParserGui
         private Dictionary<string, int >variables_values = new Dictionary<string, int>(); // Имя переменной : значение
         private Dictionary<string, TYPE> variable_type = new Dictionary<string, TYPE>(); // Имя переменной : тип.
         private Dictionary<string, int> variable_timeAdded = new Dictionary<string, int>(); // Имя перемеенной : какой по счету записанна
-        private PostfixNotationExpression p = new PostfixNotationExpression();
-        private Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))|(b'[0-1]+)|(h'[0-9A-F]+))\s*$");
-        private Regex dec_arr = new Regex(@"^^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)|(b'[0-1]+)|(h'[0-9A-F]+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)|(b'[0-1]+)|(h'[0-9A-F]+))))*\s*\)\s*$");
-        private Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d+)|(h'[0-F]+)|(b'[10]+))\s*$");
-        private Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
-        private Regex varForDec = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
-        private Regex ca = new Regex(@"CA_[0-3]");
-        private Regex expression = new Regex(@"(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)");
+        private static PostfixNotationExpression p = new PostfixNotationExpression();
+        private static Regex dec_con = new Regex(@"^const\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))|(b'[0-1]+)|(h'[0-9A-F]+))\s*$");
+        private static Regex dec_arr = new Regex(@"^^Array\s+[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))*\s*:\s*0\s*\]\s*=\s*\(\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)|(b'[0-1]+)|(h'[0-9A-F]+)))\s*(\s*,\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)|(b'[0-1]+)|(h'[0-9A-F]+))))*\s*\)\s*$");
+        private static Regex dec_var = new Regex(@"^[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((\d+)|(h'[0-F]+)|(b'[10]+))\s*$");
+        private static Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
+        private static Regex varForDec = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
+        private static Regex ca = new Regex(@"CA_[0-3]");
+        private static Regex expression = new Regex(@"(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)");
+        private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
         private int line;
         private int Cons = 0;
         private int Arrs = 0;
         private int Vars = 0;
+        private bool gfMeet = false;
       
 
         public Memory()
         {
-            
+           
         }
+
+        public void Refresh()
+        {
+            gfMeet = false;
+            line = 0;
+            Cons = 0;
+            Arrs = 0;
+            Vars = 0;
+            m = -1;
+            output = string.Empty;
+            output_var = String.Empty;
+            output_con = String.Empty;
+            output_arr = String.Empty;
+            variables_values.Clear();
+            variable_type.Clear();
+            variable_timeAdded.Clear();
+
+        }   
 
         public void Gather()
         {
@@ -99,7 +119,7 @@ namespace BinaryParserGui
                         throw new CompilationException("Допишіть будь ласка значення змінної у команді " + cmd);
                     }
 
-                    if (const_name != "m")
+                   
                     {
                         if (Math.Pow(2, (double)m) - 1 < const_value)
                         {
@@ -116,13 +136,7 @@ namespace BinaryParserGui
                             line++;
                         }
                     }
-                    else
-                    {
-                        if (m == -1)
-                            m = const_value;
-                        else
-                            throw new CompilationException("Повторне об'явлення m");
-                    }
+                    
 
 
                 }
@@ -179,29 +193,31 @@ namespace BinaryParserGui
                         throw new CompilationException("Допишіть будь ласка значення змінної у команді " + cmd);
                     }
                     var var_value = const_value;
-                    if (var_name != "m")
+                    if (Math.Pow(2, (double)m) - 1 < var_value)
                     {
-                        if (Math.Pow(2, (double)m) - 1 < var_value)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-
-                            variables_values.Add(var_name, var_value);
-                            variable_type.Add(var_name, TYPE.vars);
-                            variable_timeAdded.Add(var_name, Vars++);
-                            AddToOutput(var_value, ref output_var);
-                            output_var += " //" + var_name +"\n";
-                            line++;
-
-                        }
+                        return false;
                     }
                     else
                     {
-                        return false; // overflow
+
+                        variables_values.Add(var_name, var_value);
+                        variable_type.Add(var_name, TYPE.vars);
+                        variable_timeAdded.Add(var_name, Vars++);
+                        AddToOutput(var_value, ref output_var);
+                        output_var += " //" + var_name +"\n";
+                        line++;
+
                     }
+                    
+                    
                     return true;
+                }
+                else if (gfRegex.IsMatch(cmd))
+                {
+                    if (gfMeet == false)
+                        gfMeet = true;
+                    else
+                        throw new CompilationException("Потворне объявлення директиви GF");
                 }
                 else
                     return false; // Ошибка в синтаксисе
@@ -263,6 +279,8 @@ namespace BinaryParserGui
                 {
                     throw new CompilationException("Допишіть будь ласка значення змінної у рядку " + line.ToString());
                 }
+                if (Convert.ToString(const_value, 2).Length > m)
+                    throw new CompilationException("При спробі конвертування числа " + const_value.ToString() + " у массиві " + ArrayName + " виникло переповнення ");
                 AddToOutput(const_value, ref output_arr);
                 output_arr += " //" + ArrayName + "\n";
                 line++;
@@ -422,7 +440,9 @@ namespace BinaryParserGui
                             if (ca.IsMatch(match.Value))
                                 continue;
                             try
-                            { 
+                            {
+                                if (Convert.ToString(value, 2).Length > m)
+                                    throw new CompilationException("При спробі конвертування числа " + name + " виникло переповнення ");
                                 variables_values.Add(name, value);
                                 variable_type.Add(name, TYPE.cons);
                                 variable_timeAdded.Add(name, Cons++);
@@ -439,7 +459,7 @@ namespace BinaryParserGui
                     }
                     catch (Exception ex)
                     {
-                        throw new CompilationException("звертання до невиділенної пам'яті");
+                        throw new CompilationException("звертання до невиділенної пам'яті або " + ex.Message);
                     }
 
                 }
