@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Numerics;
+using DigitsPower;
 
 // Иногда студия криво считывает знак "-", почему неизвестно
 namespace BinaryParserGui
@@ -59,11 +61,17 @@ namespace BinaryParserGui
                             else
                             {
                                 codeGenerator.gf = true;
+
+                                BigInteger b = (BigInteger)Convert.ToDouble(new Regex(@"\d+").Match(x).Value.Substring(0));
+                                if (!b.IsProbablePrime())
+                                {
+                                    throw new CompilationException("p повинно бути простим числом !");
+                                }
                                 mem.m = (int)Math.Ceiling(Math.Log(Convert.ToDouble(new Regex(@"\d+").Match(x).Value.Substring(0)), 2));
                             }
                             GF = 1;
                         }
-                        else throw new CompilationException("С початку повинна йти директива #GF");
+                        else throw new CompilationException("Спочатку повинна йти директива #GF");
                     }
                     if (!mem.HandleDataString(x))
                         throw new CompilationException("Деяка помилка трапилася у деклараціЇ " + x);

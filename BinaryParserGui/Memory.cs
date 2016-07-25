@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using DigitsPower;
 
 namespace BinaryParserGui
 {
@@ -131,7 +132,7 @@ namespace BinaryParserGui
                             variable_type.Add(const_name, TYPE.cons);
                             variable_timeAdded.Add(const_name, Cons++);
                             AddToOutput(const_value, ref output_con);
-                            output_con += " //" + const_name + "\n";
+                            output_con += " // " + const_name + "\n";
 
                             line++;
                         }
@@ -204,7 +205,7 @@ namespace BinaryParserGui
                         variable_type.Add(var_name, TYPE.vars);
                         variable_timeAdded.Add(var_name, Vars++);
                         AddToOutput(var_value, ref output_var);
-                        output_var += " //" + var_name +"\n";
+                        output_var += " // " + var_name +"\n";
                         line++;
 
                     }
@@ -282,7 +283,7 @@ namespace BinaryParserGui
                 if (Convert.ToString(const_value, 2).Length > m)
                     throw new CompilationException("При спробі конвертування числа " + const_value.ToString() + " у массиві " + ArrayName + " виникло переповнення ");
                 AddToOutput(const_value, ref output_arr);
-                output_arr += " //" + ArrayName + "\n";
+                output_arr += " // " + ArrayName + "\n";
                 line++;
             }
 
@@ -447,7 +448,7 @@ namespace BinaryParserGui
                                 variable_type.Add(name, TYPE.cons);
                                 variable_timeAdded.Add(name, Cons++);
                                 AddToOutput(Convert.ToInt32(value), ref output_con);
-                                output_con += " //" + name + "\n";
+                                output_con += " // " + name + "\n";
                             }
                             catch (ArgumentException)
                             {

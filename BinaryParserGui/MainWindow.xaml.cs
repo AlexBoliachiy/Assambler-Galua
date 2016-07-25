@@ -667,12 +667,29 @@ namespace BinaryParserGui
             }
         }
 
-
-
-
-
-
-
+        private void MenuItem_Close(object sender, RoutedEventArgs e)
+        {
+            if (!IsSaved)
+            {
+                MessageBoxResult result = MessageBox.Show("Бажаєте зберегти зміни?", "Питанячко", MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                    if (currentfile == String.Empty)
+                        MenuItem_SaveAs(sender, null);
+                    else
+                        MenuItem_Save(sender, null);
+                else if (result == MessageBoxResult.Cancel)
+                    return;
+            }
+            IsSaved = true;
+            currentfile = string.Empty;
+            editor.Document.Blocks.Clear();
+            data.Text = string.Empty;
+            code.Text = string.Empty;
+            dataNum.Text = string.Empty;
+            codeNum.Text = string.Empty;
+            this.Title = "Асемблер Галуа IDE";
+        }
     }
 }
 

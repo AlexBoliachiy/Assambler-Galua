@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using DigitsPower;
 
 namespace BinaryParserGui
 {
@@ -492,7 +493,7 @@ namespace BinaryParserGui
             if (!Int32.TryParse(R0, out r))
                 throw new CompilationException("Значення лічильника циклу або відсутнє або некоректне!");
             if (servedLoopsValue[Convert.ToInt32(R0)])
-                throw new CompilationException("Використання лічильника, що вже використовується та ще незакритий! Номер лічильника:" + R0);
+                throw new CompilationException("Використання лічильника, що вже використовується та ще незакритий! Номер лічильника " + R0);
             outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1) ;
             closingValue.Push(Convert.ToInt32(R0));
             servedLoopsValue[Convert.ToInt32(R0)] = true;
@@ -510,7 +511,7 @@ namespace BinaryParserGui
                 throw new CompilationException("Закриття циклу є, а початку немає (закриття лічильника під номером! " + R0);
             if (closingValue.Pop() != Convert.ToInt32(R0))
             {
-                throw new CompilationException("Несподіваний кінець циклу номер або використання зайнятої змінної лічильника!" + R0);
+                throw new CompilationException("Несподіваний кінець циклу номер або використання зайнятої змінної лічильника! Номер лічильнику " + R0);
             }
             servedLoopsValue[Convert.ToInt32(R0)] = false;
             string str = Convert.ToString(CurrentLine + 2, 2);
@@ -525,7 +526,7 @@ namespace BinaryParserGui
             CurrentOutput--;
             outputs[CurrentOutput] += outputs[CurrentOutput + 1];
             outputs[CurrentOutput + 1] = string.Empty;
-            comments.Add(CurrentLine,"END_LOOP " + R0);
+            comments.Add(CurrentLine,"// END_LOOP " + R0);
             CurrentLine += 2;
         }
 
