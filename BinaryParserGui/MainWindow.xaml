@@ -17,7 +17,7 @@
                 <MenuItem Header="Відкрити" Command="Open"></MenuItem>
                 <MenuItem Header="Зберегти"  Command="Save"></MenuItem>
                 <MenuItem Header="Зберегти як..." Click="MenuItem_SaveAs"/>
-                <MenuItem Header="Закрити файл" Click="MenuItem_Close"/>
+                <MenuItem Header="Закрити файл" InputGestureText="F10" Command="Close" />
                 <Separator></Separator>
                 <MenuItem Header="Вийти" Click="MenuItem_exit"></MenuItem>
             </MenuItem>

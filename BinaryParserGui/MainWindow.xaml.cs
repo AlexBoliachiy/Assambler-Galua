@@ -60,6 +60,11 @@ namespace BinaryParserGui
             this.CommandBindings.Add(bind2);
 
 
+            CommandBinding bind3 = new CommandBinding(ApplicationCommands.Close);
+            bind3.Executed += MenuItem_Close;
+            this.CommandBindings.Add(bind3);
+
+
 
             if (!Properties.Settings.Default.gamma)
             {
@@ -570,6 +575,9 @@ namespace BinaryParserGui
         {
             if (e.Key == Key.F5)
                 MenuItem_Compile(null, null);
+            else if (e.SystemKey == Key.F10)
+                AppClose();
+            
         }
 
 
@@ -669,15 +677,20 @@ namespace BinaryParserGui
 
         private void MenuItem_Close(object sender, RoutedEventArgs e)
         {
+            AppClose();
+        }
+
+        private void AppClose()
+        {
             if (!IsSaved)
             {
                 MessageBoxResult result = MessageBox.Show("Бажаєте зберегти зміни?", "Питанячко", MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                     if (currentfile == String.Empty)
-                        MenuItem_SaveAs(sender, null);
+                        MenuItem_SaveAs(null, null);
                     else
-                        MenuItem_Save(sender, null);
+                        MenuItem_Save(null, null);
                 else if (result == MessageBoxResult.Cancel)
                     return;
             }
@@ -691,6 +704,7 @@ namespace BinaryParserGui
             this.Title = "Асемблер Галуа IDE";
         }
     }
+    
 }
 
  
