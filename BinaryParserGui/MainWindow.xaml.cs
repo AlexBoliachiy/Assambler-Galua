@@ -64,7 +64,7 @@ namespace BinaryParserGui
             bind3.Executed += MenuItem_Close;
             this.CommandBindings.Add(bind3);
 
-
+            
 
             if (!Properties.Settings.Default.gamma)
             {
@@ -100,6 +100,7 @@ namespace BinaryParserGui
 
                 fontColor = Colors.White;
             }
+            editor.IsEnabled = false;
 
         }
 
@@ -149,6 +150,7 @@ namespace BinaryParserGui
         private void MenuItem_Open(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
+            editor.IsEnabled = true;
             dlg.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
             if (dlg.ShowDialog() == true)
             {
@@ -223,6 +225,7 @@ namespace BinaryParserGui
                     data.Text = string.Empty;
                     tr.Text = string.Empty;
                     code.Text = string.Empty;
+                    editor.IsEnabled = true;
                 }
                 else if (result == MessageBoxResult.No)
                 {
@@ -231,6 +234,7 @@ namespace BinaryParserGui
                     currentfile = string.Empty;
                     data.Text = string.Empty;
                     code.Text = string.Empty;
+                    editor.IsEnabled = true;
                 }
                 else if (result == MessageBoxResult.Cancel)
                     return;
@@ -244,6 +248,7 @@ namespace BinaryParserGui
                 data.Text = string.Empty;
                 code.Text = string.Empty;
                 this.Title = "New file - " + "Асемблер Галуа IDE";
+                editor.IsEnabled = true;
             }
         }
 
@@ -702,6 +707,8 @@ namespace BinaryParserGui
             dataNum.Text = string.Empty;
             codeNum.Text = string.Empty;
             this.Title = "Асемблер Галуа IDE";
+            editor.IsEnabled = false;
+            IsSaved = true;
         }
     }
     
