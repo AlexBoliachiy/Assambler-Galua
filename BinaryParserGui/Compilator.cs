@@ -102,18 +102,24 @@ namespace BinaryParserGui
 
         public string GetCodeWithComments()
         {
-             
-            string[] codeSplit = GetCode().Split('\n');
-            foreach (KeyValuePair<int, string> x in codeGenerator.comments)
+            try
             {
-                codeSplit[x.Key] += " " + x.Value ;
+                string[] codeSplit = GetCode().Split('\n');
+                foreach (KeyValuePair<int, string> x in codeGenerator.comments)
+                {
+                    codeSplit[x.Key] += " " + x.Value;
+                }
+                string codeWithComments = string.Empty;
+                foreach (string x in codeSplit)
+                {
+                    codeWithComments += x + "\n";
+                }
+                return codeWithComments;
             }
-            string codeWithComments = string.Empty;
-            foreach (string x in codeSplit)
+            catch(IndexOutOfRangeException )
             {
-                codeWithComments += x + "\n";
+                throw new CompilationException("Здається, присутні неазакриті цикли. Закрийте їх та спробуйте ще раз");
             }
-            return codeWithComments;
         }
 
 
