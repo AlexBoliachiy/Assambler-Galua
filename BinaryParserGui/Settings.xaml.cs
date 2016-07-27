@@ -27,6 +27,7 @@ namespace BinaryParserGui
             ide = window;
             IsGammaBlack.IsChecked = Properties.Settings.Default.gamma;
             Acompilation.IsChecked = Properties.Settings.Default.Acomp;
+            TextHiglight.IsChecked = ide.SyntaxHighlite;
         }
 
         private void IsWriteFile_Checked(object sender, RoutedEventArgs e)
@@ -43,6 +44,7 @@ namespace BinaryParserGui
         {
             ide.write = (bool) IsWriteFile.IsChecked;
             ide.Acomp = (bool)Acompilation.IsChecked;
+            ide.SyntaxHighlite = (bool)TextHiglight.IsChecked;
             if (IsGammaBlack.IsChecked != Properties.Settings.Default.gamma)
             {
                 Properties.Settings.Default.gamma = !Properties.Settings.Default.gamma;

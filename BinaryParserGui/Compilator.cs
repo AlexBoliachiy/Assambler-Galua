@@ -29,9 +29,10 @@ namespace BinaryParserGui
 
         public void Refresh()
         {
-            mem = new Memory();
-            codeGenerator = new CodeGenerator(mem);
+            mem.Refresh();
             rowCountData = 0;
+            codeGenerator = new CodeGenerator(mem);
+            
         }
 
 
@@ -82,7 +83,6 @@ namespace BinaryParserGui
             mem.AddAllConstFromCodeSection(codeSec);
             mem.Gather();
             codeGenerator.HandleCodeSection(codeSec);
-            PrintCodeHuman(codeGenerator.Code);
             return true;
 
         }

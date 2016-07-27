@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 //262626
 
@@ -35,14 +36,17 @@ namespace BinaryParserGui
         private string prevText = string.Empty;
         private Color fontColor;
         public bool write = false;
+        public bool SyntaxHighlite = true;
         public bool Acomp { get; set; }
         public static RoutedCommand Undo = new RoutedCommand();
         private Regex comment = new Regex(@"\/\/.*$", RegexOptions.Multiline);
-
+        private Stopwatch stopWatch = new Stopwatch(); // using for drawing text only when user stop drawing
+        private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
+        private static BrushConverter br = new BrushConverter();
 
         public IDE()
         {
-
+            stopWatch.Start();
 
             InitializeComponent();
             CommandBinding bind = new CommandBinding(ApplicationCommands.Save);
@@ -86,11 +90,11 @@ namespace BinaryParserGui
 
             else
             {
-                editor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"));
-                code.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
-                data.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
-                dataNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
-                codeNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                editor.Background = (SolidColorBrush)(br.ConvertFrom("#262626"));
+                code.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
+                data.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
+                dataNum.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
+                codeNum.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
 
                 editor.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
                 code.Foreground = new SolidColorBrush(Colors.Wheat);
@@ -129,11 +133,11 @@ namespace BinaryParserGui
 
             else
             {
-                editor.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#262626"));
-                code.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
-                data.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
-                dataNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
-                codeNum.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#292929"));
+                editor.Background = (SolidColorBrush)(br.ConvertFrom("#262626"));
+                code.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
+                data.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
+                dataNum.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
+                codeNum.Background = (SolidColorBrush)(br.ConvertFrom("#292929"));
 
                 editor.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
                 code.Foreground = new SolidColorBrush(Colors.Wheat);
@@ -160,7 +164,8 @@ namespace BinaryParserGui
                 FileStream fileStream = new FileStream(dlg.FileName, FileMode.Open);
                 TextRange range = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
                 range.Load(fileStream, DataFormats.Text);
-                PaintEditor();
+                if (SyntaxHighlite) // Если включена подсветка синтаксиса
+                    PaintEditor();
                 IsSaved = true;
                 this.Title = dlg.FileName.Substring(dlg.FileName.LastIndexOf("\\") + 1);
                 w.Close();
@@ -299,6 +304,8 @@ namespace BinaryParserGui
                        code.Text = cmp.GetCode();
                    }
                }), DispatcherPriority.SystemIdle);
+            
+
 
         }
 
@@ -331,8 +338,16 @@ namespace BinaryParserGui
             isPainting = true;
 
 
+
             TextRange tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
             tr.ApplyPropertyValue(TextElement.ForegroundProperty, new SolidColorBrush(fontColor));
+
+            if (!SyntaxHighlite)
+            {
+                isPainting = false;
+                return;
+            }
+            FillGF();
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("MOV_A", "#2e95e8");
             FillWordFromPosition("MOV", "#2e95e8");
@@ -382,7 +397,7 @@ namespace BinaryParserGui
                         endPosition = position.GetPositionAtOffset(word.Length);
                         TextRange colouringText = new TextRange(position, endPosition);
                         colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
-                            (SolidColorBrush)(new BrushConverter().ConvertFrom(color)));
+                            (SolidColorBrush)(br.ConvertFrom(color)));
                     }
                     position = position.GetNextContextPosition(LogicalDirection.Forward);
                 }
@@ -391,6 +406,35 @@ namespace BinaryParserGui
             }
 
 
+        }
+        private void FillGF()
+        {
+            TextPointer position = editor.Document.ContentStart;
+            TextPointer endPosition = null;
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
+
+                    // Find the starting index of any substring that matches "word".
+                    int indexInRun = textRun.IndexOf("#GF");
+                    
+                    if (indexInRun >= 0 && gfRegex.IsMatch(textRun))
+                    {
+                        
+                        position = position.GetPositionAtOffset(indexInRun);
+                        endPosition = position.GetPositionAtOffset(gfRegex.Match(textRun).Length);
+                        TextRange colouringText = new TextRange(position, endPosition);
+                        colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
+                            (SolidColorBrush)(br.ConvertFrom("#FC0FC0")));
+                        return;
+                    }
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+                }
+                else
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
         }
 
         private int CountTabulation() // Считает, сколько табуляций должно автоматически дописываться
@@ -410,7 +454,6 @@ namespace BinaryParserGui
 
         private void editor_KeyUp(object sender, KeyEventArgs e)
         {
-
             var tr = new TextRange(editor.Document.ContentStart, editor.CaretPosition);
             if (e.Key == Key.Enter)
             {
@@ -424,15 +467,15 @@ namespace BinaryParserGui
             }
             else if (e.Key == Key.Tab)
                 editor.CaretPosition.InsertTextInRun("\t");
-            else if (e.Key == Key.Back)
-            {
-                //HandleRemovedTabulation(tr.Text);
-            }
-            PaintEditor();
-
-
-
-
+            StatusBar.Content += "Cur TIme " + stopWatch.ElapsedMilliseconds.ToString();
+            //stopWatch.Stop();
+            if (stopWatch.ElapsedMilliseconds > 2000 && SyntaxHighlite)
+                PaintEditor();
+            else return;
+            
+            stopWatch.Reset();
+            stopWatch.Start();
+           
 
         }
 
@@ -440,7 +483,7 @@ namespace BinaryParserGui
 
         private void editor_KeyDown(object sender, KeyEventArgs e)
         {
-
+            
         }
 
         private void removeTabNearEndLoop()
@@ -582,6 +625,8 @@ namespace BinaryParserGui
                 MenuItem_Compile(null, null);
             else if (e.SystemKey == Key.F10)
                 AppClose();
+            else if (e.SystemKey == Key.F7)
+                SyntaxHighlite = !SyntaxHighlite;
             
         }
 
@@ -609,7 +654,7 @@ namespace BinaryParserGui
                             int index = position.GetTextInRun(LogicalDirection.Forward).IndexOf("*/");
                             TextRange tr = new TextRange(position, position.GetPositionAtOffset(index + 2));
                             tr.ApplyPropertyValue(TextElement.ForegroundProperty,
-                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#00FF00")));
+                                    (SolidColorBrush)(br.ConvertFrom("#00FF00")));
                             position = position.GetNextContextPosition(LogicalDirection.Forward);
                             continue;
                         }
@@ -624,7 +669,7 @@ namespace BinaryParserGui
                                     int index = position.GetTextInRun(LogicalDirection.Forward).IndexOf("*/");
                                     TextRange tr = new TextRange(position, endPosition.GetPositionAtOffset(index + 3));
                                     tr.ApplyPropertyValue(TextElement.ForegroundProperty,
-                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#C0C0C0")));
+                                    (SolidColorBrush)(br.ConvertFrom("#C0C0C0")));
 
                                     position = endPosition.GetPositionAtOffset(index);
                                     break;
@@ -669,7 +714,7 @@ namespace BinaryParserGui
                             endPosition = position.GetPositionAtOffset(textRun.Length - 1);
                         TextRange tr = new TextRange(position, endPosition);
                         tr.ApplyPropertyValue(TextElement.ForegroundProperty,
-                                    (SolidColorBrush)(new BrushConverter().ConvertFrom("#C0C0C0")));
+                                    (SolidColorBrush)(br.ConvertFrom("#C0C0C0")));
                         position = position.GetNextContextPosition(LogicalDirection.Forward);
                     }
                     else
@@ -707,6 +752,7 @@ namespace BinaryParserGui
             dataNum.Text = string.Empty;
             codeNum.Text = string.Empty;
             this.Title = "Асемблер Галуа IDE";
+            this.StatusBar.Content = String.Empty;
             editor.IsEnabled = false;
             IsSaved = true;
         }

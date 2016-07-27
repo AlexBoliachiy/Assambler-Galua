@@ -194,6 +194,10 @@ namespace BinaryParserGui
                 }
                 i++;
             }
+            if (closingValue.Count != 0)
+            {
+                throw new CompilationException("Наявний незакритий цикл з лічільником номер " + closingValue.Pop());
+            }
         }
         private string[] GetOperands(string raw)
         {
