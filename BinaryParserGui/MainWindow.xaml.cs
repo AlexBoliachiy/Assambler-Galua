@@ -467,7 +467,6 @@ namespace BinaryParserGui
             }
             else if (e.Key == Key.Tab)
                 editor.CaretPosition.InsertTextInRun("\t");
-            StatusBar.Content += "Cur TIme " + stopWatch.ElapsedMilliseconds.ToString();
             //stopWatch.Stop();
             if (stopWatch.ElapsedMilliseconds > 2000 && SyntaxHighlite)
                 PaintEditor();
