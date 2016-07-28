@@ -580,7 +580,8 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
-            //codeNum.Text += "  " + lines.ToString() + "\n";
+            if (code.Text[code.Text.Length - 1] !='\n')
+                codeNum.Text += "  " + lines.ToString() + "\n";
 
 
         }
@@ -597,6 +598,7 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
+            
         }
 
         private void editor_SelectionChanged(object sender, RoutedEventArgs e)
