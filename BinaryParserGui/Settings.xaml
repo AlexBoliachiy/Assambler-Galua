@@ -17,7 +17,7 @@
         <CheckBox Name="IsWriteFile" Checked="IsWriteFile_Checked" Unchecked="IsWriteFile_Unchecked">писати вивід до файлів</CheckBox>
         <CheckBox Name="IsGammaBlack" Checked="IsGammaBlack_Checked" Unchecked="IsGammaBlack_Unchecked">спецiльний дизайнерський iнтерфейс</CheckBox>
         <CheckBox Name="Acompilation"> динамічна компліляція</CheckBox>
-        <CheckBox Name="TextHiglight" IsChecked="True"> підсвітка синтаксису</CheckBox>
+        <CheckBox Name="TextHiglight" IsChecked="True"> підсвітка синтаксису (F7)</CheckBox>
 
     </StackPanel>
 </Window>

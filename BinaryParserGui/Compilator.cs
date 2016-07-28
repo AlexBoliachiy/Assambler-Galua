@@ -75,7 +75,7 @@ namespace BinaryParserGui
                         else throw new CompilationException("Спочатку повинна йти директива #GF");
                     }
                     if (!mem.HandleDataString(x))
-                        throw new CompilationException("Деяка помилка трапилася у деклараціЇ " + x);
+                        throw new CompilationException("Деяка помилка трапилася в описі даних " + x);
                 }
                 i++;
             }

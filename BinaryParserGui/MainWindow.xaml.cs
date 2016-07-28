@@ -105,6 +105,7 @@ namespace BinaryParserGui
                 fontColor = Colors.White;
             }
             editor.IsEnabled = false;
+            Acomp = Properties.Settings.Default.Acomp;
 
         }
 
@@ -148,6 +149,8 @@ namespace BinaryParserGui
 
                 fontColor = Colors.White;
             }
+
+            
 
 
         }
@@ -301,7 +304,7 @@ namespace BinaryParserGui
                    if (suc == true)
                    {
                        data.Text = cmp.mem.output;
-                       code.Text = cmp.GetCode();
+                       code.Text = cmp.GetCodeWithComments();
                    }
                }), DispatcherPriority.SystemIdle);
             
@@ -624,7 +627,7 @@ namespace BinaryParserGui
                 MenuItem_Compile(null, null);
             else if (e.SystemKey == Key.F10)
                 AppClose();
-            else if (e.SystemKey == Key.F7)
+            else if (e.Key == Key.F7)
                 SyntaxHighlite = !SyntaxHighlite;
             
         }

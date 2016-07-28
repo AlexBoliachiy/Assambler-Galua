@@ -241,7 +241,7 @@ namespace BinaryParserGui
 
             if (variable_type.ContainsKey(ArrayName))
             {
-                throw new CompilationException("Спроба створити массив з вже викоростаним именем");
+                throw new CompilationException("Спроба створити массив з вже викоростаним ім'ям");
             }
             
             decimal lenght = GetLenghtExp(chars[1]);
@@ -253,7 +253,12 @@ namespace BinaryParserGui
                 CntOfVal--;
             if (CntOfVal - 3 != lenght)
             {
-                throw new CompilationException("не усі комірки масива заповнені");
+                string message;
+                if (CntOfVal - 3 > lenght)
+                    message = "Переповнення масиву значеннями";
+                else
+                    message = "Не усі комірки массива заповнені";
+                throw new CompilationException(message);
             }
 
             for (i = 3; i < CntOfVal; i++)
@@ -303,7 +308,7 @@ namespace BinaryParserGui
                 }
                 catch (Exception ex)
                 {
-                    throw new CompilationException("звертання до неіснуючої змінної");
+                    throw new CompilationException("Звертання до неіснуючої змінної");
                 }
                 
             }
@@ -349,7 +354,7 @@ namespace BinaryParserGui
             name = name.Replace("\t", string.Empty);
             if ( !variable_type.ContainsKey(name))
             {
-                throw new CompilationException(" спроба отримати адресу неіснуючої зміної");
+                throw new CompilationException(" Спроба отримати адресу неіснуючої зміної");
             }
 
             switch (variable_type[name])
@@ -377,7 +382,7 @@ namespace BinaryParserGui
         {
             if (!variable_type.ContainsKey(name))
             {
-                throw new CompilationException(" спроба отримати адресу неіснуючої зміної");
+                throw new CompilationException(" Спроба отримати адресу неіснуючої зміної ");
             }
             else
                 return variable_type[name];
@@ -387,7 +392,7 @@ namespace BinaryParserGui
             string[] out_split = output.Split('\n');
             if (adress >= out_split.Length)
             {
-                throw new CompilationException("звертання до невиділенної пам'яті");
+                throw new CompilationException("звертання до невиділенної пам'яті ");
             }
             else
                 return out_split[adress];
@@ -398,7 +403,7 @@ namespace BinaryParserGui
             string[] out_split = output.Split('\n');
             if (Convert.ToInt32(adress, 2) >= out_split.Length)
             {
-                throw new CompilationException("звертання до невиділенної пам'яті");
+                throw new CompilationException("звертання до невиділенної пам'яті" );
             }
             else
                 return out_split[Convert.ToInt32(adress, 2)];
@@ -460,7 +465,7 @@ namespace BinaryParserGui
                     }
                     catch (Exception ex)
                     {
-                        throw new CompilationException("звертання до невиділенної пам'яті або " + ex.Message);
+                        throw new CompilationException("Звертання до невиділенної пам'яті або " + ex.Message);
                     }
 
                 }
