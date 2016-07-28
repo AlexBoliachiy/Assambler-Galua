@@ -241,7 +241,7 @@ namespace BinaryParserGui
 
             if (variable_type.ContainsKey(ArrayName))
             {
-                throw new CompilationException("Спроба створити массив з вже викоростаним ім'ям");
+                throw new CompilationException("Спроба створити масив з вже використаним ім'ям");
             }
             
             decimal lenght = GetLenghtExp(chars[1]);
