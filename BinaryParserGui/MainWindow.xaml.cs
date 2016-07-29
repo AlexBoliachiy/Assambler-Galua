@@ -234,6 +234,7 @@ namespace BinaryParserGui
                     tr.Text = string.Empty;
                     code.Text = string.Empty;
                     editor.IsEnabled = true;
+                    this.Title = "New file - " + "Асемблер Галуа IDE";
                 }
                 else if (result == MessageBoxResult.No)
                 {
@@ -243,6 +244,7 @@ namespace BinaryParserGui
                     data.Text = string.Empty;
                     code.Text = string.Empty;
                     editor.IsEnabled = true;
+                    this.Title = "New file - " + "Асемблер Галуа IDE";
                 }
                 else if (result == MessageBoxResult.Cancel)
                     return;
@@ -580,7 +582,7 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
-            if (code.Text[code.Text.Length - 1] !='\n')
+            if (code.Text.Length - 1 != -1 && code.Text[code.Text.Length - 1] !='\n')
                 codeNum.Text += "  " + lines.ToString() + "\n";
 
 

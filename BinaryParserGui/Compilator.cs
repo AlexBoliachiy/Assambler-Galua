@@ -96,7 +96,8 @@ namespace BinaryParserGui
                 
                 raw = raw.Insert(i, "\n");
             }
-            raw = raw.Substring(1);
+            if (raw.Length != 0)
+                raw = raw.Substring(1);
             return raw;
         }
 
