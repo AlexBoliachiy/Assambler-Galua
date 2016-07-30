@@ -1,5 +1,5 @@
-DATA
 #GF(2^4)
+DATA
 const m = 4 
 
 const some_variable_for_test = 5

@@ -77,7 +77,7 @@ namespace BinaryParserGui
         public bool HandleDataString(string cmd)
         {
             cmd.Trim(); //Remove extra whitespaces
-            string[] cmd_split = cmd.Split(' ');
+            string[] cmd_split = cmd.Split(new char[] { ' ', '=' } , StringSplitOptions.RemoveEmptyEntries);
             if (cmd_split[0] == "const")
             {
 
@@ -90,12 +90,8 @@ namespace BinaryParserGui
                     string const_name = cmd_split[1];
                     if (variable_type.ContainsKey(const_name))
                         return false;
-                    int offset = 0;
-                    if (cmd_split[2] != "=")
-                    {
-                        offset = 1;
-                        cmd_split[2] = cmd_split[2].Replace("=", string.Empty);
-                    }
+                    int offset = 1;
+                    
                     int const_value = -1;
                     try
                     {
@@ -164,12 +160,8 @@ namespace BinaryParserGui
                 {
                     //Добавляем переменную и её значение в variables
                     //Добавляем в output данные
-                    int offset = 0;
-                    if (cmd_split[1] != "=")
-                    {
-                        offset = 1;
-                        cmd_split[2] = cmd_split[1].Replace("=", string.Empty);
-                    }
+                    int offset = 1;
+                   
                     string var_name = cmd_split[0];
                     if (variable_type.ContainsKey(var_name))
                         return false;
@@ -212,13 +204,6 @@ namespace BinaryParserGui
                     
                     
                     return true;
-                }
-                else if (gfRegex.IsMatch(cmd))
-                {
-                    if (gfMeet == false)
-                        gfMeet = true;
-                    else
-                        throw new CompilationException("Потворне объявлення директиви GF");
                 }
                 else
                     return false; // Ошибка в синтаксисе

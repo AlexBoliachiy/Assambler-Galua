@@ -42,40 +42,14 @@ namespace BinaryParserGui
         {
             input_code = CommentLine.Replace(input_code, string.Empty);
             input_code = CommentBetweenLine.Replace(input_code, string.Empty);
-            string[] commands = GetDataSection(input_code);
+            string[] commands = GetDataAndSetGFSection(input_code);
             int i = 0;
-            int GF = -1;
             foreach (string x in commands)
             {
 
-                if (x != string.Empty)
-                {
-                    if (GF == -1)  // Если м не объявлена ранее 
-                    {
-                        if (gfRegex.IsMatch(x))
-                        {
-                            if (x.Contains("^"))
-                            {
-                                mem.m = Convert.ToInt32(new Regex(@"\^\d+").Match(x).Value.Substring(1));
-                                codeGenerator.gf = false;
-                            }
-                            else
-                            {
-                                codeGenerator.gf = true;
-
-                                BigInteger b = (BigInteger)Convert.ToDouble(new Regex(@"\d+").Match(x).Value.Substring(0));
-                                if (!b.IsProbablePrime())
-                                {
-                                    throw new CompilationException("p повинно бути простим числом !");
-                                }
-                                mem.m = (int)Math.Ceiling(Math.Log(Convert.ToDouble(new Regex(@"\d+").Match(x).Value.Substring(0)), 2));
-                            }
-                            GF = 1;
-                        }
-                        else throw new CompilationException("Спочатку повинна йти директива #GF");
-                    }
-                    if (!mem.HandleDataString(x))
-                        throw new CompilationException("Деяка помилка трапилася в описі даних " + x);
+                if (x != string.Empty && !mem.HandleDataString(x))
+                {    
+                    throw new CompilationException("Деяка помилка трапилася в описі даних " + x);
                 }
                 i++;
             }
@@ -139,7 +113,7 @@ namespace BinaryParserGui
         }
 
 
-        private string[] GetDataSection(string code)
+        private string[] GetDataAndSetGFSection(string code) // Получить секцию Дата и попутно установить размерность поля
         {
 
             code = code.Replace("\t", string.Empty);
@@ -150,12 +124,37 @@ namespace BinaryParserGui
             int m = 0;
             string bar = data[m].Replace(" ", string.Empty);
             bar = bar.Replace("\t", string.Empty);
-            
+            int GF = -1;
             try
             {
+               
                 while (bar != "DATA")
                 {
-                    if (bar != string.Empty && bar != "DATA")
+
+                    if (GF == -1 && gfRegex.IsMatch(bar))  // Если м не объявлена ранее 
+                    {
+
+                        if (bar.Contains("^"))
+                        {
+                            mem.m = Convert.ToInt32(new Regex(@"\^\d+").Match(bar).Value.Substring(1));
+                            codeGenerator.gf = false;
+                        }
+                        else
+                        {
+                            codeGenerator.gf = true;
+
+                            BigInteger b = (BigInteger)Convert.ToDouble(new Regex(@"\d+").Match(bar).Value.Substring(0));
+                            if (!b.IsProbablePrime())
+                            {
+                                throw new CompilationException("p повинно бути простим числом !");
+                            }
+                            mem.m = (int)Math.Ceiling(Math.Log(Convert.ToDouble(new Regex(@"\d+").Match(bar).Value.Substring(0)), 2));
+                        }
+                        GF = 1;
+                    }
+                    else if (GF != -1 && gfRegex.IsMatch(bar)) 
+                        throw new CompilationException("Повторна об'ява директиви GF");
+                    else if (bar != string.Empty && bar != "DATA")
                         throw new CompilationException("Найпершою командою повина бути об'явлення секцii DATA");
                     m++;                  
                     bar = data[m].Replace(" ", string.Empty);
@@ -173,7 +172,8 @@ namespace BinaryParserGui
             {
                 throw new CompilationException("Не вистачає ключевих слiв (DATA/CODE)");
             }
-            
+            if (GF == -1)
+                throw new CompilationException("Відсутня директива GF (вона повина йти перед початком секції даних)");
             return out_data.ToArray();
         }
 

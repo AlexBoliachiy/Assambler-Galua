@@ -106,7 +106,7 @@ namespace BinaryParserGui
             }
             editor.IsEnabled = false;
             Acomp = Properties.Settings.Default.Acomp;
-
+            IsSaved = true;
         }
 
 
@@ -204,6 +204,7 @@ namespace BinaryParserGui
                 SaveCode(dlg.FileName);
             }
             currentfile = dlg.FileName;
+            this.Title = currentfile;
         }
 
         private void SaveCode(string FileName)
