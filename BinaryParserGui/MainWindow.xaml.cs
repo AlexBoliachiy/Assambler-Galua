@@ -107,6 +107,8 @@ namespace BinaryParserGui
             editor.IsEnabled = false;
             Acomp = Properties.Settings.Default.Acomp;
             IsSaved = true;
+            editor.Document.PageWidth = 10000;
+            editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
         }
 
 
