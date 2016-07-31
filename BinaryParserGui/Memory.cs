@@ -35,6 +35,7 @@ namespace BinaryParserGui
         private static Regex ca = new Regex(@"CA_[0-3]");
         private static Regex expression = new Regex(@"(((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+)))\s*(\s*[+\-*/]\s*((([A-za-z_]+[A-Z_a-z0-9]*)|(\d+))))+)|(h'[0-F]+)|(b'[01]+)");
         private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
+        private static Regex LOOP_CONSTS = new Regex(@"^\s*LOOP\s+[0-3]\s*,\s*\d+\s*$");
         private int line;
         private int Cons = 0;
         private int Arrs = 0;
@@ -394,6 +395,7 @@ namespace BinaryParserGui
 
         public bool AddAllConstFromCodeSection(string[] Code)
         {
+            GetSomeLoopConstants(Code);
             foreach (string x in Code)
             {
                 if (x.Contains("LOAD_CA_A")) // Если эта команда, то добавлять значения в память небезопасно. Так что тут указывать исключительно 9-байтовые значения
@@ -454,6 +456,27 @@ namespace BinaryParserGui
                 }
             }
             return true;
+        }
+        /// <summary>
+        /// Считывает с секции кода константы типа простых чисел. Например LOOP 1, 2 ; LOOP 0, 16
+        /// </summary>
+        public void GetSomeLoopConstants(string[] Code)
+        {
+            foreach (string x in Code)
+            {
+                if (LOOP_CONSTS.IsMatch(x))
+                {
+                    string str = x.Replace(" ", string.Empty);
+                    str = str.Substring(str.IndexOf(",") + 1);
+                    string name = str;
+                    int value = Convert.ToInt32(str);
+                    variables_values.Add(name, value);
+                    variable_type.Add(name, TYPE.cons);
+                    variable_timeAdded.Add(name, Cons++);
+                    AddToOutput(Convert.ToInt32(value), ref output_con);
+                    output_con += " // " + x + "\n";
+                }
+            }
         }
         
 
