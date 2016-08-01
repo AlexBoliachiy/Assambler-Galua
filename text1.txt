@@ -3,15 +3,15 @@ DATA
 const m = 4 
 
 const some_variable_for_test = 5
-const pow_A = 5
+const pow_A = 6
 
-const pow_B = 4 
+const pow_B = 5
 
-Array A [pow_A:0] = (12, 15, 1, 0, 7, 11) 
+Array A [pow_A] = (12, 15, 1, 0, 7, 11) 
 
-Array B [pow_B:0] = (7, 1, 4, 3, 10)
+Array B [pow_B] = (7, 1, 4, 3, 10)
 
-Array C [pow_A+pow_B:0] = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+Array C [pow_A+pow_B] = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 
 CODE
