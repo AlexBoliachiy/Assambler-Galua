@@ -394,7 +394,7 @@ namespace BinaryParserGui
         /// На вход подается сложное выражение, которое может содержать как десятичные, так и бинарные и хекс значения и переменные. На выходе получаем целое число
         /// </summary>
         /// <returns>Int</returns>
-        private int ExpressionToInt(string expr)
+        public int ExpressionToInt(string expr)
         {
             Regex bin = new Regex(@"b'[01]+");
             Regex hex = new Regex(@"h'[0-F]");

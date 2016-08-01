@@ -22,7 +22,29 @@
                 <MenuItem Header="Вийти" Click="MenuItem_exit"></MenuItem>
             </MenuItem>
             <MenuItem Header="Компілювати" Click="MenuItem_Compile" />
-            <MenuItem Header="Налаштування" Click="MenuItem_Settings"></MenuItem>
+            <MenuItem Header="Налаштування">
+                <MenuItem  Header="писати вивід до файлів" Click="Settings_Write">
+                    <MenuItem.Icon >
+                        <Image Name="WriteImage" Source="icon.ico"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="спецiльний дизайнерський iнтерфейс" Click="Settings_interface">
+                    <MenuItem.Icon >
+                        <Image Name="InterfaceIcon" Source="icon.ico"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="динамічна компіляція" Click="Settings_Acomp">
+                    <MenuItem.Icon >
+                        <Image Name="AcompIcon" Source="icon.ico"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="підсвітка синтаксису (F7)" Click="Settings_SyntaxHighlight">
+                    <MenuItem.Icon >
+                        <Image Name="SyntaxHighliteIcon" Source="icon.ico"></Image>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
         </Menu>
         <RichTextBox Name="editor" Grid.Column="1" Grid.Row="1" TextChanged="editor_TextChanged"  SelectionChanged="editor_SelectionChanged" 
                      FontFamily="Consolas" KeyUp="editor_KeyUp" KeyDown="editor_KeyDown" IsUndoEnabled="True" UndoLimit="10">

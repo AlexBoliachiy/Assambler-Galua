@@ -109,6 +109,10 @@ namespace BinaryParserGui
             IsSaved = true;
             editor.Document.PageWidth = 10000;
             editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
+            WriteImage.Visibility = Visibility.Hidden;
+            AcompIcon.Visibility = Properties.Settings.Default.Acomp ? Visibility.Visible : Visibility.Hidden;
+            InterfaceIcon.Visibility = Properties.Settings.Default.gamma ? Visibility.Visible : Visibility.Hidden;
+            SyntaxHighliteIcon.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
         }
 
 
@@ -476,7 +480,7 @@ namespace BinaryParserGui
             else if (e.Key == Key.Tab)
                 editor.CaretPosition.InsertTextInRun("\t");
             //stopWatch.Stop();
-            if (stopWatch.ElapsedMilliseconds > 2000 && SyntaxHighlite)
+            if (stopWatch.ElapsedMilliseconds > 2000 )
                 PaintEditor();
             else return;
             
@@ -567,12 +571,7 @@ namespace BinaryParserGui
 
         }
 
-        private void MenuItem_Settings(object sender, RoutedEventArgs e)
-        {
-
-            Settings s = new Settings(write, this);
-            s.Show();
-        }
+     
         private void code_TextChanged(object sender, TextChangedEventArgs e)
         {
             int lines = 0;
@@ -764,6 +763,32 @@ namespace BinaryParserGui
             this.StatusBar.Content = String.Empty;
             editor.IsEnabled = false;
             IsSaved = true;
+        }
+
+        private void Settings_Write(object sender, RoutedEventArgs e) //Default: turn off
+        {
+            write = ! write;
+            WriteImage.Visibility = write ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void Settings_interface(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.gamma = ! Properties.Settings.Default.gamma;
+            InterfaceChange(Properties.Settings.Default.gamma);
+            InterfaceIcon.Visibility = Properties.Settings.Default.gamma ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void Settings_SyntaxHighlight(object sender, RoutedEventArgs e) //Default: turn on
+        {
+            SyntaxHighlite = ! SyntaxHighlite;
+            WriteImage.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void Settings_Acomp(object sender, RoutedEventArgs e)
+        {
+            Acomp = ! Acomp;
+            WriteImage.Visibility = write ? Visibility.Visible : Visibility.Hidden;
+            Properties.Settings.Default.Acomp = Acomp;
         }
     }
     

@@ -19,12 +19,12 @@ namespace BinaryParserGui
         Regex cpd_regex = new Regex(@"CPD\s+R[0-3]\s*$");
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
-        Regex mov_array_regex = new Regex(@"OV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
+        Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
         Regex jmp_regex = new Regex(@"JMP\s+(R[0-3]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|([0-9]{9}))\s*$");
-        Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$$");
+        Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
         Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
-        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*((b'[0-1]+)|(h'[0-F]+)|(\d+))\s*$");
+        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex inc_dec_regex = new Regex(@"INC_DEC\s+((CA_)|(R))[0-3]\s*,\s*[0-1]\s*$");
         Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
         string output;
@@ -406,21 +406,8 @@ namespace BinaryParserGui
             int i = Convert.ToInt32(R0[3].ToString());
             string CA = ConvertToBinary(i, 2);
             string A = string.Empty;
-            int Aint = -1;
-            try {
-                if (char.IsDigit(R1[0]))
-                    Aint= Convert.ToInt32(R1);
-                else if (R1.Remove(2) == "b'") // Binary number
-                    Aint = Convert.ToInt32(R1.Substring(2), 2);
-                else if (R1.Remove(2) == "h'") //Hexadecimal number
-                    Aint = Convert.ToInt32(R1.Substring(2), 16);
-                else
-                    throw new CompilationException("Число");
-            }
-                    catch
-            {
-                throw new CompilationException("Допишіть будь ласка значення змінної у команді LOAD_CA_A" + R0 + ", " + R1);
-            }
+            int Aint = mem.ExpressionToInt(R1);
+            
             A = ConvertToBinary(Aint, 9);
             outputs[CurrentOutput] += "1101" + CA + "0" + A ;
             comments.Add(CurrentLine, "// " + "LOAD_CA_A " + R0 + ", " + R1);
