@@ -209,7 +209,7 @@ namespace BinaryParserGui
             for (;i < lenght + 3; i++)
             {
                 AddToOutput(0, ref output_arr);
-                output_arr += " // " + "AUTO " + ArrayName + "[" + (i - 3).ToString() + "]" + "\n";
+                output_arr += " // " + "AUTO " + ArrayName + " [" + (i - 3).ToString() + "]" + "\n";
                 line++;
             }
 

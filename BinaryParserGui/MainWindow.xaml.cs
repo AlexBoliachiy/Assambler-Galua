@@ -782,13 +782,13 @@ namespace BinaryParserGui
         private void Settings_SyntaxHighlight(object sender, RoutedEventArgs e) //Default: turn on
         {
             SyntaxHighlite = ! SyntaxHighlite;
-            WriteImage.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
+            SyntaxHighliteIcon.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void Settings_Acomp(object sender, RoutedEventArgs e)
         {
             Acomp = ! Acomp;
-            WriteImage.Visibility = write ? Visibility.Visible : Visibility.Hidden;
+            AcompIcon.Visibility = Acomp ? Visibility.Visible : Visibility.Hidden;
             Properties.Settings.Default.Acomp = Acomp;
         }
     }
