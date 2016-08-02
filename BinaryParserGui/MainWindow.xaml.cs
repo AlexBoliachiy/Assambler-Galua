@@ -295,6 +295,7 @@ namespace BinaryParserGui
         {
             if (isPainting) // Для избежания рекурсии ( изменяя текст тут, рекурсивно будет вызываться эта же функция)
                 return;
+            
             IsSaved = false;
             if (Acomp)
                 Dispatcher.BeginInvoke((Action)(() =>
@@ -357,6 +358,7 @@ namespace BinaryParserGui
             if (!SyntaxHighlite)
             {
                 isPainting = false;
+                editor.UndoLimit = 100;
                 return;
             }
             FillGF();
@@ -385,7 +387,6 @@ namespace BinaryParserGui
             PaintMultiLaneComments();
             PaintSingleLineComments();
             isPainting = false;
-
 
 
         }
