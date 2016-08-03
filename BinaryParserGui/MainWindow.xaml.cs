@@ -109,10 +109,12 @@ namespace BinaryParserGui
             IsSaved = true;
             editor.Document.PageWidth = 10000;
             editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-            WriteImage.Visibility = Visibility.Hidden;
+            write = Properties.Settings.Default.write;
+            WriteImage.Visibility = Properties.Settings.Default.write ? Visibility.Visible : Visibility.Hidden;
             AcompIcon.Visibility = Properties.Settings.Default.Acomp ? Visibility.Visible : Visibility.Hidden;
             InterfaceIcon.Visibility = Properties.Settings.Default.gamma ? Visibility.Visible : Visibility.Hidden;
             SyntaxHighliteIcon.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
+
         }
 
 
@@ -291,6 +293,7 @@ namespace BinaryParserGui
                 else if (result == MessageBoxResult.Cancel)
                     e.Cancel = true;
             }
+            Properties.Settings.Default.Save();
 
 
 
@@ -564,7 +567,6 @@ namespace BinaryParserGui
             {
                 if (suc == true)
                 {
-                    bool isWrite = false; // Не стирать
                     data.Text = cmp.mem.output;
                     code.Text = cmp.GetCodeWithComments();
                     if (write == true )
@@ -579,15 +581,16 @@ namespace BinaryParserGui
                         {
                             File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
                             File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
-                            string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
-                            MessageBox.Show("Зроблено!\n" + str, "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                            MessageBox.Show("Зроблено!\n" + "Вивід записаний у відповідні файли", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
                         }
-                        
                     }
-                    
+                    else
+                        MessageBox.Show("Зроблено!\n", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
-                    
+
+
+
                 }
 
             }
@@ -788,10 +791,11 @@ namespace BinaryParserGui
             IsSaved = true;
         }
 
-        private void Settings_Write(object sender, RoutedEventArgs e) //Default: turn off
+        private void Settings_Write(object sender, RoutedEventArgs e) 
         {
             write = ! write;
             WriteImage.Visibility = write ? Visibility.Visible : Visibility.Hidden;
+            Properties.Settings.Default.write = write;
         }
 
         private void Settings_interface(object sender, RoutedEventArgs e)

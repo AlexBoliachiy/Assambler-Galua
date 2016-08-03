@@ -46,5 +46,17 @@ namespace BinaryParserGui.Properties {
                 this["Acomp"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool write {
+            get {
+                return ((bool)(this["write"]));
+            }
+            set {
+                this["write"] = value;
+            }
+        }
     }
 }

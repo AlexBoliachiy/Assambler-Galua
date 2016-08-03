@@ -203,7 +203,7 @@ namespace BinaryParserGui
                 if (Convert.ToString(const_value, 2).Length > m)
                     throw new CompilationException("При спробі конвертування числа " + const_value.ToString() + " у массиві " + ArrayName + " виникло переповнення ");
                 AddToOutput(const_value, ref output_arr);
-                output_arr += " // " + ArrayName + "[" + (i-3).ToString() + "]" + "\n";
+                output_arr += " // " + ArrayName + " [" + (i-3).ToString() + "]" + "\n";
                 line++;
             }
             for (;i < lenght + 3; i++)
