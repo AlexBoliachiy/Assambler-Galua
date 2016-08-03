@@ -208,9 +208,14 @@ namespace BinaryParserGui
             if (dlg.ShowDialog() == true)
             {
                 SaveCode(dlg.FileName);
+                currentfile = dlg.FileName;
+                this.Title = currentfile;
             }
-            currentfile = dlg.FileName;
-            this.Title = currentfile;
+            else
+            {
+                currentfile = string.Empty;
+            }
+            
         }
 
         private void SaveCode(string FileName)
@@ -374,7 +379,9 @@ namespace BinaryParserGui
             FillWordFromPosition("MULT", "#2e95e8");
             FillWordFromPosition("DIV", "#2e95e8");
             FillWordFromPosition("POW", "#2e95e8");
-            FillWordFromPosition("INV", "#2e95e8");
+            FillWordFromPosition("INVM", "#2e95e8");
+            FillWordFromPosition("INVA", "#2e95e8");
+            FillWordFromPosition("SUB", "#2e95e8");
             FillWordFromPosition("CDP", "#2e95e8");
             FillWordFromPosition("CPD", "#2e95e8");
            
@@ -537,6 +544,7 @@ namespace BinaryParserGui
             this.Close();
         }
 
+        //код выглядит отвратительно
         private void MenuItem_Compile(object sender, RoutedEventArgs e)
         {
             var tr = new TextRange(editor.Document.ContentStart, editor.Document.ContentEnd);
@@ -559,13 +567,27 @@ namespace BinaryParserGui
                     bool isWrite = false; // Не стирать
                     data.Text = cmp.mem.output;
                     code.Text = cmp.GetCodeWithComments();
-                    if (write == true)
+                    if (write == true )
                     {
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
-                        File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
+                        if (currentfile == string.Empty) //Что бы записывать в файлы нужно сначала сохранить новый файл
+                            MenuItem_SaveAs(null, null);
+                        if (currentfile == string.Empty) //Если имя не поменялось
+                        {
+                            MessageBox.Show("Зроблено!\n" + "Вивід у файли не записаний, так як спочатку файл треба зберегти", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        }
+                        else
+                        {
+                            File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
+                            File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
+                            string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
+                            MessageBox.Show("Зроблено!\n" + str, "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
+                        }
+                        
                     }
-                    string str = write ? "Вивід записаний у відповідні файли" : string.Empty;
-                    MessageBox.Show("Зроблено!\n" + str, "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    
+
+                    
                 }
 
             }

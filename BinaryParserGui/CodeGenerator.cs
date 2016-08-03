@@ -14,7 +14,8 @@ namespace BinaryParserGui
         Regex mult_regex = new Regex(@"MULT\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex div_regex = new Regex(@"DIV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex pow_regex = new Regex(@"POW\s+R[0-3]\s*,\s*R[0-3]\s*$");
-        Regex inv_regex = new Regex(@"INV_\s+R[0-3]\s*$");
+        Regex invm_regex = new Regex(@"INVM\s+R[0-3]\s*$");
+        Regex inva_regex = new Regex(@"INVA\s+R[0-3]\s*$");
         Regex cdp_regex = new Regex(@"CDP\s+R[0-3]\s*$");
         Regex cpd_regex = new Regex(@"CPD\s+R[0-3]\s*$");
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
@@ -27,6 +28,7 @@ namespace BinaryParserGui
         Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex inc_dec_regex = new Regex(@"INC_DEC\s+((CA_)|(R))[0-3]\s*,\s*[0-1]\s*$");
         Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
+        Regex sub_regex = new Regex(@"SUB\s+R[0-3]\s*,\s*R[0-3]\s*$");
         string output;
         Memory mem;
         string[] outputs = new String[5];
@@ -56,7 +58,7 @@ namespace BinaryParserGui
             string binary = Convert.ToString(value, 2);
             if (binary.Length > rank)
             {
-                throw new CompilationException("При конвертуванні числа " +  value.ToString() + " у двійкову послідовність трапилося переповнення");
+                throw new CompilationException("При конвертуванні числа " + value.ToString() + " у двійкову послідовність трапилося переповнення");
             }
             while (binary.Length < rank)
             {
@@ -73,67 +75,67 @@ namespace BinaryParserGui
             {
                 string currentStrCmd = x.Replace("\t", " ");
                 string[] CurrentCmd = currentStrCmd.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if ( CurrentCmd.Length == 0 || CurrentCmd[0] == "CODE" )
+                if (CurrentCmd.Length == 0 || CurrentCmd[0] == "CODE")
                 {
                     i++;
                     continue;
                 }
-                    
+
                 string[] ops = GetOperands(x);
                 switch (CurrentCmd[0])
                 {
                     case "ADD": // В оригинале названо add_sub, но в коде почему-то эта Команда  ни разу не использовалась, так что я назвал её так
                         if (!add_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         ADD(ops[0], ops[1]);
                         break;
                     case "MULT":
                         if (!mult_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         MULT(ops[0], ops[1]);
                         break;
                     case "DIV":
                         if (!div_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         DIV(ops[0], ops[1]);
                         break;
                     case "POW":
                         if (!pow_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         POW(ops[0], ops[1]);
                         break;
-                    case "INV_":
-                        if (!inv_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                    case "INVM":
+                        if (!invm_regex.IsMatch(currentStrCmd))
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         INV_(ops[0]);
                         break;
                     case "CDP":
                         if (!cdp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         CDP(ops[0]);
                         break;
                     case "CPD":
                         if (!cpd_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         CPD(ops[0]);
                         break;
                     case "MOV":
                         if (!mov_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         MOV(ops[0], ops[1]);
                         break;
                     case "MOV_A":
                         bool success = false;
                         if (mov_a_regex.IsMatch(currentStrCmd))
-                        { 
+                        {
                             MOV_A(ops[0], ops[1]);
                             success = true;
                         }
-                        
+
 
                         if (!success)
                         {
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         }
 
                         break;
@@ -147,50 +149,62 @@ namespace BinaryParserGui
 
                         if (!suc)
                         {
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         }
                         break;
                     case "JMP":
                         if (!jmp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         JMP(ops[0], ops[1]);
                         break;
                     case "LOOP":
                         if (!loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]  + " " + x);
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] + " " + x);
                         LOOP(ops[0], ops[1]);
                         break;
                     case "LOAD_CA":
                         if (!load_ca_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         LOAD_CA(ops[0], ops[1]);
                         break;
                     case "LOAD_CA_A":
                         if (!load_ca_a_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         LOAD_CA_A(ops[0], ops[1]);
                         break;
                     case "INC_DEC":
                         if (!inc_dec_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         INC_DEC(ops[0], ops[1]);
                         break;
                     case "OUT":
                         if (!out_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         OUT(ops[0]);
                         break;
                     case "END_LOOP":
                         if (!end_loop_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0] );
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
                         END_LOOP(ops[0]);
                         break;
+                    case "SUB":
+                        if (!sub_regex.IsMatch(currentStrCmd))
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
+                        SUB(ops[0], ops[1]);
+                        break;
+                    case "INVA":
+                        if(!inva_regex.IsMatch(currentStrCmd))
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
+                        INVA(ops[0]);
+                        break;
+
+
                     case "/*":
                         throw new CompilationException("Незакритий коментар у рядку  :" + (i + rowCountData).ToString());
                     default:
                         throw new CompilationException("Невідома Команда " + currentStrCmd + " у рядку " + (i + rowCountData).ToString());
-                        
-                        
+
+
                 }
                 i++;
             }
@@ -230,26 +244,26 @@ namespace BinaryParserGui
 
         private void MULT(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ; ;
+            outputs[CurrentOutput] += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2); ;
             comments.Add(CurrentLine, "// " + "MULT " + R0 + ", " + R1);
             CurrentLine++;
         }
         private void DIV(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0010" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ;
+            outputs[CurrentOutput] += "0010" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             comments.Add(CurrentLine, "// " + "DIV " + R0 + ", " + R1);
             CurrentLine++;
         }
 
         private void POW(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0011" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ;
+            outputs[CurrentOutput] += "0011" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             comments.Add(CurrentLine, "// " + "POW " + R0 + ", " + R1);
             CurrentLine++;
         }
         private void INV_(string R0)
         {
-            outputs[CurrentOutput] += "0100" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0100" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
             comments.Add(CurrentLine, "// " + "INV " + R0 + ", ");
             CurrentLine++;
         }
@@ -258,8 +272,8 @@ namespace BinaryParserGui
         {
             if (gf)
                 throw new CompilationException("Не можна використовувати команду CDP при директиві GF(p)");
-            outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00" ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
-            comments.Add(CurrentLine, "// " + "CDP " + R0 );
+            outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            comments.Add(CurrentLine, "// " + "CDP " + R0);
             CurrentLine++;
         }
 
@@ -267,14 +281,14 @@ namespace BinaryParserGui
         {
             if (gf)
                 throw new CompilationException("Не можна використовувати команду CPD при директиві GF(p)");
-            outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"  ; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
             comments.Add(CurrentLine, "// " + "CPD " + R0 + ", ");
             CurrentLine++;
         }
 
         private void MOV(string R0, string R1)
         {
-            outputs[CurrentOutput] += "0111" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) ;
+            outputs[CurrentOutput] += "0111" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
             comments.Add(CurrentLine, "// " + "MOV " + R0 + ", " + R1);
             CurrentLine++;
         }
@@ -282,12 +296,12 @@ namespace BinaryParserGui
         private void MOV_A(string R0, string R1)
         {
             if (R0 == "R0" || R0 == "R1" || R0 == "R2" || R0 == "R3")
-                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1) ; 
+                outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(R1);
             else
             {
-                if ( mem.GetType(R0) == TYPE.cons)
+                if (mem.GetType(R0) == TYPE.cons)
                 {
-                    throw new CompilationException("Спроба запису у константу у команді MOV_A " + R0 + ",  " + R1 );
+                    throw new CompilationException("Спроба запису у константу у команді MOV_A " + R0 + ",  " + R1);
                 }
                 outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0);
             }
@@ -329,7 +343,7 @@ namespace BinaryParserGui
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
                     exp = exp.Substring(5);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" ;
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
 
@@ -357,7 +371,7 @@ namespace BinaryParserGui
                     {
                         binaryOffset = "0" + binaryOffset;
                     }
-                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset ;
+                    outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
                 }
                 else
                 {
@@ -375,12 +389,12 @@ namespace BinaryParserGui
             if (R1 == string.Empty || R1 == null) // Значит безусловный переход
             {
                 outputs[CurrentOutput] += "1010" + "11" + "1";
-                
+
             }
             else
             {
 
-                outputs[CurrentOutput] += "1010" + Convert.ToString(Convert.ToInt32(R0[1]), 2) + "0"; 
+                outputs[CurrentOutput] += "1010" + Convert.ToString(Convert.ToInt32(R0[1]), 2) + "0";
             }
 
             if (IsNumber(R0))
@@ -393,7 +407,7 @@ namespace BinaryParserGui
             CurrentLine += 2;
         }
 
-     
+
         private void LOAD_CA(string R0, string R1)
         {
             outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[3].ToString()), 2);
@@ -407,9 +421,9 @@ namespace BinaryParserGui
             string CA = ConvertToBinary(i, 2);
             string A = string.Empty;
             int Aint = mem.ExpressionToInt(R1);
-            
+
             A = ConvertToBinary(Aint, 9);
-            outputs[CurrentOutput] += "1101" + CA + "0" + A ;
+            outputs[CurrentOutput] += "1101" + CA + "0" + A;
             comments.Add(CurrentLine, "// " + "LOAD_CA_A " + R0 + ", " + R1);
             CurrentLine += 2;
         }
@@ -418,11 +432,11 @@ namespace BinaryParserGui
         {
             if (R0[0] == 'R')// If register
             {
-                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + R1 ;
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "0" + R1;
             }
             else // if CA
             {
-                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1 ;
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1;
             }
             comments.Add(CurrentLine, "// " + "INC_DEC " + R0 + ", " + R1);
             CurrentLine++;
@@ -430,7 +444,7 @@ namespace BinaryParserGui
 
         private void OUT(string R0)
         {
-           
+
             outputs[CurrentOutput] += "1111";
             if (R0.Contains("[")) // if array
             {
@@ -456,7 +470,7 @@ namespace BinaryParserGui
                     {
                         binaryOffset = "0" + binaryOffset;
                     }
-                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset ;
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
                     comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                     CurrentLine += 3;
                 }
@@ -465,14 +479,14 @@ namespace BinaryParserGui
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['));
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000" ;
+                    outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                     comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                     CurrentLine += 3;
                 }
             }
             else
             {
-                outputs[CurrentOutput] += "0" + mem.GetBinaryAdress(R0) ;
+                outputs[CurrentOutput] += "0" + mem.GetBinaryAdress(R0);
                 comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                 CurrentLine += 2;
             }
@@ -485,17 +499,18 @@ namespace BinaryParserGui
                 throw new CompilationException("Значення лічильника циклу або відсутнє або некоректне!");
             if (servedLoopsValue[Convert.ToInt32(R0)])
                 throw new CompilationException("Використання лічильника, що вже використовується та ще незакритий! Номер лічильника " + R0);
-            outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1) ;
+            outputs[CurrentOutput] += "1011" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + mem.GetBinaryAdress(R1);
             closingValue.Push(Convert.ToInt32(R0));
             servedLoopsValue[Convert.ToInt32(R0)] = true;
             CurrentOutput++;
-            outputs[CurrentOutput-1] += output;
+            outputs[CurrentOutput - 1] += output;
             output = string.Empty;
             EnterToCycle[CurrentOutput] = CurrentLine;
             comments.Add(CurrentLine, "// " + "LOOP " + R0 + ", " + R1);
             CurrentLine += 4;
-            
+
         }
+
         private void END_LOOP(string R0)
         {
             if (closingValue.Count == 0)
@@ -512,15 +527,35 @@ namespace BinaryParserGui
                 str = "0" + str;
             }
 
-            outputs[CurrentOutput - 1] += "1010" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + str; 
+            outputs[CurrentOutput - 1] += "1010" + ConvertToBinary(Convert.ToInt32(R0), 2) + "0" + str;
             outputs[CurrentOutput] += "1010" + "11" + "1" + ConvertToBinary(EnterToCycle[CurrentOutput] + 2, 9);
             CurrentOutput--;
             outputs[CurrentOutput] += outputs[CurrentOutput + 1];
             outputs[CurrentOutput + 1] = string.Empty;
-            comments.Add(CurrentLine,"// END_LOOP " + R0);
+            comments.Add(CurrentLine, "// END_LOOP " + R0);
             CurrentLine += 2;
         }
 
+        private void SUB(string R0, string R1)
+        {
+            if (!gf)
+                throw new CompilationException("Команду SUB можно використовувати тільки у режимі GF(p)");
+            outputs[CurrentOutput] += "0110" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2);
+            comments.Add(CurrentLine, "// " + "SUB " + R0 + ", " + R1);
+            CurrentLine++;
+        }
+
+        private void INVA(string R0)
+        {
+            if (!gf)
+                throw new CompilationException("Команду INVA можно використовувати тільки у режимі GF(p)");
+            outputs[CurrentOutput] += "0101" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "00"; //В доке внятно несказанно, что должно дописываться в неиспользованные байты
+            comments.Add(CurrentLine, "// " + "INVA " + R0 + ", ");
+            CurrentLine++;
+        }
     }
-            
+
 }
+
+            
+    
