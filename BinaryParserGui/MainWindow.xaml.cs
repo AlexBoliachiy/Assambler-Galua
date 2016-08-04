@@ -114,7 +114,8 @@ namespace BinaryParserGui
             AcompIcon.Visibility = Properties.Settings.Default.Acomp ? Visibility.Visible : Visibility.Hidden;
             InterfaceIcon.Visibility = Properties.Settings.Default.gamma ? Visibility.Visible : Visibility.Hidden;
             SyntaxHighliteIcon.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
-
+            OutputCode.Text = Properties.Settings.Default.CODENAME;
+            OutputData.Text = Properties.Settings.Default.CODENAME;
         }
 
 
@@ -293,8 +294,11 @@ namespace BinaryParserGui
                 else if (result == MessageBoxResult.Cancel)
                     e.Cancel = true;
             }
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.CODENAME = OutputCode.Text;
+            Properties.Settings.Default.CODENAME = OutputData.Text;
 
+            Properties.Settings.Default.Save();
+           
 
 
         }
@@ -582,11 +586,11 @@ namespace BinaryParserGui
                             if (Properties.Settings.Default.CODEBOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
                                 File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
                             else
-                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\")) + OutputCode.Text + ".txt", cmp.GetCode());
-                            if (Properties.Settings.Default.CODEBOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
+                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\") + 1) + OutputCode.Text + ".txt", cmp.GetCode());
+                            if (Properties.Settings.Default.DATABOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
                                 File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
                             else
-                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\")) + OutputData.Text + ".txt", cmp.GetCode());
+                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\") + 1) + OutputData.Text + ".txt", comment.Replace(data.Text, string.Empty));
                             
                             MessageBox.Show("Зроблено!\n" + "Вивід записаний у відповідні файли", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
@@ -825,21 +829,12 @@ namespace BinaryParserGui
             Properties.Settings.Default.Acomp = Acomp;
         }
 
-        private void Settings_DATA(object sender, MouseButtonEventArgs e)
+        private void Settings_OutputUserNames(object sender, RoutedEventArgs e)
         {
-            if (e.ClickCount == 2)
-            {
-                Properties.Settings.Default.DATABOOL = ! Properties.Settings.Default.DATABOOL;
-                OutputDATAIcon.Visibility = Properties.Settings.Default.DATABOOL ? Visibility.Visible : Visibility.Hidden;
-                CODE_MENU.IsEnabled = !CODE_MENU.IsEnabled;
-            }
-        }
-
-        private void Settings_CODE(object sender, MouseButtonEventArgs e)
-        {
+            
+            Properties.Settings.Default.DATABOOL = ! Properties.Settings.Default.DATABOOL;
             Properties.Settings.Default.CODEBOOL = !Properties.Settings.Default.CODEBOOL;
-            OutputCODEIcon.Visibility = Properties.Settings.Default.CODEBOOL ? Visibility.Visible : Visibility.Hidden;
-            CODE_MENU.IsEnabled = !CODE_MENU.IsEnabled;
+            UserOutputIco.Visibility = Properties.Settings.Default.CODEBOOL ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void MenuItem_SettingsClosing(object sender, ContextMenuEventArgs e)

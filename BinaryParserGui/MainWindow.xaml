@@ -43,16 +43,15 @@
                         <Image Name="SyntaxHighliteIcon" Source="icon.ico"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Користувацька назва файлу вивіду DATA" StaysOpenOnClick="True" MouseLeftButtonDown="Settings_DATA" Name="CODE_DATA">
+                <MenuItem Header="Користувацькі назви файлів" Click="Settings_OutputUserNames" StaysOpenOnClick="True">
                     <MenuItem.Icon >
-                        <Image Visibility="Hidden" Name="OutputDATAIcon" Source="icon.ico" ></Image>
+                        <Image Name="UserOutputIco" Source="icon.ico"></Image>
                     </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Користувацька назва файлу вивіду DATA" StaysOpenOnClick="True"  Name="CODE_DATA">
                     <TextBox Width="100" Name="OutputData"></TextBox>
                 </MenuItem>
-                <MenuItem Header="Користувацька назва файлу вивіду CODE" StaysOpenOnClick="True" MouseLeftButtonDown="Settings_CODE" Name="CODE_MENU">
-                    <MenuItem.Icon >
-                        <Image Visibility="Hidden" Name="OutputCODEIcon" Source="icon.ico"></Image>
-                    </MenuItem.Icon>
+                <MenuItem Header="Користувацька назва файлу вивіду CODE" StaysOpenOnClick="True" Name="CODE_MENU">
                     <TextBox  Width="100" Name="OutputCode"></TextBox>
                 </MenuItem>
             </MenuItem>
