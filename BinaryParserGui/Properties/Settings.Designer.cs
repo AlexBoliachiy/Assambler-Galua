@@ -58,5 +58,53 @@ namespace BinaryParserGui.Properties {
                 this["write"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("UserCode")]
+        public string DATANAME {
+            get {
+                return ((string)(this["DATANAME"]));
+            }
+            set {
+                this["DATANAME"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("UserData")]
+        public string CODENAME {
+            get {
+                return ((string)(this["CODENAME"]));
+            }
+            set {
+                this["CODENAME"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DATABOOL {
+            get {
+                return ((bool)(this["DATABOOL"]));
+            }
+            set {
+                this["DATABOOL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CODEBOOL {
+            get {
+                return ((bool)(this["CODEBOOL"]));
+            }
+            set {
+                this["CODEBOOL"] = value;
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@
                 <MenuItem Header="Вийти" Click="MenuItem_exit"></MenuItem>
             </MenuItem>
             <MenuItem Header="Компілювати" Click="MenuItem_Compile" />
-            <MenuItem Header="Налаштування" StaysOpenOnClick="True">
+            <MenuItem Header="Налаштування" StaysOpenOnClick="True" ContextMenuClosing="MenuItem_SettingsClosing">
                 <MenuItem  Header="писати вивід до файлів" Click="Settings_Write" StaysOpenOnClick="True">
                     <MenuItem.Icon >
                         <Image Name="WriteImage" Source="icon.ico"></Image>
@@ -42,6 +42,18 @@
                     <MenuItem.Icon >
                         <Image Name="SyntaxHighliteIcon" Source="icon.ico"></Image>
                     </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Користувацька назва файлу вивіду DATA" StaysOpenOnClick="True" MouseLeftButtonDown="Settings_DATA" Name="CODE_DATA">
+                    <MenuItem.Icon >
+                        <Image Visibility="Hidden" Name="OutputDATAIcon" Source="icon.ico" ></Image>
+                    </MenuItem.Icon>
+                    <TextBox Width="100" Name="OutputData"></TextBox>
+                </MenuItem>
+                <MenuItem Header="Користувацька назва файлу вивіду CODE" StaysOpenOnClick="True" MouseLeftButtonDown="Settings_CODE" Name="CODE_MENU">
+                    <MenuItem.Icon >
+                        <Image Visibility="Hidden" Name="OutputCODEIcon" Source="icon.ico"></Image>
+                    </MenuItem.Icon>
+                    <TextBox  Width="100" Name="OutputCode"></TextBox>
                 </MenuItem>
             </MenuItem>
 

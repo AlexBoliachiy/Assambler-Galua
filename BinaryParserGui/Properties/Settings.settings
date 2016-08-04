@@ -11,5 +11,17 @@
     <Setting Name="write" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="DATANAME" Type="System.String" Scope="User">
+      <Value Profile="(Default)">UserCode</Value>
+    </Setting>
+    <Setting Name="CODENAME" Type="System.String" Scope="User">
+      <Value Profile="(Default)">UserData</Value>
+    </Setting>
+    <Setting Name="DATABOOL" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CODEBOOL" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

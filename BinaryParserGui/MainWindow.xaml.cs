@@ -68,7 +68,7 @@ namespace BinaryParserGui
             bind3.Executed += MenuItem_Close;
             this.CommandBindings.Add(bind3);
 
-            
+
 
             if (!Properties.Settings.Default.gamma)
             {
@@ -158,7 +158,7 @@ namespace BinaryParserGui
                 fontColor = Colors.White;
             }
 
-            
+
 
 
         }
@@ -217,7 +217,7 @@ namespace BinaryParserGui
             {
                 currentfile = string.Empty;
             }
-            
+
         }
 
         private void SaveCode(string FileName)
@@ -303,7 +303,7 @@ namespace BinaryParserGui
         {
             if (isPainting) // Для избежания рекурсии ( изменяя текст тут, рекурсивно будет вызываться эта же функция)
                 return;
-            
+
             IsSaved = false;
             if (Acomp)
                 Dispatcher.BeginInvoke((Action)(() =>
@@ -325,7 +325,7 @@ namespace BinaryParserGui
                        code.Text = cmp.GetCodeWithComments();
                    }
                }), DispatcherPriority.SystemIdle);
-            
+
 
 
         }
@@ -373,7 +373,7 @@ namespace BinaryParserGui
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("MOV_A", "#2e95e8");
             FillWordFromPosition("MOV", "#2e95e8");
-            FillWordFromPosition("const", "#2e95e8");  
+            FillWordFromPosition("const", "#2e95e8");
             FillWordFromPosition("END_LOOP", "#58b8f0");
             FillWordFromPosition("Array", "#1dbb6b");
             FillWordFromPosition("DATA", "#f9dc1a");
@@ -387,7 +387,7 @@ namespace BinaryParserGui
             FillWordFromPosition("SUB", "#2e95e8");
             FillWordFromPosition("CDP", "#2e95e8");
             FillWordFromPosition("CPD", "#2e95e8");
-           
+
             FillWordFromPosition("1JMP", "#2e95e8");
             FillWordFromPosition("LOOP", "#58b8f0");
             FillWordFromPosition("LOAD_CA_A", "#2e95e8");
@@ -442,10 +442,10 @@ namespace BinaryParserGui
 
                     // Find the starting index of any substring that matches "word".
                     int indexInRun = textRun.IndexOf("#GF");
-                    
+
                     if (indexInRun >= 0 && gfRegex.IsMatch(textRun))
                     {
-                        
+
                         position = position.GetPositionAtOffset(indexInRun);
                         endPosition = position.GetPositionAtOffset(gfRegex.Match(textRun).Length);
                         TextRange colouringText = new TextRange(position, endPosition);
@@ -491,13 +491,13 @@ namespace BinaryParserGui
             else if (e.Key == Key.Tab)
                 editor.CaretPosition.InsertTextInRun("\t");
             //stopWatch.Stop();
-            if (stopWatch.ElapsedMilliseconds > 2000 )
+            if (stopWatch.ElapsedMilliseconds > 2000)
                 PaintEditor();
             else return;
-            
+
             stopWatch.Reset();
             stopWatch.Start();
-           
+
 
         }
 
@@ -505,7 +505,7 @@ namespace BinaryParserGui
 
         private void editor_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
         }
 
         private void removeTabNearEndLoop()
@@ -569,7 +569,7 @@ namespace BinaryParserGui
                 {
                     data.Text = cmp.mem.output;
                     code.Text = cmp.GetCodeWithComments();
-                    if (write == true )
+                    if (write == true)
                     {
                         if (currentfile == string.Empty) //Что бы записывать в файлы нужно сначала сохранить новый файл
                             MenuItem_SaveAs(null, null);
@@ -579,8 +579,15 @@ namespace BinaryParserGui
                         }
                         else
                         {
-                            File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
-                            File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
+                            if (Properties.Settings.Default.CODEBOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
+                                File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
+                            else
+                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\")) + OutputCode.Text + ".txt", cmp.GetCode());
+                            if (Properties.Settings.Default.CODEBOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
+                                File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
+                            else
+                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\")) + OutputData.Text + ".txt", cmp.GetCode());
+                            
                             MessageBox.Show("Зроблено!\n" + "Вивід записаний у відповідні файли", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
                         }
@@ -597,7 +604,7 @@ namespace BinaryParserGui
 
         }
 
-     
+
         private void code_TextChanged(object sender, TextChangedEventArgs e)
         {
             int lines = 0;
@@ -610,7 +617,7 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
-            if (code.Text.Length - 1 != -1 && code.Text[code.Text.Length - 1] !='\n')
+            if (code.Text.Length - 1 != -1 && code.Text[code.Text.Length - 1] != '\n')
                 codeNum.Text += "  " + lines.ToString() + "\n";
 
 
@@ -628,7 +635,7 @@ namespace BinaryParserGui
                     lines++;
                 }
             }
-            
+
         }
 
         private void editor_SelectionChanged(object sender, RoutedEventArgs e)
@@ -661,7 +668,7 @@ namespace BinaryParserGui
                 AppClose();
             else if (e.Key == Key.F7)
                 SyntaxHighlite = !SyntaxHighlite;
-            
+
         }
 
 
@@ -791,34 +798,56 @@ namespace BinaryParserGui
             IsSaved = true;
         }
 
-        private void Settings_Write(object sender, RoutedEventArgs e) 
+        private void Settings_Write(object sender, RoutedEventArgs e)
         {
-            write = ! write;
+            write = !write;
             WriteImage.Visibility = write ? Visibility.Visible : Visibility.Hidden;
             Properties.Settings.Default.write = write;
         }
 
         private void Settings_interface(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.gamma = ! Properties.Settings.Default.gamma;
+            Properties.Settings.Default.gamma = !Properties.Settings.Default.gamma;
             InterfaceChange(Properties.Settings.Default.gamma);
             InterfaceIcon.Visibility = Properties.Settings.Default.gamma ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void Settings_SyntaxHighlight(object sender, RoutedEventArgs e) //Default: turn on
         {
-            SyntaxHighlite = ! SyntaxHighlite;
+            SyntaxHighlite = !SyntaxHighlite;
             SyntaxHighliteIcon.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void Settings_Acomp(object sender, RoutedEventArgs e)
         {
-            Acomp = ! Acomp;
+            Acomp = !Acomp;
             AcompIcon.Visibility = Acomp ? Visibility.Visible : Visibility.Hidden;
             Properties.Settings.Default.Acomp = Acomp;
         }
+
+        private void Settings_DATA(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                Properties.Settings.Default.DATABOOL = ! Properties.Settings.Default.DATABOOL;
+                OutputDATAIcon.Visibility = Properties.Settings.Default.DATABOOL ? Visibility.Visible : Visibility.Hidden;
+                CODE_MENU.IsEnabled = !CODE_MENU.IsEnabled;
+            }
+        }
+
+        private void Settings_CODE(object sender, MouseButtonEventArgs e)
+        {
+            Properties.Settings.Default.CODEBOOL = !Properties.Settings.Default.CODEBOOL;
+            OutputCODEIcon.Visibility = Properties.Settings.Default.CODEBOOL ? Visibility.Visible : Visibility.Hidden;
+            CODE_MENU.IsEnabled = !CODE_MENU.IsEnabled;
+        }
+
+        private void MenuItem_SettingsClosing(object sender, ContextMenuEventArgs e)
+        {
+
+        }
     }
-    
 }
 
- 
+
+

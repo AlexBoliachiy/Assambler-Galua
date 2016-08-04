@@ -18,6 +18,7 @@ namespace BinaryParserGui
         private static Regex CommentLine = new Regex(@"\/\/.*$", RegexOptions.Multiline);
         private static Regex CommentBetweenLine = new Regex(@"\/\*((.*)|)\*\/", RegexOptions.Singleline);
         private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
+        private static Regex hashValue = new Regex(@"#\s*((\d+)|(b'[10]+)|(h'[0-F]+))");
         int rowCountData = 0; 
         public Compilator()
         {
@@ -121,6 +122,7 @@ namespace BinaryParserGui
             string bar = data[m].Replace(" ", string.Empty);
             bar = bar.Replace("\t", string.Empty);
             int GF = -1;
+            string irreducible_polynomial = string.Empty;
             try
             {
                
@@ -144,12 +146,20 @@ namespace BinaryParserGui
                             {
                                 throw new CompilationException("p повинно бути простим числом !");
                             }
-                            mem.m = (int)Math.Ceiling(Math.Log(Convert.ToDouble(new Regex(@"\d+").Match(bar).Value.Substring(0)), 2));
+                            double p = Convert.ToDouble(new Regex(@"\d+").Match(bar).Value.Substring(0));
+                            mem.m = (int)Math.Ceiling(Math.Log(p, 2));
+                            irreducible_polynomial = "const irreducible_polynomial = " + ((int)p).ToString();
                         }
                         GF = 1;
                     }
                     else if (GF != -1 && gfRegex.IsMatch(bar)) 
                         throw new CompilationException("Повторна об'ява директиви GF");
+                    else if (GF == 1 && codeGenerator.gf == false && hashValue.IsMatch(bar))
+                    {
+                        int value = mem.ExpressionToInt(bar.Substring(bar.IndexOf("#") + 1));
+                        irreducible_polynomial = "const irreducible_polynomial = " + value.ToString() ;
+
+                    }
                     else if (bar != string.Empty && bar != "DATA")
                         throw new CompilationException("Найпершою командою повина бути об'явлення секцii DATA");
                     m++;                  
@@ -170,6 +180,7 @@ namespace BinaryParserGui
             }
             if (GF == -1)
                 throw new CompilationException("Відсутня директива GF (вона повина йти перед початком секції даних)");
+            out_data.Insert(0, irreducible_polynomial); // Добавляем первой командой строку со значением # в режиме GF(2^m) 
             return out_data.ToArray();
         }
 
