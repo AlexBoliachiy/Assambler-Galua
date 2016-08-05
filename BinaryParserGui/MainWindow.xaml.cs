@@ -115,7 +115,8 @@ namespace BinaryParserGui
             InterfaceIcon.Visibility = Properties.Settings.Default.gamma ? Visibility.Visible : Visibility.Hidden;
             SyntaxHighliteIcon.Visibility = SyntaxHighlite ? Visibility.Visible : Visibility.Hidden;
             OutputCode.Text = Properties.Settings.Default.CODENAME;
-            OutputData.Text = Properties.Settings.Default.CODENAME;
+            OutputData.Text = Properties.Settings.Default.DATANAME;
+            UserOutputIco.Visibility = Properties.Settings.Default.CODEBOOL ? Visibility.Visible : Visibility.Hidden;
         }
 
 
@@ -295,7 +296,7 @@ namespace BinaryParserGui
                     e.Cancel = true;
             }
             Properties.Settings.Default.CODENAME = OutputCode.Text;
-            Properties.Settings.Default.CODENAME = OutputData.Text;
+            Properties.Settings.Default.DATANAME = OutputData.Text;
 
             Properties.Settings.Default.Save();
            

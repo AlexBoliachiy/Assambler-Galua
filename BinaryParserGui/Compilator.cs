@@ -148,7 +148,7 @@ namespace BinaryParserGui
                             }
                             double p = Convert.ToDouble(new Regex(@"\d+").Match(bar).Value.Substring(0));
                             mem.m = (int)Math.Ceiling(Math.Log(p, 2));
-                            irreducible_polynomial = "const irreducible_polynomial = " + ((int)p).ToString();
+                            irreducible_polynomial = "const p = " + ((int)p).ToString();
                         }
                         GF = 1;
                     }
