@@ -48,10 +48,10 @@
                         <Image Name="UserOutputIco" Source="icon.ico"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Користувацька назва файлу вивіду DATA" StaysOpenOnClick="True"  Name="CODE_DATA">
+                <MenuItem Header="Пам'ять даних" StaysOpenOnClick="True"  Name="CODE_DATA">
                     <TextBox Width="100" Name="OutputData"></TextBox>
                 </MenuItem>
-                <MenuItem Header="Користувацька назва файлу вивіду CODE" StaysOpenOnClick="True" Name="CODE_MENU">
+                <MenuItem Header="Пам'ять команд" StaysOpenOnClick="True" Name="CODE_MENU">
                     <TextBox  Width="100" Name="OutputCode"></TextBox>
                 </MenuItem>
             </MenuItem>
