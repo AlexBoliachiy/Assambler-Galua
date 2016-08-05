@@ -43,7 +43,7 @@ namespace BinaryParserGui
         private Stopwatch stopWatch = new Stopwatch(); // using for drawing text only when user stop drawing
         private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
         private static BrushConverter br = new BrushConverter();
-
+        private static Regex hashValue = new Regex(@"#\s*((\d+)|(b'[10]+)|(h'[0-F]+))");
         public IDE()
         {
             stopWatch.Start();
@@ -375,6 +375,7 @@ namespace BinaryParserGui
                 return;
             }
             FillGF();
+            FillHashValue();
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("MOV_A", "#2e95e8");
             FillWordFromPosition("MOV", "#2e95e8");
@@ -453,6 +454,35 @@ namespace BinaryParserGui
 
                         position = position.GetPositionAtOffset(indexInRun);
                         endPosition = position.GetPositionAtOffset(gfRegex.Match(textRun).Length);
+                        TextRange colouringText = new TextRange(position, endPosition);
+                        colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
+                            (SolidColorBrush)(br.ConvertFrom("#FC0FC0")));
+                        return;
+                    }
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+                }
+                else
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
+        }
+        private void FillHashValue()
+        {
+            TextPointer position = editor.Document.ContentStart;
+            TextPointer endPosition = null;
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
+
+                    // Find the starting index of any substring that matches "word".
+                    int indexInRun = textRun.IndexOf("#");
+
+                    if (indexInRun >= 0 && hashValue.IsMatch(textRun))
+                    {
+
+                        position = position.GetPositionAtOffset(indexInRun);
+                        endPosition = position.GetPositionAtOffset(hashValue.Match(textRun).Length);
                         TextRange colouringText = new TextRange(position, endPosition);
                         colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
                             (SolidColorBrush)(br.ConvertFrom("#FC0FC0")));
