@@ -77,6 +77,8 @@ namespace BinaryParserGui
         {
             cmd.Trim(); //Remove extra whitespaces
             string[] cmd_split = cmd.Split(new char[] { ' ', '=' } , StringSplitOptions.RemoveEmptyEntries);
+            if (cmd_split.Length == 0)
+                throw new CompilationException("Очень странная ошибка. Пожалуйста, сохраните код и вышлите его мне. С уважением, автор");
             if (cmd_split[0] == "const")
             {
 
@@ -397,7 +399,7 @@ namespace BinaryParserGui
         public int ExpressionToInt(string expr)
         {
             Regex bin = new Regex(@"b'[01]+");
-            Regex hex = new Regex(@"h'[0-F]");
+            Regex hex = new Regex(@"h'[0-F]+");
             string defaultExpr = expr;
             
             var Matches = bin.Matches(expr);

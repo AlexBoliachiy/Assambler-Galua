@@ -116,7 +116,15 @@ namespace BinaryParserGui
                 if (!operators.Contains(str))
                 {
                     stack.Push(str);
-                    str = queue.Dequeue();
+                    try
+                    {
+                        str = queue.Dequeue();
+                    }
+                    catch
+                    {
+                        throw new CompilationException("Помилка у виразі " + input);
+                    }
+                    
                 }
                 else
                 {
