@@ -480,7 +480,7 @@ namespace BinaryParserGui
                     string exp = R0.Substring(R0.IndexOf('['));
                     string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
                     outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
-                    comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
+                    comments.Add(CurrentLine, "// " + "OUT " + R0);
                     CurrentLine += 3;
                 }
             }
