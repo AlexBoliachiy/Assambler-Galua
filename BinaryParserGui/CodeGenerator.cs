@@ -486,7 +486,7 @@ namespace BinaryParserGui
             }
             else
             {
-                outputs[CurrentOutput] += "0" + mem.GetBinaryAdress(R0);
+                outputs[CurrentOutput] += "000" + mem.GetBinaryAdress(R0);
                 comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
                 CurrentLine += 2;
             }
