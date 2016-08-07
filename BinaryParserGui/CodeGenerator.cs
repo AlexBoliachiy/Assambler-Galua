@@ -21,7 +21,7 @@ namespace BinaryParserGui
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
         Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
-        Regex jmp_regex = new Regex(@"JMP\s+(R[0-3]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|([0-9]{9}))\s*$");
+        Regex jmp_regex = new Regex(@"JMP\s+(R[0-2]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|(b'[01]+)|(h'[0-F]+))\s*$");
         Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
         Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
@@ -155,7 +155,10 @@ namespace BinaryParserGui
                     case "JMP":
                         if (!jmp_regex.IsMatch(currentStrCmd))
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
-                        JMP(ops[0], ops[1]);
+                        if (ops.Length == 2)
+                            JMP(ops[0], ops[1]);
+                        else
+                            JMP(ops[0], null);
                         break;
                     case "LOOP":
                         if (!loop_regex.IsMatch(currentStrCmd))
@@ -386,25 +389,33 @@ namespace BinaryParserGui
         }
         private void JMP(string R0, string R1)
         {
-            if (R1 == string.Empty || R1 == null) // Значит безусловный переход
+            try
             {
-                outputs[CurrentOutput] += "1010" + "11" + "1";
+                bool isConditional = false;
+                if (R1 == string.Empty || R1 == null) // Значит безусловный переход
+                {
+                    outputs[CurrentOutput] += "1010" + "11" + "1";
 
+                }
+                else
+                {
+                    isConditional = true;
+                    outputs[CurrentOutput] += "1010" + ConvertToBinary(R0[1], 2) + "1";
+                }
+
+                if (!isConditional && R0.Length != 1 && (R0.Remove(2) == "h'" || R0.Remove(2) == "b'" || IsNumber(R0)))
+                {
+                    outputs[CurrentOutput] += ConvertToBinary(mem.ExpressionToInt(R0), 9);
+                }
+                else if (isConditional)
+                    outputs[CurrentOutput] += ConvertToBinary(mem.ExpressionToInt(R1), 9);
+                comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1 == null ? string.Empty : R1);
+                CurrentLine += 2;
             }
-            else
+            catch
             {
-
-                outputs[CurrentOutput] += "1010" + Convert.ToString(Convert.ToInt32(R0[1]), 2) + "0";
+                throw new CompilationException("Помилка у команді JMP");
             }
-
-            if (IsNumber(R0))
-            {
-                outputs[CurrentOutput] += R1;
-            }
-            else
-                outputs[CurrentOutput] += mem.GetBinaryAdress(R0);
-            comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1);
-            CurrentLine += 2;
         }
 
 

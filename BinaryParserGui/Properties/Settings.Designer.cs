@@ -106,5 +106,17 @@ namespace BinaryParserGui.Properties {
                 this["CODEBOOL"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Stop {
+            get {
+                return ((bool)(this["Stop"]));
+            }
+            set {
+                this["Stop"] = value;
+            }
+        }
     }
 }

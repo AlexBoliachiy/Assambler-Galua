@@ -117,6 +117,7 @@ namespace BinaryParserGui
             OutputCode.Text = Properties.Settings.Default.CODENAME;
             OutputData.Text = Properties.Settings.Default.DATANAME;
             UserOutputIco.Visibility = Properties.Settings.Default.CODEBOOL ? Visibility.Visible : Visibility.Hidden;
+            StopIcon.Visibility = Properties.Settings.Default.Stop ? Visibility.Visible : Visibility.Hidden;
         }
 
 
@@ -328,6 +329,8 @@ namespace BinaryParserGui
                    {
                        data.Text = cmp.mem.output;
                        code.Text = cmp.GetCodeWithComments();
+                       if (Properties.Settings.Default.Stop)
+                           code.Text += "01001111 // Stop";
                    }
                }), DispatcherPriority.SystemIdle);
 
@@ -604,6 +607,8 @@ namespace BinaryParserGui
                 {
                     data.Text = cmp.mem.output;
                     code.Text = cmp.GetCodeWithComments();
+                    if (Properties.Settings.Default.Stop)
+                        code.Text += "01001111 // Stop";
                     if (write == true)
                     {
                         if (currentfile == string.Empty) //Что бы записывать в файлы нужно сначала сохранить новый файл
@@ -871,6 +876,13 @@ namespace BinaryParserGui
         private void MenuItem_SettingsClosing(object sender, ContextMenuEventArgs e)
         {
 
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Stop = !Properties.Settings.Default.Stop;
+         
+            StopIcon.Visibility = Properties.Settings.Default.Stop ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }
