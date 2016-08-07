@@ -330,7 +330,7 @@ namespace BinaryParserGui
                        data.Text = cmp.mem.output;
                        code.Text = cmp.GetCodeWithComments();
                        if (Properties.Settings.Default.Stop)
-                           code.Text += "01001111 // Stop-слово";
+                           code.Text += "01001111 // STOP-слово";
                    }
                }), DispatcherPriority.SystemIdle);
 
@@ -608,7 +608,7 @@ namespace BinaryParserGui
                     data.Text = cmp.mem.output;
                     code.Text = cmp.GetCodeWithComments();
                     if (Properties.Settings.Default.Stop)
-                        code.Text += "01001111 // Stop-слово";
+                        code.Text += "01001111 // STOP-слово";
                     if (write == true)
                     {
                         if (currentfile == string.Empty) //Что бы записывать в файлы нужно сначала сохранить новый файл
