@@ -21,7 +21,8 @@ namespace BinaryParserGui
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
         Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
-        Regex jmp_regex = new Regex(@"JMP\s+(R[0-2]\s*,\s*)?\s*(([A-Za-z_]+[A-Z_a-z0-9]*)|(b'[01]+)|(h'[0-F]+))\s*$");
+        Regex jmp_regex1 = new Regex(@"JMP\s+[A-Za-z]\w*\s*$");
+        Regex jmp_regex2 = new Regex(@"JMP\s+R[0-2]\s*,\s*[A-Za-z]\w*\s*$");
         Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
         Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
@@ -29,6 +30,7 @@ namespace BinaryParserGui
         Regex inc_dec_regex = new Regex(@"INC_DEC\s+((CA_)|(R))[0-3]\s*,\s*[0-1]\s*$");
         Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
         Regex sub_regex = new Regex(@"SUB\s+R[0-3]\s*,\s*R[0-3]\s*$");
+        Regex label = new Regex(@"[A-z]\w*\s*:");
         string output;
         Memory mem;
         string[] outputs = new String[5];
@@ -36,6 +38,7 @@ namespace BinaryParserGui
         int CurrentOutput = 0;
         int[] EnterToCycle = new int[4];
         Dictionary<int, bool> servedLoopsValue = new Dictionary<int, bool>() { { 0, false }, { 1, false }, { 2, false }, { 3, false } };
+        Dictionary<string, int> labels = new Dictionary<string, int>();
         Stack<int> closingValue = new Stack<int>();
         public int rowCountData = 0;
         public Dictionary<int, string> comments = new Dictionary<int, string>();
@@ -80,8 +83,17 @@ namespace BinaryParserGui
                     i++;
                     continue;
                 }
+                if (label.IsMatch(currentStrCmd))
+                {
+                    string labelName = currentStrCmd.Replace(" ", string.Empty).Replace(":", string.Empty);
+                    if (labels.ContainsKey(labelName))
+                        throw new CompilationException("Повторна декларація мітки " + labelName);
+                    labels.Add(labelName, CurrentLine);
+                    continue;
+                }
 
                 string[] ops = GetOperands(x);
+                
                 switch (CurrentCmd[0])
                 {
                     case "ADD": // В оригинале названо add_sub, но в коде почему-то эта Команда  ни разу не использовалась, так что я назвал её так
@@ -131,8 +143,6 @@ namespace BinaryParserGui
                             MOV_A(ops[0], ops[1]);
                             success = true;
                         }
-
-
                         if (!success)
                         {
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
@@ -153,12 +163,13 @@ namespace BinaryParserGui
                         }
                         break;
                     case "JMP":
-                        if (!jmp_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
-                        if (ops.Length == 2)
-                            JMP(ops[0], ops[1]);
+                        if (jmp_regex1.IsMatch(currentStrCmd))
+                            JMP(ops[0]);
+                        else if (jmp_regex2.IsMatch(currentStrCmd))
+                            JMPconditional(ops[0], ops[1]);
                         else
-                            JMP(ops[0], null);
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + " Команда " + CurrentCmd[0]);
+                     
                         break;
                     case "LOOP":
                         if (!loop_regex.IsMatch(currentStrCmd))
@@ -387,37 +398,40 @@ namespace BinaryParserGui
             comments.Add(CurrentLine, "// " + "MOV_ARRAY " + R0 + ", " + R1);
             CurrentLine += 3;
         }
-        private void JMP(string R0, string R1)
+        private void JMP(string R0)
         {
+
+            int line;
             try
             {
-                bool isConditional = false;
-                if (R1 == string.Empty || R1 == null) // Значит безусловный переход
-                {
-                    outputs[CurrentOutput] += "1010" + "11" + "1";
-
-                }
-                else
-                {
-                    isConditional = true;
-                    outputs[CurrentOutput] += "1010" + ConvertToBinary(R0[1], 2) + "1";
-                }
-
-                if (!isConditional && R0.Length != 1 && (R0.Remove(2) == "h'" || R0.Remove(2) == "b'" || IsNumber(R0)))
-                {
-                    outputs[CurrentOutput] += ConvertToBinary(mem.ExpressionToInt(R0), 9);
-                }
-                else if (isConditional)
-                    outputs[CurrentOutput] += ConvertToBinary(mem.ExpressionToInt(R1), 9);
-                comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1 == null ? string.Empty : R1);
-                CurrentLine += 2;
+                line = labels[R0];
             }
             catch
             {
-                throw new CompilationException("Помилка у команді JMP");
+                throw new CompilationException("JMP з невідомою міткою " + R0);
             }
-        }
+            outputs[CurrentOutput] += "1010" + "11" + "1";
+            outputs[CurrentOutput] += ConvertToBinary(line, 9);
+            comments.Add(CurrentLine, "// " + "JMP " + R0);
 
+
+        }
+        private void JMPconditional(string R0, string R1)
+        {
+
+            int line;
+            try
+            {
+                line = labels[R1];
+            }
+            catch
+            {
+                throw new CompilationException("JMP з невідомою міткою " + R0);
+            }
+            outputs[CurrentOutput] += "1010" + ConvertToBinary(Convert.ToInt32(R0.Substring(1)), 2) + "1"; 
+            outputs[CurrentOutput] += ConvertToBinary(line, 9);
+            comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1);
+        }
 
         private void LOAD_CA(string R0, string R1)
         {

@@ -16,7 +16,7 @@ Array C [pow_A+pow_B] = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 
 CODE
-
+L:
 LOAD_CA_A	CA_2, b'000000000
 
 LOOP	0, pow_B + 1 
@@ -48,3 +48,7 @@ OUT	C [CA_1]
 INC_DEC	CA_1, 0
 
 END_LOOP	0
+JMP R0, L
+
+
+

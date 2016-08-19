@@ -44,6 +44,7 @@ namespace BinaryParserGui
         private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
         private static BrushConverter br = new BrushConverter();
         private static Regex hashValue = new Regex(@"#\s*((\d+)|(b'[10]+)|(h'[0-F]+))");
+        private static Regex label = new Regex(@"[A-z]\w*\s*:");
         public IDE()
         {
             stopWatch.Start();
@@ -379,6 +380,7 @@ namespace BinaryParserGui
             }
             FillGF();
             FillHashValue();
+            FillLabels();
             FillWordFromPosition("MOV_ARRAY", "#2e95e8");
             FillWordFromPosition("MOV_A", "#2e95e8");
             FillWordFromPosition("MOV", "#2e95e8");
@@ -397,7 +399,7 @@ namespace BinaryParserGui
             FillWordFromPosition("CDP", "#2e95e8");
             FillWordFromPosition("CPD", "#2e95e8");
 
-            FillWordFromPosition("1JMP", "#2e95e8");
+            FillWordFromPosition("JMP", "#2e95e8");
             FillWordFromPosition("LOOP", "#58b8f0");
             FillWordFromPosition("LOAD_CA_A", "#2e95e8");
             FillWordFromPosition("LOAD_CA", "#2e95e8");
@@ -441,6 +443,7 @@ namespace BinaryParserGui
         }
         private void FillGF()
         {
+        
             TextPointer position = editor.Document.ContentStart;
             TextPointer endPosition = null;
             while (position != null)
@@ -461,6 +464,36 @@ namespace BinaryParserGui
                         colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
                             (SolidColorBrush)(br.ConvertFrom("#FC0FC0")));
                         return;
+                    }
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+                }
+                else
+                    position = position.GetNextContextPosition(LogicalDirection.Forward);
+            }
+        }
+
+        private void FillLabels()
+        {
+
+            TextPointer position = editor.Document.ContentStart;
+            TextPointer endPosition = null;
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    string textRun = position.GetTextInRun(LogicalDirection.Forward);
+
+                    // Find the starting index of any substring that matches "word".
+                    int indexInRun = label.Match(textRun).Index;
+
+                    if (indexInRun >= 0)
+                    {
+
+                        position = position.GetPositionAtOffset(indexInRun);
+                        endPosition = position.GetPositionAtOffset(label.Match(textRun).Length);
+                        TextRange colouringText = new TextRange(position, endPosition);
+                        colouringText.ApplyPropertyValue(TextElement.ForegroundProperty,
+                            (SolidColorBrush)(br.ConvertFrom("#9400d3")));
                     }
                     position = position.GetNextContextPosition(LogicalDirection.Forward);
                 }
