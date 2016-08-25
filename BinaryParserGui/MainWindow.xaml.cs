@@ -653,9 +653,9 @@ namespace BinaryParserGui
                         else
                         {
                             if (Properties.Settings.Default.CODEBOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
-                                File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", cmp.GetCode());
+                                File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_code" + ".txt", comment.Replace(code.Text, string.Empty));
                             else
-                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\") + 1) + OutputCode.Text + ".txt", cmp.GetCode());
+                                File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\") + 1) + OutputCode.Text + ".txt", comment.Replace(code.Text, string.Empty));
                             if (Properties.Settings.Default.DATABOOL == false || (Properties.Settings.Default.CODEBOOL == true && OutputCode.Text == string.Empty))
                                 File.WriteAllText(currentfile.Remove(currentfile.Length - 4) + "_data" + ".txt", comment.Replace(data.Text, string.Empty));
                             else
