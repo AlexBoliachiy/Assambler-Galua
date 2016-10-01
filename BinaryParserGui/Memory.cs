@@ -100,7 +100,7 @@ namespace BinaryParserGui
 
                     if (Math.Pow(2, (double)m) - 1 < const_value)
                     {
-                        throw new CompilationException("Переповнення стеку у команді " + cmd);
+                        throw new CompilationException("Переповнення розрядної сітки у команді " + cmd);
                     }
                     else
                     {
