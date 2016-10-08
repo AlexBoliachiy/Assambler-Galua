@@ -390,7 +390,7 @@ namespace BinaryParserGui
             FillWordFromPosition("DATA", "#f9dc1a");
             FillWordFromPosition("CODE", "#f9dc1a");
             FillWordFromPosition("ADD", "#2e95e8");
-            FillWordFromPosition("MULT", "#2e95e8");
+            FillWordFromPosition("MUL", "#2e95e8");
             FillWordFromPosition("DIV", "#2e95e8");
             FillWordFromPosition("POW", "#2e95e8");
             FillWordFromPosition("INVM", "#2e95e8");
@@ -403,7 +403,8 @@ namespace BinaryParserGui
             FillWordFromPosition("LOOP", "#58b8f0");
             FillWordFromPosition("LOAD_CA_A", "#2e95e8");
             FillWordFromPosition("LOAD_CA", "#2e95e8");
-            FillWordFromPosition("INC_DEC", "#2e95e8");
+            FillWordFromPosition("INC", "#2e95e8");
+            FillWordFromPosition("DEC", "#2e95e8");
             FillWordFromPosition("OUT", "#2e95e8");
             PaintMultiLaneComments();
             PaintSingleLineComments();

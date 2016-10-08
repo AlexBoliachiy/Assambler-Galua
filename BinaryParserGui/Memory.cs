@@ -32,7 +32,7 @@ namespace BinaryParserGui
         private static Regex dec_var = new Regex(@"^\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*=\s*((((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))|(b'[0-1]+)|(h'[0-9A-F]+))\s*(\s*[+/*-]\s*((((\d+)|([A-Za-z_]+[A-Z_a-z0-9]*)))|(b'[0-1]+)|(h'[0-9A-F]+)))*\s*$");
         private static Regex var = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
         private static Regex varForDec = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*");
-        private static Regex ca = new Regex(@"CA_[0-3]");
+        private static Regex ca = new Regex(@"AC[0-3]");
         private static Regex expression = new Regex(@"((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))+");
         private static Regex gfRegex = new Regex(@"#GF\(\s*((2\^[0-9]+)|(\d+))\s*\)");
         private static Regex LOOP_CONSTS = new Regex(@"^\s*LOOP\s+[0-3]\s*,\s*\d+\s*$");

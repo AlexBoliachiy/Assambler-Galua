@@ -11,7 +11,7 @@ namespace BinaryParserGui
     public class CodeGenerator
     {
         Regex add_regex = new Regex(@"ADD\s+R[0-3]\s*,\s*R[0-3]\s*$"); //Для большей читаемости кода я предпочел напилить кучу реджексов
-        Regex mult_regex = new Regex(@"MULT\s+R[0-3]\s*,\s*R[0-3]\s*$");
+        Regex mult_regex = new Regex(@"MUL\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex div_regex = new Regex(@"DIV\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex pow_regex = new Regex(@"POW\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex invm_regex = new Regex(@"INVM\s+R[0-3]\s*$");
@@ -19,16 +19,17 @@ namespace BinaryParserGui
         Regex cdp_regex = new Regex(@"CDP\s+R[0-3]\s*$");
         Regex cpd_regex = new Regex(@"CPD\s+R[0-3]\s*$");
         Regex mov_regex = new Regex(@"MOV\s+R[0-3]\s*,\s*R[0-3]\s*$");
-        Regex mov_a_regex = new Regex(@"MOV_A\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
-        Regex mov_array_regex = new Regex(@"MOV_ARRAY\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*CA_[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
+        Regex mov_a_regex = new Regex(@"MOV\s+((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*)|([A-Za-z_]+[A-Z_a-z0-9]*\s*,\s*R[0-3]))\s*$");
+        Regex mov_array_regex = new Regex(@"MOV\s*((R[0-3]\s*,\s*[A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*AC[0-3]\s*([+-]\s*\d+)?\s*\])|([A-Za-z_]+[A-Z_a-z0-9]*\s*\[\s*AC[0-3]\s*([+-]\s*\d+)?\s*\]\s*,\s*R[0-3]))\s*$"); //
         Regex jmp_regex1 = new Regex(@"JMP\s+[A-Za-z]\w*\s*$");
         Regex jmp_regex2 = new Regex(@"JMP\s+R[0-2]\s*,\s*[A-Za-z]\w*\s*$");
         Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
-        Regex load_ca_regex = new Regex(@"LOAD_CA\s+CA_[0-3]\s*,\s*CA_[0-3]\s*$");
-        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+CA_[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
-        Regex inc_dec_regex = new Regex(@"INC_DEC\s+((CA_)|(R))[0-3]\s*,\s*[0-1]\s*$");
-        Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[CA_[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
+        Regex load_ca_regex = new Regex(@"LOAD_CA\s+AC[0-3]\s*,\s*AC[0-3]\s*$");
+        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+AC[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
+        Regex inc_regex = new Regex(@"INC\s+((AC)|(R))[0-3]\s*$");
+        Regex dec_regex = new Regex(@"DEC\s+((AC)|(R))[0-3]\s*$");
+        Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[AC[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
         Regex sub_regex = new Regex(@"SUB\s+R[0-3]\s*,\s*R[0-3]\s*$");
         Regex label = new Regex(@"[A-z]\w*\s*:");
         string output;
@@ -101,7 +102,7 @@ namespace BinaryParserGui
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
                         ADD(ops[0], ops[1]);
                         break;
-                    case "MULT":
+                    case "MUL":
                         if (!mult_regex.IsMatch(currentStrCmd))
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
                         MULT(ops[0], ops[1]);
@@ -132,35 +133,26 @@ namespace BinaryParserGui
                         CPD(ops[0]);
                         break;
                     case "MOV":
-                        if (!mov_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
-                        MOV(ops[0], ops[1]);
-                        break;
-                    case "MOV_A":
-                        bool success = false;
-                        if (mov_a_regex.IsMatch(currentStrCmd))
+                        bool suc = false;
+                        if (mov_regex.IsMatch(currentStrCmd))
+                        {
+                            MOV(ops[0], ops[1]);
+                            suc = true;
+                        }
+                        else if (mov_a_regex.IsMatch(currentStrCmd))
                         {
                             MOV_A(ops[0], ops[1]);
-                            success = true;
-                        }
-                        if (!success)
-                        {
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
                         }
 
-                        break;
-                    case "MOV_ARRAY":
-                        bool suc = false;
-                        if (mov_array_regex.IsMatch(currentStrCmd))
+                        else if (mov_array_regex.IsMatch(currentStrCmd))
                         {
                             MOV_ARRAY(ops[0], ops[1]);
                             suc = true;
                         }
 
-                        if (!suc)
-                        {
+                        if (suc == false)
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
-                        }
+                        
                         break;
                     case "JMP":
                         if (jmp_regex1.IsMatch(currentStrCmd))
@@ -186,10 +178,15 @@ namespace BinaryParserGui
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
                         LOAD_CA_A(ops[0], ops[1]);
                         break;
-                    case "INC_DEC":
-                        if (!inc_dec_regex.IsMatch(currentStrCmd))
+                    case "INC":
+                        if (!inc_regex.IsMatch(currentStrCmd))
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
-                        INC_DEC(ops[0], ops[1]);
+                        INC_DEC(ops[0], "0");
+                        break;
+                    case "DEC":
+                        if (!inc_regex.IsMatch(currentStrCmd))
+                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
+                        INC_DEC(ops[0], "1");
                         break;
                     case "OUT":
                         if (!out_regex.IsMatch(currentStrCmd))
@@ -330,15 +327,18 @@ namespace BinaryParserGui
                 {
                     string arrName = R1.Remove(R1.IndexOf('['));
                     string exp = R1.Substring(R1.IndexOf('['));
-                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    exp = exp.Substring(5);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[3].ToString()), 2);
+                    exp = exp.Substring(4);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
                     string sign;
                     if (offset[0] == '+')
                         sign = "0";
-                    else
+                    else 
                         sign = "1";
-                    offset = offset.Substring(1);
+                    if (offset == string.Empty)
+                        offset = "0";
+                    else
+                        offset = offset.Substring(1);
                     string binaryOffset = ConvertToBinary(Convert.ToInt32(offset), 2);
                     if (binaryOffset.Length > 4)
                     {
@@ -354,8 +354,8 @@ namespace BinaryParserGui
                 {
                     string arrName = R1.Remove(R1.IndexOf('['));
                     string exp = R1.Substring(R1.IndexOf('['));
-                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    exp = exp.Substring(5);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[3].ToString()), 2);
+                    exp = exp.Substring(4);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
                     outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
@@ -367,8 +367,8 @@ namespace BinaryParserGui
                 {
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
-                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    exp = exp.Substring(5);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[3].ToString()), 2);
+                    exp = exp.Substring(4);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
                     string sign;
                     if (offset[0] == '+')
@@ -391,7 +391,7 @@ namespace BinaryParserGui
                 {
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['), R0.LastIndexOf(']') - R0.IndexOf('[') + 1);
-                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[3].ToString()), 2);
                     outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
@@ -435,14 +435,14 @@ namespace BinaryParserGui
 
         private void LOAD_CA(string R0, string R1)
         {
-            outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[3].ToString()), 2);
+            outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[2].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[2].ToString()), 2);
             comments.Add(CurrentLine, "// " + "LOAD_CA " + R0 + ", " + R1);
             CurrentLine++;
         }
 
         private void LOAD_CA_A(string R0, string R1) //OK 1
         {
-            int i = Convert.ToInt32(R0[3].ToString());
+            int i = Convert.ToInt32(R0[2].ToString());
             string CA = ConvertToBinary(i, 2);
             string A = string.Empty;
             int Aint = mem.ExpressionToInt(R1, false);
@@ -461,7 +461,7 @@ namespace BinaryParserGui
             }
             else // if CA
             {
-                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[3].ToString()), 2) + "1" + R1;
+                outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[2].ToString()), 2) + "1" + R1;
             }
             comments.Add(CurrentLine, "// " + "INC_DEC " + R0 + ", " + R1);
             CurrentLine++;
@@ -503,7 +503,7 @@ namespace BinaryParserGui
                 {
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['));
-                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[3].ToString()), 2);
                     outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                     comments.Add(CurrentLine, "// " + "OUT " + R0);
                     CurrentLine += 3;
