@@ -5,14 +5,14 @@ const m = 4
 
 const some_variable_for_test = 5
 const pow_A = 6
-
+te = 4
 const pow_B = 5
 
 Array A [pow_A] = (12, 15, 1, 0, 7, 11) 
 
 Array B [pow_B] = (7, 1, 4, 3, 10)
 
-Array C [pow_A+pow_B] = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+Array C [pow_A+pow_B] = (0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 
 CODE
@@ -41,7 +41,7 @@ L:
 
 LOAD_CA_A	CA_1, b'000000000
 
-LOOP	0, pow_A + pow_B + 1 
+LOOP	0, te + 1
 
 OUT	C [CA_1]
 

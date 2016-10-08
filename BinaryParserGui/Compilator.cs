@@ -156,7 +156,7 @@ namespace BinaryParserGui
                         throw new CompilationException("Повторна об'ява директиви GF");
                     else if (GF == 1 && codeGenerator.gf == false && hashValue.IsMatch(bar))
                     {
-                        int value = mem.ExpressionToInt(bar.Substring(bar.IndexOf("#") + 1));
+                        int value = mem.ExpressionToInt(bar.Substring(bar.IndexOf("#") + 1), false);
                         irreducible_polynomial = "const irreducible_polynomial = " + value.ToString() ;
 
                     }

@@ -445,7 +445,7 @@ namespace BinaryParserGui
             int i = Convert.ToInt32(R0[3].ToString());
             string CA = ConvertToBinary(i, 2);
             string A = string.Empty;
-            int Aint = mem.ExpressionToInt(R1);
+            int Aint = mem.ExpressionToInt(R1, false);
 
             A = ConvertToBinary(Aint, 9);
             outputs[CurrentOutput] += "1101" + CA + "0" + A;

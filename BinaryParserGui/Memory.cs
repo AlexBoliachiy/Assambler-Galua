@@ -93,7 +93,7 @@ namespace BinaryParserGui
                         return false;
 
                     
-                    int const_value = ExpressionToInt(cmd.Substring(cmd.IndexOf("=")) + " + 0");
+                    int const_value = ExpressionToInt(cmd.Substring(cmd.IndexOf("=")) + " + 0", true);
 
 
 
@@ -144,7 +144,7 @@ namespace BinaryParserGui
                     if (variable_type.ContainsKey(var_name))
                         return false;
                    
-                    int var_value = ExpressionToInt(cmd.Substring(cmd.IndexOf("=")) + " + 0");
+                    int var_value = ExpressionToInt(cmd.Substring(cmd.IndexOf("=")) + " + 0", true);
                     if (Math.Pow(2, (double)m) - 1 < var_value)
                     {
                         return false;
@@ -201,7 +201,7 @@ namespace BinaryParserGui
 
             for (i = 3; i < CntOfVal; i++)
             {
-                int const_value = ExpressionToInt(chars[i]);
+                int const_value = ExpressionToInt(chars[i], true);
                 if (Convert.ToString(const_value, 2).Length > m)
                     throw new CompilationException("При спробі конвертування числа " + const_value.ToString() + " у массиві " + ArrayName + " виникло переповнення ");
                 AddToOutput(const_value, ref output_arr);
@@ -248,7 +248,7 @@ namespace BinaryParserGui
         private decimal GetLenghtExp(string arr) //Подаем сюда chars[1]
         {
 
-            return ExpressionToInt(arr);
+            return ExpressionToInt(arr, true);
         }
         //Добавляет в файл памяти указанную переменную
         private bool AddToOutput(int i, ref string Output)
@@ -348,7 +348,7 @@ namespace BinaryParserGui
                             
                             if (ca.IsMatch(match.Value))
                                 continue;
-                            int value = ExpressionToInt(match.Value);
+                            int value = ExpressionToInt(match.Value, false);
                             string name = match.Value.Replace(" ", string.Empty) ;
                             if (Convert.ToString(value, 2).Length > m)
                                 throw new CompilationException("При спробі конвертування числа " + name + " виникло переповнення ");
@@ -394,14 +394,30 @@ namespace BinaryParserGui
         }
         /// <summary>
         /// На вход подается сложное выражение, которое может содержать как десятичные, так и бинарные и хекс значения и переменные. На выходе получаем целое число
+        /// data должно быть правдой, если функция вызывается из DATA секции
         /// </summary>
         /// <returns>Int</returns>
-        public int ExpressionToInt(string expr)
+        public int ExpressionToInt(string expr, bool data)
         {
+
+            if (! data)
+            {
+                MatchCollection matches = var.Matches(expr);
+                foreach (Match x in matches)
+                {
+                   
+                    if (variable_type.ContainsKey(x.Value) && variable_type[x.Value] == TYPE.vars)
+                    {
+                        if (expr.Contains("+") || expr.Contains("/") || expr.Contains("*") || expr.Contains("-"))
+                        {
+                            throw new CompilationException("Вираз зі змінною не може бути арифметичним виразом у секції CODE");
+                        }
+                    }
+                }
+            }
             Regex bin = new Regex(@"b'[01]+");
             Regex hex = new Regex(@"h'[0-F]+");
             string defaultExpr = expr;
-            
             var Matches = bin.Matches(expr);
             foreach (Match x in Matches)
             {
@@ -412,6 +428,7 @@ namespace BinaryParserGui
             {
                 expr = expr.Replace(x.Value, Convert.ToInt32(x.Value.Substring(2), 16).ToString()); //Заменяем хекс значения на десятичные в строке 
             }
+
             expr = ReplaceVariableToValue(expr); // Заменяем значения переменных на десятичные значения
             int res = (int)p.result(expr);
             if (res < 0)
