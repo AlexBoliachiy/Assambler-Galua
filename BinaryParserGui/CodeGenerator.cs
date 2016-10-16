@@ -323,7 +323,7 @@ namespace BinaryParserGui
                 }
                 outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0);
             }
-            comments.Add(CurrentLine, "// " + "MOV_A " + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "MOV" + R0 + ", " + R1);
             CurrentLine += 2;
         }
         private void MOV_ARRAY(string R0, string R1)
@@ -402,7 +402,7 @@ namespace BinaryParserGui
                     outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
-            comments.Add(CurrentLine, "// " + "MOV_ARRAY " + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "MOV" + R0 + ", " + R1);
             CurrentLine += 3;
         }
         private void JMP(string R0)
@@ -443,7 +443,7 @@ namespace BinaryParserGui
         private void LOAD_CA(string R0, string R1)
         {
             outputs[CurrentOutput] += "1100" + ConvertToBinary(Convert.ToInt32(R0[2].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[2].ToString()), 2);
-            comments.Add(CurrentLine, "// " + "LOAD_CA " + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "LOAD " + R0 + ", " + R1);
             CurrentLine++;
         }
 
@@ -456,7 +456,7 @@ namespace BinaryParserGui
 
             A = ConvertToBinary(Aint, 9);
             outputs[CurrentOutput] += "1101" + CA + "0" + A;
-            comments.Add(CurrentLine, "// " + "LOAD_CA_A " + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "LOAD " + R0 + ", " + R1);
             CurrentLine += 2;
         }
 
