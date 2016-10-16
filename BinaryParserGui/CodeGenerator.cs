@@ -263,7 +263,7 @@ namespace BinaryParserGui
         private void MULT(string R0, string R1)
         {
             outputs[CurrentOutput] += "0001" + ConvertToBinary(Convert.ToInt32(R0[1].ToString()), 2) + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2); ;
-            comments.Add(CurrentLine, "// " + "MULT " + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "MUL " + R0 + ", " + R1);
             CurrentLine++;
         }
         private void DIV(string R0, string R1)
@@ -323,7 +323,7 @@ namespace BinaryParserGui
                 }
                 outputs[CurrentOutput] += "1000" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(R0);
             }
-            comments.Add(CurrentLine, "// " + "MOV" + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "MOV " + R0 + ", " + R1);
             CurrentLine += 2;
         }
         private void MOV_ARRAY(string R0, string R1)
@@ -402,7 +402,7 @@ namespace BinaryParserGui
                     outputs[CurrentOutput] += "1001" + ConvertToBinary(Convert.ToInt32(R1[1].ToString()), 2) + "0" + mem.GetBinaryAdress(arrName) + ca + "0" + "1" + "0000";
                 }
             }
-            comments.Add(CurrentLine, "// " + "MOV" + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + "MOV " + R0 + ", " + R1);
             CurrentLine += 3;
         }
         private void JMP(string R0)
@@ -470,7 +470,7 @@ namespace BinaryParserGui
             {
                 outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[2].ToString()), 2) + "1" + R1;
             }
-            comments.Add(CurrentLine, "// " + "INC_DEC " + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + ( R0=="0" ? "INC":"DEC") + R0 + ", " + R1);
             CurrentLine++;
         }
 
