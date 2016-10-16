@@ -25,8 +25,8 @@ namespace BinaryParserGui
         Regex jmp_regex2 = new Regex(@"JMP\s+R[0-2]\s*,\s*[A-Za-z]\w*\s*$");
         Regex loop_regex = new Regex(@"LOOP\s+[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex end_loop_regex = new Regex(@"END_LOOP\s+[0-3]\s*$");
-        Regex load_ca_regex = new Regex(@"LOAD_CA\s+AC[0-3]\s*,\s*AC[0-3]\s*$");
-        Regex load_ca_a_regex = new Regex(@"LOAD_CA_A\s+AC[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
+        Regex load_ca_regex = new Regex(@"LOAD\s+AC[0-3]\s*,\s*AC[0-3]\s*$");
+        Regex load_ca_a_regex = new Regex(@"LOAD\s+AC[0-3]\s*,\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+))\s*(\s*[+/*-]\s*((b'[01]+)|(h'[0-F]+)|([A-Za-z_]+[A-Z_a-z0-9]*)|(\d+)))*\s*$");
         Regex inc_regex = new Regex(@"INC\s+((AC)|(R))[0-3]\s*$");
         Regex dec_regex = new Regex(@"DEC\s+((AC)|(R))[0-3]\s*$");
         Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[AC[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
@@ -169,15 +169,21 @@ namespace BinaryParserGui
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0] + " " + x);
                         LOOP(ops[0], ops[1]);
                         break;
-                    case "LOAD_CA":
-                        if (!load_ca_regex.IsMatch(currentStrCmd))
+                    case "LOAD":
+                        bool suce = false;
+                        if (load_ca_regex.IsMatch(currentStrCmd))
+                        {
+                            LOAD_CA(ops[0], ops[1]);
+                            suce = true;
+                        }
+                        else if (load_ca_a_regex.IsMatch(currentStrCmd))
+                        {
+                            LOAD_CA_A(ops[0], ops[1]);
+                        }
+                        else
+                        {
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
-                        LOAD_CA(ops[0], ops[1]);
-                        break;
-                    case "LOAD_CA_A":
-                        if (!load_ca_a_regex.IsMatch(currentStrCmd))
-                            throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
-                        LOAD_CA_A(ops[0], ops[1]);
+                        }            
                         break;
                     case "INC":
                         if (!inc_regex.IsMatch(currentStrCmd))
@@ -214,7 +220,7 @@ namespace BinaryParserGui
                     case "/*":
                         throw new CompilationException("Незакритий коментар у рядку  :" + (i + rowCountData).ToString());
                     default:
-                        throw new CompilationException("Невідома Команда " + currentStrCmd + " у рядку " + (i + rowCountData).ToString());
+                        throw new CompilationException("Невідома команда \"" + currentStrCmd + "\" у рядку " + (i + rowCountData).ToString());
 
 
                 }
