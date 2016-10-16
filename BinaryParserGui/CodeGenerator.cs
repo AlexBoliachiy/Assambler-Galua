@@ -220,7 +220,7 @@ namespace BinaryParserGui
                     case "/*":
                         throw new CompilationException("Незакритий коментар у рядку  :" + (i + rowCountData).ToString());
                     default:
-                        throw new CompilationException("Невідома команда \"" + currentStrCmd + "\" у рядку " + (i + rowCountData).ToString());
+                        throw new CompilationException("Невідома команда \"" + currentStrCmd.Trim() + "\" у рядку " + (i + rowCountData).ToString());
 
 
                 }
