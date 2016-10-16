@@ -470,7 +470,7 @@ namespace BinaryParserGui
             {
                 outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[2].ToString()), 2) + "1" + R1;
             }
-            comments.Add(CurrentLine, "// " + ( R0=="0" ? "INC":"DEC") + R0 + ", " + R1);
+            comments.Add(CurrentLine, "// " + ( R1=="1" ? "INC":"DEC") + R0);
             CurrentLine++;
         }
 
