@@ -401,8 +401,7 @@ namespace BinaryParserGui
 
             FillWordFromPosition("JMP", "#2e95e8");
             FillWordFromPosition("LOOP", "#58b8f0");
-            FillWordFromPosition("LOAD_CA_A", "#2e95e8");
-            FillWordFromPosition("LOAD_CA", "#2e95e8");
+            FillWordFromPosition("LOAD", "#2e95e8");
             FillWordFromPosition("INC", "#2e95e8");
             FillWordFromPosition("DEC", "#2e95e8");
             FillWordFromPosition("OUT", "#2e95e8");
