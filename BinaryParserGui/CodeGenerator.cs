@@ -191,7 +191,7 @@ namespace BinaryParserGui
                         INC_DEC(ops[0], "0");
                         break;
                     case "DEC":
-                        if (!inc_regex.IsMatch(currentStrCmd))
+                        if (!dec_regex.IsMatch(currentStrCmd))
                             throw new CompilationException("Помилка в синтаксисі коду команди у рядку номер " + (i + rowCountData).ToString() + "\nКоманда " + CurrentCmd[0]);
                         INC_DEC(ops[0], "1");
                         break;
@@ -470,7 +470,7 @@ namespace BinaryParserGui
             {
                 outputs[CurrentOutput] += "1110" + ConvertToBinary(Convert.ToInt32(R0[2].ToString()), 2) + "1" + R1;
             }
-            comments.Add(CurrentLine, "// " + ( R1=="1" ? "INC":"DEC") + R0);
+            comments.Add(CurrentLine, "// " + ( R1=="0" ? "INC " :"DEC ") + R0);
             CurrentLine++;
         }
 
