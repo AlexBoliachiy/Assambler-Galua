@@ -142,6 +142,7 @@ namespace BinaryParserGui
                         else if (mov_a_regex.IsMatch(currentStrCmd))
                         {
                             MOV_A(ops[0], ops[1]);
+                            suc = true;
                         }
 
                         else if (mov_array_regex.IsMatch(currentStrCmd))

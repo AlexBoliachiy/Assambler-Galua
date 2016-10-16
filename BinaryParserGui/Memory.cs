@@ -364,6 +364,10 @@ namespace BinaryParserGui
                     }
                     catch (Exception ex)
                     {
+                        /*
+                        Тут я столкнулся с непростой ситуацией.
+                         */
+                        continue;
                         throw new CompilationException("Звертання до невиділенної пам'яті або " + ex.Message);
                     }
 
