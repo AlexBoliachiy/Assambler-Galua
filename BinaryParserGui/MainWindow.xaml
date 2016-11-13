@@ -23,22 +23,22 @@
             </MenuItem>
             <MenuItem Header="Компілювати" Click="MenuItem_Compile" />
             <MenuItem Header="Налаштування" StaysOpenOnClick="True" ContextMenuClosing="MenuItem_SettingsClosing">
-                <MenuItem  Header="писати вивід до файлів" Click="Settings_Write" StaysOpenOnClick="True">
+                <MenuItem  Header="Писати вивід до файлів" Click="Settings_Write" StaysOpenOnClick="True">
                     <MenuItem.Icon >
                         <Image Name="WriteImage" Source="icon.ico"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="спецiльний дизайнерський iнтерфейс" Click="Settings_interface" StaysOpenOnClick="True">
+                <MenuItem Header="Спецiльний дизайнерський iнтерфейс" Click="Settings_interface" StaysOpenOnClick="True">
                     <MenuItem.Icon >
                         <Image Name="InterfaceIcon" Source="icon.ico"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="динамічна компіляція" Click="Settings_Acomp" StaysOpenOnClick="True">
+                <MenuItem Header="Динамічна компіляція" Click="Settings_Acomp" StaysOpenOnClick="True">
                     <MenuItem.Icon >
                         <Image Name="AcompIcon" Source="icon.ico"></Image>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="підсвітка синтаксису (F7)" Click="Settings_SyntaxHighlight" StaysOpenOnClick="True">
+                <MenuItem Header="Підсвітка синтаксису (F7)" Click="Settings_SyntaxHighlight" StaysOpenOnClick="True">
                     <MenuItem.Icon >
                         <Image Name="SyntaxHighliteIcon" Source="icon.ico"></Image>
                     </MenuItem.Icon>
