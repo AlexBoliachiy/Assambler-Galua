@@ -411,7 +411,7 @@ namespace BinaryParserGui
                     string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
                     if (binaryOffset.Length > 4)
                     {
-                        throw new CompilationException("Значення зміщення більще 4-х біт");
+                        throw new CompilationException("Значення зміщення більше 4-х біт");
                     }
                     while (binaryOffset.Length != 4)
                     {
@@ -508,14 +508,14 @@ namespace BinaryParserGui
                     string binaryOffset = Convert.ToString(Convert.ToInt32(offset), 2);
                     if (binaryOffset.Length > 4)
                     {
-                        throw new CompilationException("Значення зміщення більще 4-х біт");
+                        throw new CompilationException("Значення зміщення більше 4-х біт");
                     }
                     while (binaryOffset.Length != 4)
                     {
                         binaryOffset = "0" + binaryOffset;
                     }
                     outputs[CurrentOutput] += "00" + "1" + mem.GetBinaryAdress(arrName) + ca + "0" + sign + binaryOffset;
-                    comments.Add(CurrentLine, "// " + "OUT " + R0 + ", ");
+                    comments.Add(CurrentLine, "// " + "OUT " + R0);
                     CurrentLine += 3;
                 }
                 else
