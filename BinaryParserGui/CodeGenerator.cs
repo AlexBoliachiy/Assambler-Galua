@@ -446,7 +446,7 @@ namespace BinaryParserGui
         private void JMPconditional(string R0, string R1)
         {
             outputs[CurrentOutput] += "1010" + ConvertToBinary(Convert.ToInt32(R0.Substring(1)), 2) + "1";
-            outputs[CurrentOutput] += "{" + R0 + "}";
+            outputs[CurrentOutput] += "{" + R1 + "}";
             comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1);
             CurrentLine += 2;
         }
@@ -496,8 +496,8 @@ namespace BinaryParserGui
                 {
                     string arrName = R0.Remove(R0.IndexOf('['));
                     string exp = R0.Substring(R0.IndexOf('['));
-                    string ca = ConvertToBinary(Convert.ToInt32(exp[4].ToString()), 2);
-                    exp = exp.Substring(5);
+                    string ca = ConvertToBinary(Convert.ToInt32(exp[3].ToString()), 2);
+                    exp = exp.Substring(4);
                     string offset = exp.Remove(exp.IndexOf(']'), 1);
                     string sign;
                     if (offset[0] == '+')
