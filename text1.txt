@@ -24,7 +24,7 @@ LOAD	AC3, AC2
 
 MOV	R1, B [AC2 + 0]	
 LOOP  1, pow_A + 1		
-MOV	R0, A [AC1 ]	
+MOV	R0, A [AC1 	]	
 MOV	R2, C [AC3  ]	
 MUL	R0, R1		
 ADD	R2, R0		
@@ -32,7 +32,7 @@ MOV	C [AC1 + 0], R2
 INC	AC1
 INC	AC3
 END_LOOP	1			
-JMP L:
+JMP L
 INC	AC2
 
 END_LOOP	0

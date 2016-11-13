@@ -54,7 +54,7 @@
                 <MenuItem Header="Пам'ять команд" StaysOpenOnClick="True" Name="CODE_MENU">
                     <TextBox  Width="100" Name="OutputCode"></TextBox>
                 </MenuItem>
-                <MenuItem Header="Stop слово" StaysOpenOnClick="True" Name="Stop" Click="Stop_Click">
+                <MenuItem Header="STOP-слово" StaysOpenOnClick="True" Name="Stop" Click="Stop_Click">
                     <MenuItem.Icon >
                         <Image Name="StopIcon" Source="icon.ico"></Image>
                     </MenuItem.Icon>
