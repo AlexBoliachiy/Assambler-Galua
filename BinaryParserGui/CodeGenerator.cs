@@ -371,7 +371,7 @@ namespace BinaryParserGui
                         offset = "0";
                     else
                         offset = offset.Substring(1);
-                    string binaryOffset = ConvertToBinary(Convert.ToInt32(offset), 2);
+                    string binaryOffset = ConvertToBinary(Convert.ToInt32(offset), 4);
                     if (binaryOffset.Length > 4)
                     {
                         throw new CompilationException("Значение смещения больше 4-х байт");

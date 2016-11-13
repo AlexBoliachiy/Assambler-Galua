@@ -131,7 +131,7 @@ namespace BinaryParserGui
                 else return false;
             }
             else if (cmd_split[0] == "/*")
-                throw new CompilationException("Незакритий многострічковий коментар у секціЇ DATA");
+                throw new CompilationException("Незакритий багаторядковий  коментар у секціЇ DATA");
             else
             {
                 if (dec_var.IsMatch(cmd))
