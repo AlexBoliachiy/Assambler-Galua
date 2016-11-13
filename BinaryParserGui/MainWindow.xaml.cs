@@ -661,7 +661,7 @@ namespace BinaryParserGui
                             else
                                 File.WriteAllText(currentfile.Remove(currentfile.LastIndexOf(@"\") + 1) + OutputData.Text + ".txt", comment.Replace(data.Text, string.Empty));
                             
-                            MessageBox.Show("Зроблено!\n" + "Вивід записаний у відповідні файли", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                            MessageBox.Show("Зроблено!\nВивід записаний у відповідні файли", "Успіх", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 
                         }
                     }

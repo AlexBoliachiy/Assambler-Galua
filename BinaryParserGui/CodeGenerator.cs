@@ -31,7 +31,9 @@ namespace BinaryParserGui
         Regex dec_regex = new Regex(@"DEC\s+((AC)|(R))[0-3]\s*$");
         Regex out_regex = new Regex(@"OUT\s+([A-Za-z_]+[A-Z_a-z0-9]*)\s*(\[AC[0-3]\s*([+-]\s*\d+)?\s*\])?\s*$");//
         Regex sub_regex = new Regex(@"SUB\s+R[0-3]\s*,\s*R[0-3]\s*$");
-        Regex label = new Regex(@"[A-z]\w*\s*:");
+        Regex label = new Regex(@"[A-Za-z_]+[A-Z_a-z0-9]*\s*:");
+        Regex label_in_output = new Regex(@"{.*?}");
+
         string output;
         Memory mem;
         string[] outputs = new String[5];
@@ -86,11 +88,15 @@ namespace BinaryParserGui
                 }
                 if (label.IsMatch(currentStrCmd))
                 {
-                    string labelName = currentStrCmd.Replace(" ", string.Empty).Replace(":", string.Empty);
-                    if (labels.ContainsKey(labelName))
-                        throw new CompilationException("Повторна декларація мітки " + labelName);
-                    labels.Add(labelName, CurrentLine);
-                    continue;
+                    Match match = label.Match(currentStrCmd);
+                    string labelName = currentStrCmd.Replace(" ", string.Empty).Replace(":", string.Empty).Replace("\t", string.Empty);
+                    if (labelName == match.Value.Replace(" ", string.Empty).Replace(":", string.Empty).Replace("\t", string.Empty))
+                    {
+                        if (labels.ContainsKey(labelName))
+                            throw new CompilationException("Повторна декларація мітки " + labelName);
+                        labels.Add(labelName, CurrentLine);
+                        continue;
+                    }
                 }
 
                 string[] ops = GetOperands(x);
@@ -229,6 +235,25 @@ namespace BinaryParserGui
             if (closingValue.Count != 0)
             {
                 throw new CompilationException("Наявний незакритий цикл з лічільником номер " + closingValue.Pop());
+            }
+
+            //Расставляем значение адресов в метки
+            try
+            {
+                for (i = 0; i < outputs.Length; i++)
+                {
+                    if (outputs[i] == string.Empty || outputs[i] == null)
+                        continue;
+                    MatchCollection matchcol = label_in_output.Matches(outputs[i]);
+                    foreach (Match x in matchcol)
+                    {
+                        outputs[i] = outputs[i].Replace(x.Value, ConvertToBinary(labels[x.Value.Replace("{", string.Empty).Replace("}", string.Empty)], 9));
+                    }
+                }
+            }
+            catch
+            {
+                throw new CompilationException("У одного чи декількох JMP використовуються невідомі мітки");
             }
         }
         private string[] GetOperands(string raw)
@@ -405,40 +430,27 @@ namespace BinaryParserGui
             comments.Add(CurrentLine, "// " + "MOV " + R0 + ", " + R1);
             CurrentLine += 3;
         }
+
+
         private void JMP(string R0)
         {
 
-            int line;
-            try
-            {
-                line = labels[R0];
-            }
-            catch
-            {
-                throw new CompilationException("JMP з невідомою міткою " + R0);
-            }
+            R0 = R0.Replace(":", string.Empty);
             outputs[CurrentOutput] += "1010" + "11" + "1";
-            outputs[CurrentOutput] += ConvertToBinary(line, 9);
+            outputs[CurrentOutput] += "{" + R0 + "}";
             comments.Add(CurrentLine, "// " + "JMP " + R0);
-
-
+            CurrentLine += 2;
         }
+
+
         private void JMPconditional(string R0, string R1)
         {
-
-            int line;
-            try
-            {
-                line = labels[R1];
-            }
-            catch
-            {
-                throw new CompilationException("JMP з невідомою міткою " + R1);
-            }
-            outputs[CurrentOutput] += "1010" + ConvertToBinary(Convert.ToInt32(R0.Substring(1)), 2) + "1"; 
-            outputs[CurrentOutput] += ConvertToBinary(line, 9);
+            outputs[CurrentOutput] += "1010" + ConvertToBinary(Convert.ToInt32(R0.Substring(1)), 2) + "1";
+            outputs[CurrentOutput] += "{" + R0 + "}";
             comments.Add(CurrentLine, "// " + "JMP " + R0 + ", " + R1);
+            CurrentLine += 2;
         }
+
 
         private void LOAD_CA(string R0, string R1)
         {
